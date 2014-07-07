@@ -34,11 +34,15 @@ namespace Client
             //the callback function should be triggered on file updating from other device during the session
             return false;
         }
-        public bool UploadFile()
+        public FileMetadata UploadFile(FileMetadata aFileMetadata, FileBlobdata aFileBlobdata)
+        {
+            return null;
+        }
+        public bool DeleteFile(FileMetadata aFileMetadata)
         {
             return false;
         }
-        public Queue<FileMetadata> GetCompleteMetadata(ulong sinceCounter)
+        public List<FileMetadata> GetCompleteMetadata(ulong sinceCounter)
         {
             //this method only get the complete metadata from master server, then client can retrieve every file from blob server
             //this could be used to initialize a new blank device (download everything from cloud), when set sinceCounter = 0;

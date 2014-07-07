@@ -11,17 +11,18 @@ namespace SharedLibrary
     [Serializable]
     public class FileMetadata
     {
+        public enum STATUS : byte {ERROR, NEW, LAST, HISTORY, DELETE };
         public string filename;     //with path, up to sync root
         public ulong parent;
         public ulong globalCounter;
 
-        public bool last;
+        public STATUS status;
         public DateTime timestamp;  //this is the master server time on updating or client local time for file modification. Only the master server time is used to calculate SHA
 
         public string blobKey;
         public ServerLocation blobServer;
 
-        public static SHA256 GetSHA(FileMetadata metadata, byte[] fileData, int fileLength)
+        public static SHA256 GetSHA(FileMetadata metadata, FileBlobdata blobdata)
         {
             //The SHA will be used to be the blobKey
             //Only some parts of metadata should be used in calculating SHA: filename, parent, globalCounter, timestamp, fileData.
@@ -29,6 +30,12 @@ namespace SharedLibrary
             //Reference http://msdn.microsoft.com/en-us/library/system.security.cryptography.sha256%28v=vs.110%29.aspx
             return null;
         }
+    }
+
+    public class FileBlobdata
+    {
+        byte[] binary;
+        int length;
     }
 
     [Serializable]
