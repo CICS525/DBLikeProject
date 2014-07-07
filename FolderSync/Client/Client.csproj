@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="FileSysPerformer.cs" />
     <Compile Include="FileSysWatcher.cs" />
+    <Compile Include="MetadataManager.cs" />
     <Compile Include="ServerSession.cs" />
     <Compile Include="Setting.cs">
       <SubType>Form</SubType>
