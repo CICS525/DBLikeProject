@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MasterServer
+{
+    class MasterMain
+    {
+        static void Main(string[] args)
+        {
+        }
+    }
+}
