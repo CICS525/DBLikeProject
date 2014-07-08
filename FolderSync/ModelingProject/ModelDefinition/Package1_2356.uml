@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="e0be4d9f-21cd-43cc-91af-0b9e4ab091ac"
+  name="Cryptography"
+  visibility="Private" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <referencesInternal>
+    <reference
+      Id="1872dd90-370d-4b11-a9f9-c28fe69fac94"
+      handle="viewcode://./CodeSchema_Namespace?Namespace%3DSystem.Security.Cryptography"
+      tag="ViewCode" />
+  </referencesInternal>
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="4163a4bd-e9a8-4da9-8b3c-a7396a39579d"
+        name="SHA256"
+        isAbstract="true"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="eb7cdcee-2f43-407d-a5f9-99d4b4187b05"
+            handle="viewcode://./CodeSchema_Class?Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem.Security.Cryptography Type%3DSHA256"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="28d05dac-321d-441b-9bc8-aebfa53609c0"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="d506c0ff-b1ba-43a8-9f7d-97fbcf23b951">
+                <propertyInstance
+                  Id="5aa219f8-f7fa-4270-989c-8f8482f6f593"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="c24fc4ad-d14d-41d1-8d04-6c6afd0c7d9d">
+                <propertyInstance
+                  Id="956e38fc-d7e4-4f2c-9bb8-9d867908b755"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="2689758c-0254-4157-8601-ef46c76046f9">
+                <propertyInstance
+                  Id="95d07c34-df34-415c-a1c6-5ff1d9cc4601"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="48b6aa41-bf20-45c3-993b-d1b3321905e7">
+                <propertyInstance
+                  Id="9de75579-37ee-4352-923c-053fa0b981fd"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="da7db720-d213-4839-98dd-ac831cfc5c7d">
+                <propertyInstance
+                  Id="0a1058b4-9758-4e20-a01d-aad0233ea53e"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+      </class>
+    </packageHasNamedElement>
+  </packagedElements>
+</package>

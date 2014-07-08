@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="file:///C:/PROGRAM FILES (X86)/MICROSOFT VISUAL STUDIO 12.0/COMMON7/IDE/EXTENSIONS/MICROSOFT/ARCHITECTURE TOOLS/EXTENSIBILITY/Logging/ReverseEngineeringLog.xslt"?>
+<Log xmlns="http://schemas.microsoft.com/VisualStudio/2010/CodeGen.RE.Log" Label="Code Generation/Text Transformation Log">
+  <MessageClass Name="Message" Label="Message" Option="Show informational messages" />
+  <MessageClass Name="Warning" Label="Warning" Option="Show warnings" />
+  <MessageClass Name="Error" Label="Error" Option="Show errors" />
+  <MessageClass Name="Property" Label="Property" Option="Show metadata" />
+  <MessageClass Name="Diagnostic" Label="Message" Option="Show diagnostic messages" />
+  <Message Timestamp="2014-07-08T00:22:26" Importance="High" Text="Reverse Engineering Started." />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: '2a722fc3-0e26-45de-a063-a9c243fefcba' -  (ClassifierTemplateParameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'Boolean' -  (PrimitiveType)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'de43815a-29c3-4362-b135-5d27b94cf16b' -  (ClassifierTemplateParameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::BlobSession' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::BlobSession::BlobSession' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::BlobSession::DownloadFile' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::BlobSession::DownloadFile::blobInfo' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::LoadSetting' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::Main' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::SaveSetting' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::sDeviceName' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::sDownloadQue' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::sPassword' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::sRootDir' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::sUploadQue' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::ClientMain::sUsername' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::EntrySession' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::EntrySession::EntrySession' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::EntrySession::Login' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::EntrySession::Login::password' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::EntrySession::Login::usrname' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer::DeleteFile' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer::DeleteFile::filename' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer::FileSysPerformer' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer::UpdateFile' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer::UpdateFile::blobInfo' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysPerformer::UpdateFile::filename' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysWatcher' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysWatcher::FileSysWatcher' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysWatcher::FileSysWatcher::onChanged' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::FileSysWatcher::FileSysWatcher::rootDir' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::Connect' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::Connect::password' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::Connect::username' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::DeleteFile' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::DeleteFile::aFileMetadata' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::Disconnect' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::GetCompleteMetadata' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::GetCompleteMetadata::sinceCounter' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::MasterSession' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::MasterSession::masterServer' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::RegisterCallback' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::UploadFile' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::UploadFile::aFileBlobdata' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MasterSession::UploadFile::aFileMetadata' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::DeleteMetadate' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::DeleteMetadate::aFileMetadata' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::GetInstance' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::GetLocalMetadata' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::MetadataManager' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::ReadLocalMetadata' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::SaveLocalMetadate' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::sGlobalWriteCounter' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::sLocalMetadata' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::that' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::UpdateMetadata' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::MetadataManager::UpdateMetadata::aFileMetadata' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting' -  (Class)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::BtnOK' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::BtnOK_Click' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::BtnOK_Click::e' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::BtnOK_Click::sender' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::components' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::Dispose' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::Dispose::disposing' -  (Parameter)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::InitializeComponent' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::label1' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::label2' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::label3' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::Setting' -  (Operation)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::TxtBxDeviceName' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::TxtBxPassword' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::Client::Setting::TxtBxUsername' -  (Property)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::SharedLibrary' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::SharedLibrary::FileBlobdata' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::SharedLibrary::FileMetadata' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::SharedLibrary::FileOperation' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::SharedLibrary::ServerLocation' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Collections' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Collections::Generic' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Collections::Generic::List' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Collections::Generic::List&lt;FileMetadata‎&gt;' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Collections::Generic::Queue' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Collections::Generic::Queue&lt;FileOperation‎&gt;' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::ComponentModel' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::ComponentModel::IContainer' -  (Interface)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::EventArgs' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::IO' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::IO::FileSystemEventHandler' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Object' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::UInt64' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Windows' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Windows::Forms' -  (Package)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Windows::Forms::Button' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Windows::Forms::Form' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Windows::Forms::Label' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject::System::Windows::Forms::TextBox' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'String' -  (PrimitiveType)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject::Client::Setting to ModelingProject::System::Windows::Forms::Form (Generalization)" />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="High" Text="(8) type(s) fully reverse engineered." />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="High" Text="(17) type(s) partially reverse engineered.  These types were not included in the original selection so their full definitions are not reverse engineered.  Instead, this shallow operation has simply ensured these types exist in the UML model because they are needed in order to fully describe other elements." />
+  <Message Timestamp="2014-07-08T00:22:30" Importance="High" Text="The reverse engineering operation completed with (0) error(s), and (0) warning(s)." />
+</Log>

@@ -1,0 +1,954 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="10ce69d6-5f27-4dca-aca4-5f0192b3c9c4"
+  name="MasterServer"
+  visibility="Private" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <referencesInternal>
+    <reference
+      Id="283cd7cd-edf2-42d0-ac6b-51e58dbf6535"
+      handle="viewcode://./CodeSchema_Namespace?Namespace%3DMasterServer"
+      tag="ViewCode" />
+  </referencesInternal>
+  <packagedElements>
+    <packageHasNamedElement>
+      <class
+        Id="ed59304f-c424-4822-bb00-37b2c008bb66"
+        name="MasterMain"
+        visibility="Package"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="e438d9f9-949e-4b57-98bd-227acdb4ed69"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="893846a4-2880-44a9-9b37-8149daebb6e2"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="78cae462-79dd-4ba1-9a6b-c4414caa78d7">
+                <propertyInstance
+                  Id="1fcabd8d-7b53-4974-a685-01222e3813ee"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="d355bfd0-c084-4b66-9fd8-a95cbfcb0d2d">
+                <propertyInstance
+                  Id="24a1569e-bdfc-4758-8bec-cc48b87fbcc6"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="f86629c8-5e72-4fdd-a8b6-6acdc2f64d27">
+                <propertyInstance
+                  Id="3444017f-f459-4014-94cb-4d823ff3947c"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="9f9b8b54-dd22-468a-8b7c-b13a18289954">
+                <propertyInstance
+                  Id="18bfec2b-926d-486d-bd54-09fe438c0014"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="6d008e2a-2319-4426-9c2d-07b48dfa53ba">
+                <propertyInstance
+                  Id="4a3de5ec-935b-455d-82ed-d311a1236800"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="614d7fe3-d686-4f00-a43e-c10730dca89b"
+            name="CreateAccount"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="c5f9376f-16c3-4972-9925-f64b48b5d433"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DCreateAccount OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="84b95572-7d3f-40d0-85d1-4b648ee59eeb"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="506a4be5-d9f5-44d3-a5b0-e022943fe146">
+                    <propertyInstance
+                      Id="0e822e68-c8c9-4530-957f-c5dfe2de8fcf"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="34a99161-d302-41eb-bad1-3e8b98339863">
+                    <propertyInstance
+                      Id="4f93d42e-887a-4103-922a-e4e7e432658a"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6a7d8c96-4e6a-484c-8964-9b48b25f0886">
+                    <propertyInstance
+                      Id="380f4cfc-aaf7-4a01-b4e5-2e8b294be21e"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="07e618c9-ae2d-49bb-8951-5cdfa412e4e9">
+                    <propertyInstance
+                      Id="94a53141-51e2-4fc1-bb80-1883347287b3"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="0edbff1c-5790-41fc-b6ed-706ea12c2693">
+                    <propertyInstance
+                      Id="8e7d718a-e20b-400f-ad98-7ce116c910b9"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5a12d830-e7ea-4d95-9884-1ae72c63369d">
+                    <propertyInstance
+                      Id="8394535d-c317-4228-ae80-31f23364673e"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="849ed279-23ce-405c-bfcc-fe3c60124d08"
+                  direction="Return">
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+                      LastKnownName="Boolean"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a8cd06f2-35ac-4493-8d31-78d26e37d42b"
+                  name="username"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="22754ed7-815b-43a2-b3f8-8a3659dcc83f"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DCreateAccount OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)]) ParameterIdentifier%3Dusername"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c25c19ba-ae51-4bfd-ac57-0366cd0dec9a"
+                  name="password"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="097a6231-2fa1-47f8-a719-18c60b7cc201"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DCreateAccount OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)]) ParameterIdentifier%3Dpassword"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="7aa62356-4971-4061-ba1d-2c92d88ecda2"
+            name="Login"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="2e0b3345-0485-4603-87b7-448def4983c4"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DLogin OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="41881589-548d-4e60-b78d-76c2422cba66"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="088e288f-f8b1-4d84-85ea-5b08da185e39">
+                    <propertyInstance
+                      Id="e3535188-de54-45fd-8c9c-edcc32f0fa69"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="c3ddc2fd-ab9d-4448-a44d-0b524a15df52">
+                    <propertyInstance
+                      Id="386f7ff8-1fd5-4050-b612-a5bfa2ad381b"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="be40fddc-4d1b-48b1-b606-24c4e8a72a6f">
+                    <propertyInstance
+                      Id="292b5588-c8a7-4a76-9989-61ce538339b1"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="67f8dde5-bdbe-4664-afef-d13372cbfdf3">
+                    <propertyInstance
+                      Id="95e20ba9-239c-40d0-9e35-2f3f8a43e7e9"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ee0b6965-af53-4ae5-a666-23811c8df241">
+                    <propertyInstance
+                      Id="37e5cdfc-543b-40bb-9d50-74e81e241ae3"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="db4a9edf-eef4-4f38-ad63-c85d2491145d">
+                    <propertyInstance
+                      Id="519b107b-f57c-49e5-906e-a6a6b4d856bd"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="9035dd13-07ec-40f2-84da-1fd1ee270e8b"
+                  direction="Return">
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+                      LastKnownName="Boolean"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="4933628d-d57e-42e6-9bd7-7f61724ce8c0"
+                  name="username"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="ccb7c038-533b-4811-b002-b8f6279309cc"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DLogin OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)]) ParameterIdentifier%3Dusername"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ca959e58-fd22-43d6-83bf-b07140853fd3"
+                  name="password"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="94e8fa18-cfed-4c7b-99fa-8afdb7a9f5ec"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DLogin OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)]) ParameterIdentifier%3Dpassword"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="904add3f-6cd2-46e6-8d05-3f9ebea64ffd"
+            name="Main"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="true"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="b529e51f-d1e0-42cc-a3e5-d5cd9320eebc"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DMain OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3D(Name%3DString ArrayRank%3D1 ParentType%3DString))])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="30db64a6-0a8b-45ad-9ef7-e53c66f56962"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="d187c51e-d3e1-4c93-9d38-464a2a20b391">
+                    <propertyInstance
+                      Id="445d3a6a-68c3-477f-a71b-2d9c3912382e"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="9a8dd6cb-bfd7-40c4-bbdd-3ff8d3379e53">
+                    <propertyInstance
+                      Id="1f2054bb-cae2-4fc3-8571-c5046e1ea171"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="f465b043-39be-4898-9cb0-fa502a593a38">
+                    <propertyInstance
+                      Id="3f8ae6bb-c202-44ee-a074-8eca1f4405aa"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ed78c23e-989d-4807-ad71-b186d6d28d1a">
+                    <propertyInstance
+                      Id="e76221da-3af5-4862-ade5-ae713ee4e41f"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="eb966813-6e21-49ee-82c7-222e77add41f">
+                    <propertyInstance
+                      Id="ad293764-32a6-4b2e-bab4-7c65a1d69fe5"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="43ae4750-d5da-4ca2-a1f5-82f42cb91034">
+                    <propertyInstance
+                      Id="6cd618cf-4574-4784-aac1-a06d975c5980"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="d674595a-08f8-4870-8a57-84d6a65b3329"
+                  name="args"
+                  direction="In"
+                  isOrdered="true">
+                  <referencesInternal>
+                    <reference
+                      Id="5c95c760-ca7f-4ed1-a69a-fd35c5c78450"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D(Name%3DMain OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3D(Name%3DString ArrayRank%3D1 ParentType%3DString))]) ParameterIdentifier%3Dargs"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <lowerValueInternal>
+                    <literalString
+                      Id="d6893ef4-c226-4a99-b14e-ed7ef918fa30"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="06c62d36-1b2f-42d5-9f63-9d40e5653383"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="e1333b65-6ef0-49eb-82ef-ce12639ce932"
+            name="MasterMain"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="db874975-4b36-41fd-a038-bb6a2c6be0f4"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMasterMain Member%3D.ctor"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="a79e1607-b0c0-4120-8931-b57d58d10f9c"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="d32bb12e-171f-44b1-a091-5e5659816665">
+                    <propertyInstance
+                      Id="3f56e5b6-c07e-45fd-9b14-4c09c83e0917"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="4544e9fb-8e0d-486f-8d50-27a36ad7d6a7">
+                    <propertyInstance
+                      Id="99e73d4f-3876-418f-8160-e3935c6aa000"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ac31f6da-1d47-480e-b4c8-4d5ad194266e">
+                    <propertyInstance
+                      Id="606fd6ae-a463-47f6-844c-2321b911cea4"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="95713e13-5175-47ff-94ae-d2fff25817ca">
+                    <propertyInstance
+                      Id="bb184acf-59fc-4b5b-8393-0525b5590752"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="9fd36b74-801f-499b-8fb7-170fcc5b81e2">
+                    <propertyInstance
+                      Id="7b9b3317-49d3-4639-98e5-1693fc0df780"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="86fe70c1-21f7-43f3-8c4a-18a0f788945a">
+                    <propertyInstance
+                      Id="b8e876c8-679b-4310-9ac6-ce60283d566a"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="3e7660dc-e120-4e35-8457-f87f30f367b3"
+        name="Metadatabase"
+        visibility="Package"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="789cf9e5-01d9-487a-a3ba-9dbe1e491269"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="742436db-9d3d-4424-a125-7a87b5a0a6b4"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="1dfd05e5-00b2-49dc-9edc-754f99a9ebd1">
+                <propertyInstance
+                  Id="d1c0bef8-48b4-40d6-916e-00954a4da1b9"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="7d4d436d-5e3a-40d5-a146-ab005f42ae5e">
+                <propertyInstance
+                  Id="57d40edc-d603-408b-a0a7-677332f5fddf"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="cf4d61ef-01e1-4659-80b6-6e084cf09e2f">
+                <propertyInstance
+                  Id="9508ded4-52da-4980-94b5-5defbec4d33e"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="06fe045c-6684-437f-a0ed-1944336989e7">
+                <propertyInstance
+                  Id="0a9c819f-7036-4b8e-8bdb-3ad936f62521"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="1258e110-9008-4b4a-afab-f3bef9a881b6">
+                <propertyInstance
+                  Id="3ce91c24-dc0e-4057-bda3-9251f1e121c7"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="60bdcc4f-2446-4ffc-ac4d-39cac9e140bd"
+            name="DeleteMetadate"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="42b877ef-96de-4671-ad14-50b95035712c"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DDeleteMetadate OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="6011b568-8ab5-4d19-b9b2-1c566f85bae5"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="cceb5276-32fc-488d-83e4-0f6487560a82">
+                    <propertyInstance
+                      Id="929e7a16-e0e8-48e1-a87a-44dcaf64f0e9"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="726368cb-03be-4979-9ec1-c613a415fc47">
+                    <propertyInstance
+                      Id="a1c45c44-419a-4e34-b1c3-f1be77650323"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="0109d9de-01c3-4464-bc11-c88d3a2f5504">
+                    <propertyInstance
+                      Id="7efba190-c78b-4527-b8f7-407a34c7c55c"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="a466066e-883e-4668-a678-61c4443688a5">
+                    <propertyInstance
+                      Id="7c9f422a-243f-4231-a913-637d23a753f4"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="98d8d727-3acc-467c-a0a3-e67bf39a1acd">
+                    <propertyInstance
+                      Id="276d67e0-92ef-4c5a-957d-4d6a1139777d"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="4ca125e4-2e45-4395-b1af-9dd6961d610a">
+                    <propertyInstance
+                      Id="e426f210-3776-4456-bbd6-6c9f7f469e5f"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="68644fe5-5690-41a5-af4e-57ac01497ddd"
+                  direction="Return">
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="8943dc84-709e-4f62-b15a-a3273aa6f165"
+                      LastKnownName="Boolean"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="f0122478-eaf2-4cae-8ae3-43322e4c6fbb"
+                  name="username"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="66f30e64-9146-46ff-a884-97ebe83e7ac9"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DDeleteMetadate OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)]) ParameterIdentifier%3Dusername"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="5fd0766a-456e-4ff7-b1d0-75cdf0f9f872"
+                  name="aFileMetadata"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="535245b8-f27b-41e0-b5da-8653ed51fabe"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DDeleteMetadate OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)]) ParameterIdentifier%3DaFileMetadata"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="83f21422-a448-4648-b2af-46374135ae80"
+                      LastKnownName="FileMetadata"
+                      LastKnownLocation="Package_2355.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="03ccea25-d4ad-409f-883a-0e7b9c284b23"
+            name="GetCompleteMetadata"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="0823165c-96e6-47b1-924f-4ecd8cacf8fd"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DGetCompleteMetadata OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DUInt64)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="2e408f59-688e-4144-9eb8-78a1434b8fd9"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="76e7baa6-4ba9-416d-916e-015318d64da0">
+                    <propertyInstance
+                      Id="b8ca44ee-b4a3-448f-8593-e41108ef69cc"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="22908bfd-febd-447c-8560-7ea98c5603b5">
+                    <propertyInstance
+                      Id="8d8309c4-5ad4-4b45-8b6e-add605f0cd97"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="87212a75-afb0-4fb3-8f0c-544afe95b2c3">
+                    <propertyInstance
+                      Id="3f25168e-94a1-4a53-a7ba-06b45d03a2fc"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="a33606c7-ea0b-4ce4-84b8-1bb8f45ca1cb">
+                    <propertyInstance
+                      Id="e1e7f55b-fe39-4304-941d-804edce631f6"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="a72c2e6b-1d6b-465c-aa72-31ac4d19a8ff">
+                    <propertyInstance
+                      Id="12b4c989-9f88-4eb5-8f4b-9fef77d59baa"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6a23e0eb-8721-40cf-8091-7ad8af55b1ea">
+                    <propertyInstance
+                      Id="6253f9a7-8ade-48f1-a033-414ac616a7d6"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b4851120-ea0d-4b03-a83b-bc1ba5b34f6a"
+                  direction="Return">
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="3960001e-5a26-46f9-a0e3-dcc088672232"
+                      LastKnownName="List&lt;FileMetadata‎&gt;"
+                      LastKnownLocation="Package2_0018.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ad0e6da3-477d-4e9a-843e-17ca353f2644"
+                  name="sinceCounter"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="17bc4689-3768-4871-b115-d686ff80d6ce"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DGetCompleteMetadata OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DUInt64)]) ParameterIdentifier%3DsinceCounter"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4a318204-2479-41ee-b809-cac7ecb1a745"
+                      LastKnownName="UInt64"
+                      LastKnownLocation="Package1_2355.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="de32601f-0107-4bef-8e3d-1c26c900e5a6"
+            name="UpdateMetadata"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="e26f4483-c935-4c81-b56c-64d990aaced9"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DUpdateMetadata OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileBlobdata)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="aa4f30cd-c6fb-47cf-917f-2d62e3d37dbe"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="0c5aac14-7ab7-4245-8ce1-7a816d13b35c">
+                    <propertyInstance
+                      Id="6e1e5fbf-2f82-46ed-b233-95682c2a5b75"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="b4f561e0-1f0f-4da9-9992-b626141673c2">
+                    <propertyInstance
+                      Id="e0ee3bcf-f943-4d9e-a477-cfe27a06154e"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="4995b044-817e-4295-99ff-bebb475b9403">
+                    <propertyInstance
+                      Id="bccb336e-5b37-4a57-90df-3ce6ff1a2a52"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="7d2a78e8-aada-4f1c-a301-e78fa7f57479">
+                    <propertyInstance
+                      Id="5f4a7148-bdfa-4a34-b9f4-b6ac5b926ddd"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="3fd8cfff-f297-4067-afb5-fcc9c03dfb7c">
+                    <propertyInstance
+                      Id="5c4b0250-880d-43e6-b20b-7876742ba67b"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="7656aefa-8399-47db-aec0-94b0ecdec402">
+                    <propertyInstance
+                      Id="b8ebe06e-285a-41f6-a11d-edcc35bd903b"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c9e7eca3-3b9e-41a1-b625-ae408c057551"
+                  direction="Return">
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="83f21422-a448-4648-b2af-46374135ae80"
+                      LastKnownName="FileMetadata"
+                      LastKnownLocation="Package_2355.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="41d01a88-3ecd-44ca-8c49-5fed49b4129e"
+                  name="username"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="16205008-fea6-4f06-8427-53248b375014"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DUpdateMetadata OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileBlobdata)]) ParameterIdentifier%3Dusername"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="59259974-6d55-42c6-b7bd-763d77ac8ef9"
+                      LastKnownName="String"
+                      LastKnownLocation="ModelingProject.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b8d73f00-5eb3-40dc-ad9f-0e1a185e58cd"
+                  name="aFileMetadata"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="df602fe7-0518-4dc3-803a-728271136679"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DUpdateMetadata OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileBlobdata)]) ParameterIdentifier%3DaFileMetadata"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="83f21422-a448-4648-b2af-46374135ae80"
+                      LastKnownName="FileMetadata"
+                      LastKnownLocation="Package_2355.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="0628f1cd-6691-408e-a7e5-1a5b1e9c8ece"
+                  name="aFileBlobdata"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="e5e13fda-19fe-4855-bfb1-bcd857b89db5"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D(Name%3DUpdateMetadata OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv4.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DString)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileMetadata)%2C(Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FSharedLibrary%2Fbin%2FDebug%2FSharedLibrary.dll Namespace%3DSharedLibrary Type%3DFileBlobdata)]) ParameterIdentifier%3DaFileBlobdata"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="76f80979-dc3a-4a50-bb14-6d7322ace8db"
+                      LastKnownName="FileBlobdata"
+                      LastKnownLocation="Package_2355.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="df56f01b-a757-49c2-a419-4f0e10b692a0"
+            name="Metadatabase"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="10af2bac-1321-44b3-8825-b5c97b7f43be"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FUsers%2FElitward%2FDocuments%2FGitHub%2FDBLikeProject%2FFolderSync%2FMasterServer%2Fbin%2FDebug%2FMasterServer.exe Namespace%3DMasterServer Type%3DMetadatabase Member%3D.ctor"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="5eaaf4b6-6ac0-4fe5-a349-3608d40867b9"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="b7705513-719e-4fd1-a90a-011e011d9e4d">
+                    <propertyInstance
+                      Id="76e31a4d-f81c-4a19-a4dc-824f8ea2fce1"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="0840f398-e13c-4c8b-a0be-8c4358c05ed2">
+                    <propertyInstance
+                      Id="e008268d-0d2b-4ff1-b902-2e78ad1a9a67"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6788d3fa-52f5-4595-8786-9300df329047">
+                    <propertyInstance
+                      Id="f13c4367-b254-4f0c-96ea-9b7418e0e887"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="759c7fd8-420a-4c02-823b-d976d386f216">
+                    <propertyInstance
+                      Id="7ada7e3d-fdbd-4310-9ec4-9d53699db8e7"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="8a63c408-872d-46ee-a5f1-be2fe8693b22">
+                    <propertyInstance
+                      Id="a31495a0-58c0-4da6-806a-e50ac92435e3"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="83c9a72f-442f-48d5-a0ac-03a420fa2da9">
+                    <propertyInstance
+                      Id="32f71031-da57-408d-bf2d-91fe9b670b2b"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+  </packagedElements>
+</package>

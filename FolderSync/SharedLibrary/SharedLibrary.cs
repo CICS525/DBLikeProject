@@ -34,8 +34,8 @@ namespace SharedLibrary
 
     public class FileBlobdata
     {
-        byte[] binary;
-        int length;
+        public byte[] binary;
+        public int length;
     }
 
     [Serializable]
