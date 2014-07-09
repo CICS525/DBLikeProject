@@ -32,6 +32,7 @@ namespace SharedLibrary
         }
     }
 
+    [Serializable]
     public class FileBlobdata
     {
         public byte[] binary;
@@ -52,5 +53,7 @@ namespace SharedLibrary
     [Serializable]
     public class ServerLocation
     {
+        public string serverURL;
+        public int port;
     }
 }

@@ -18,6 +18,10 @@ namespace EntityServer
         {
             return false;
         }
+        private bool SetBackupMasterServerSyncStatus(bool upToDate)     //this is optional
+        {
+            return false;
+        }
         static void Main(string[] args)
         {
             //waiting fot incoming connections
