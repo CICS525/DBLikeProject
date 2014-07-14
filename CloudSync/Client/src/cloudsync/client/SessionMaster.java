@@ -10,7 +10,7 @@ import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.ServerLocation;
 
 public class SessionMaster {
-	//SessionMaster should be singleton design patten
+	//SessionMaster should be singleton design pattern
 	private static SessionMaster that = null;
 	
 	private ServerLocation masterLocation = null;
@@ -42,7 +42,7 @@ public class SessionMaster {
 	}
 
 	public boolean connect(String username, String password) {
-		//for the entry server and master server at seperated, so here may need to check username & password again
+		//for the entry server and master server at separated, so here may need to check username & password again
 		try {
 			socket = new Socket(masterLocation.url, masterLocation.port);
 		} catch (UnknownHostException e) {

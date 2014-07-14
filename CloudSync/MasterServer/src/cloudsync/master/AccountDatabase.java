@@ -1,7 +1,7 @@
 package cloudsync.master;
 
 public class AccountDatabase {
-	//singelton design pattern
+	//Singleton design pattern
 	private static AccountDatabase that = null;
 	
 	private AccountDatabase(){

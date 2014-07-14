@@ -6,7 +6,7 @@ import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 
 public class FileSysPerformer {
-	//FileSysPerformer should be singleton design patten
+	//FileSysPerformer should be singleton design pattern
 	private static FileSysPerformer that = null;
 
 	private ArrayList<Metadata> metaList = null;
