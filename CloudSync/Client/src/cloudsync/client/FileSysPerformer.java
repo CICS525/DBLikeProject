@@ -1,5 +1,6 @@
 package cloudsync.client;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import cloudsync.sharedInterface.Metadata;
@@ -12,7 +13,6 @@ public class FileSysPerformer {
 	private ArrayList<Metadata> metaList = null;
 	private PerformThread thread = null;
 	
-	// Test by Sky
 	private FileSysPerformer(){
 		// private constructor to secure singleton
 	}
@@ -31,12 +31,14 @@ public class FileSysPerformer {
 	
 	private boolean deleteFile(String filename){
 		// delete empty folder when it is empty
-		// file separate 
+		// Get the folder from filename
+		String director = filename.substring(0,lastIndexof(File.separatorChar));
 		return false;
 	}
 
 	private boolean FilePerform(Metadata metadata){
 		// Add this file to the ignore list of its FileSysMonitor
+		
 		if(metadata.status==STATUS.DELETE){
 			deleteFile(metadata.filename);
 		}else{
