@@ -14,7 +14,7 @@ public class FileSysPerformer {
 	
 	// Test by Sky
 	private FileSysPerformer(){
-		//private constructor to secure singleton
+		// private constructor to secure singleton
 	}
 	
 	public static FileSysPerformer getInstance(){
@@ -30,11 +30,13 @@ public class FileSysPerformer {
 	}
 	
 	private boolean deleteFile(String filename){
-		//delete empty folder when it is empty
+		// delete empty folder when it is empty
+		// file separate 
 		return false;
 	}
 
 	private boolean FilePerform(Metadata metadata){
+		// Add this file to the ignore list of its FileSysMonitor
 		if(metadata.status==STATUS.DELETE){
 			deleteFile(metadata.filename);
 		}else{
@@ -42,6 +44,7 @@ public class FileSysPerformer {
 			SessionBlob blobSession = new SessionBlob();
 			blobSession.downloadFile(metadata);
 		}
+		// Remove this file from the ignore list of its FileSysMonitor 
 		return false;
 	}
 	
