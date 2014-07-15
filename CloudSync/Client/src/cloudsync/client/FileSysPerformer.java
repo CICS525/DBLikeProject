@@ -32,12 +32,15 @@ public class FileSysPerformer {
 	private boolean deleteFile(String filename){
 		// delete empty folder when it is empty
 		// Get the folder from filename
-		String director = filename.substring(0,lastIndexof(File.separatorChar));
+		String director = filename.substring(0,filename.lastIndexOf(File.separator));
 		return false;
 	}
 
 	private boolean FilePerform(Metadata metadata){
 		// Add this file to the ignore list of its FileSysMonitor
+		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
+			aMonitor.startIgnoreFile(metadata.filename);
+		}
 		
 		if(metadata.status==STATUS.DELETE){
 			deleteFile(metadata.filename);
@@ -46,7 +49,12 @@ public class FileSysPerformer {
 			SessionBlob blobSession = new SessionBlob();
 			blobSession.downloadFile(metadata);
 		}
+		
 		// Remove this file from the ignore list of its FileSysMonitor 
+		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
+			aMonitor.stopIgnoreFile(metadata.filename);
+		}
+
 		return false;
 	}
 	
