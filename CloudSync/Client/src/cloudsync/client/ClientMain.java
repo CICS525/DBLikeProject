@@ -1,16 +1,26 @@
 package cloudsync.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ClientMain {
 
-	private static SessionMaster masterSession;
+	private static SessionMaster masterSession = null;
+	private static ClientSettings settings = null;
+	private static ArrayList<FileSysMonitor> allFileMonitors = null;
+	
+	public static ArrayList<FileSysMonitor> getAllFileMonitors(){
+		return allFileMonitors;
+	}
 
 	public static void main(String[] args) {
 
-		ClientSettings settings = ClientSettings.getInstance();
+		settings = ClientSettings.getInstance();
 		settings.loadSettings();
 		
+		if(allFileMonitors==null){
+			allFileMonitors = new ArrayList<FileSysMonitor>();
+		}
 		FileSysMonitor fileMonitor = new FileSysMonitor();
 		fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
 
@@ -21,6 +31,7 @@ public class ClientMain {
 			}
 			
 		});
+		allFileMonitors.add(fileMonitor);
 		
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
