@@ -7,6 +7,7 @@ package cloudsync.client;
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -22,6 +23,7 @@ import java.nio.file.WatchService;
 public class FileSysMonitor {
 
 	private static boolean isListening = true;
+	private ArrayList<String> ignoreList = new ArrayList<String>();
 	
 	/**
 	 * Watches a directory for changes, sends to FileSysMontiorCallback
@@ -65,6 +67,7 @@ public class FileSysMonitor {
 	
 	/**
 	 * Checks if the file is currently locked.
+	 * Default value is true; do not assumed file is not locked.
 	 * @param filename
 	 * @return
 	 */
@@ -86,21 +89,23 @@ public class FileSysMonitor {
 	}
 	
 	/**
-	 * 
+	 * Prevents a file from being uploaded to the cloud service
 	 * @param filename
 	 * @return
 	 */
 	public boolean startIgnoreFile(String filename){
 		//FileSysPerformer.java may need to update files. These action should be ignored.
+		ignoreList.add(filename);
 		return false;
 	}
 	
 	/**
-	 * 
+	 * Allows a file to be uploaded to the cloud service.
 	 * @param filename
 	 * @return
 	 */
 	public boolean stopIgnoreFile(String filename){
+		ignoreList.remove(filename);
 		return false;
 	}
 }
