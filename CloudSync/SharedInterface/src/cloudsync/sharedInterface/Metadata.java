@@ -3,7 +3,7 @@ package cloudsync.sharedInterface;
 import java.util.Date;
 
 public class Metadata {
-	public enum STATUS {INIT, NEW, LAST, HISTORY, DELETE, CONFLICT, ERROR};
+	public enum STATUS {INIT, /*NEW,*/ LAST, HISTORY, DELETE, CONFLICT, ERROR};
 	
 	public String filename = null;
 	public long globalCounter = 0;
