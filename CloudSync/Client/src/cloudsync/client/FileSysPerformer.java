@@ -12,6 +12,7 @@ public class FileSysPerformer {
 	private ArrayList<Metadata> metaList = null;
 	private PerformThread thread = null;
 	
+	// Test by Sky
 	private FileSysPerformer(){
 		//private constructor to secure singleton
 	}
