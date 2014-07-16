@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
+import cloudsync.sharedInterface.SessionBlob;
 
 public class FileSysPerformer {
 	//FileSysPerformer should be singleton design pattern

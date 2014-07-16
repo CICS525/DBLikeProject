@@ -3,6 +3,8 @@ package cloudsync.client;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cloudsync.sharedInterface.SessionBlob;
+
 public class ClientMain {
 
 	private static SessionMaster masterSession = null;
@@ -14,6 +16,9 @@ public class ClientMain {
 	}
 
 	public static void main(String[] args) {
+		
+		SessionBlob sessionBlod = new SessionBlob();
+		sessionBlod.blobTest();
 
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
