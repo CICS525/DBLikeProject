@@ -36,24 +36,33 @@ public class FileSysMonitor {
 	 * @throws IOException should an IOException occur
 	 * @throws InterruptedException should an InterrupedException (thread terminated, etc...) occurs.
 	 */
-	public void StartListen(String directory, FileSysMonitorCallback callback) throws IOException, InterruptedException{
-		WatchService watcher = FileSystems.getDefault().newWatchService();
-		Path filePath = Paths.get(directory);
-		WatchKey key;
-		filePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-				StandardWatchEventKinds.ENTRY_DELETE,
-				StandardWatchEventKinds.ENTRY_MODIFY);
-		
-		while (isListening) {
-			key = watcher.take();
-			for (WatchEvent<?> event: key.pollEvents()) {
-				callback.Callback(event.context().toString());			
+	public boolean StartListen(String directory, FileSysMonitorCallback callback) {
+		try {
+			WatchService watcher = FileSystems.getDefault().newWatchService();
+			Path filePath = Paths.get(directory);
+			WatchKey key;
+			filePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+					StandardWatchEventKinds.ENTRY_DELETE,
+					StandardWatchEventKinds.ENTRY_MODIFY);
+			
+			while (isListening) {
+				key = watcher.take();
+				for (WatchEvent<?> event: key.pollEvents()) {
+					callback.Callback(event.context().toString());			
+				}
+				boolean valid = key.reset();
+				if (!valid) {
+					break;
+				}
 			}
-			boolean valid = key.reset();
-			if (!valid) {
-				break;
-			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 	
 	/**
