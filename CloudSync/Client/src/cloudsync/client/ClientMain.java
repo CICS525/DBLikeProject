@@ -17,8 +17,8 @@ public class ClientMain {
 
 	public static void main(String[] args) {
 		
-		SessionBlob sessionBlod = new SessionBlob();
-		sessionBlod.blobTest();
+		//SessionBlob sessionBlod = new SessionBlob();
+		//sessionBlod.blobTest();
 
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
