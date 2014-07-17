@@ -82,7 +82,6 @@ public class MetadataManager {
 		} finally {
 			scan.close();
 		}
-		
 	}
 	
 	/**
@@ -102,6 +101,8 @@ public class MetadataManager {
 			e.printStackTrace();
 			return false;
 		} 
+
+	
 	}
 
 	/**
