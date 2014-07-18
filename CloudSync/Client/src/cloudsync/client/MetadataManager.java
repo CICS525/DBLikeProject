@@ -101,8 +101,6 @@ public class MetadataManager {
 			e.printStackTrace();
 			return false;
 		} 
-
-	
 	}
 
 	/**
