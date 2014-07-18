@@ -80,7 +80,7 @@ public class SessionMaster {
 	}
 	
 	public String uploadFile(String filename){
-		//upate a file to Master Server, the file should be temporarily saved in file system on master server
+		//Update a file to Master Server, the file should be temporarily saved in file system on master server
 		//the Master server may return the path & filename on server file system
 		return null;
 	}
@@ -97,10 +97,12 @@ public class SessionMaster {
 		@Override
 		public void run() {
 			while( socket.isConnected() ){
-				//wating incoming command
+				//Waiting incoming command
 				
 				MetadataManager metadataManage = MetadataManager.getInstance();
-				ArrayList<Metadata> newMetaList = getCompleteMetadata( metadataManage.getGlobalWriteCounter() );
+				long globalCounter = metadataManage.getGlobalWriteCounter();
+				System.out.println("SocketThread@SessionMaster: globalCounter="+globalCounter);
+				ArrayList<Metadata> newMetaList = getCompleteMetadata( globalCounter );
 				for(Metadata aMeta: newMetaList){
 					metadataManage.updateLocalMetadate(aMeta);	//update local metadata info
 					

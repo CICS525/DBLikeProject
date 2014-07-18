@@ -2,8 +2,6 @@ package cloudsync.client;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 
@@ -13,7 +11,6 @@ public class FileSysPerformer {
 
 	private ArrayList<Metadata> metaList = null;
 	private PerformThread thread = null;
-	public static Lock lock;
 	
 	private FileSysPerformer(){
 		// private constructor to secure singleton
@@ -70,7 +67,6 @@ public class FileSysPerformer {
 
 	private boolean FilePerform(Metadata metadata){
 		// Add this file to the ignore list of all FileSysMonitors
-		lock.lock();
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
 			aMonitor.startIgnoreFile(metadata.filename);
 		}
@@ -87,7 +83,6 @@ public class FileSysPerformer {
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
 			aMonitor.stopIgnoreFile(metadata.filename);
 		}
-		lock.unlock();
 		return false;
 	}
 	
@@ -95,9 +90,9 @@ public class FileSysPerformer {
 		if(metaList == null){
 			metaList = new ArrayList<Metadata>();
 		}
-		lock.lock();
-		metaList.add(metadata);
-		lock.unlock();
+		synchronized (metaList) {
+			metaList.add(metadata);
+		}
 		if(thread==null){
 			thread = new PerformThread();
 			thread.start();
@@ -112,9 +107,9 @@ public class FileSysPerformer {
 				for( Metadata aMeta : metaList ){
 					boolean suc = FilePerform(aMeta);
 					if(suc){
-						lock.lock();
-						metaList.remove(aMeta);
-						lock.unlock();
+						synchronized (metaList) {
+							metaList.remove(aMeta);
+						}
 					}
 				}
 			}
