@@ -24,8 +24,10 @@ public class FileSysPerformer {
 	}
 	
 	private boolean prepareFolder(String filename){
-		//maybe need to create directory before writing
-		String folder = filename.substring(0, filename.lastIndexOf(File.separator));
+		// maybe need to create directory before writing
+		// Convert base filename to absolute file name 
+		String absFilename = getAbsoluteFilename(filename);
+		String folder = absFilename.substring(0, absFilename.lastIndexOf(File.separator));
 		File directory = new File(folder);
 		if(!directory.exists()){
 			System.out.println("Creating a directory " + folder);
@@ -44,14 +46,16 @@ public class FileSysPerformer {
 	}
 	
 	private boolean deleteFile(String filename){
-		File file = new File(filename);
+		// Convert base filename to absolute file name 
+		String absFilename = getAbsoluteFilename(filename);
+		File file = new File(absFilename);
 		if (file.delete()){
 			System.out.println(file.getName() + " is deleted.");
 		} else {
 			System.out.println("Delete operation fails");
 		}
 		// delete empty folder when it is empty
-		String folder = filename.substring(0,filename.lastIndexOf(File.separator));
+		String folder = absFilename.substring(0,absFilename.lastIndexOf(File.separator));
 		File directory = new File(folder);
 		if (directory.isDirectory()){
 			if(directory.list().length>0){
