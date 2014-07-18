@@ -3,8 +3,11 @@ package cloudsync.sharedInterface;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobContainerPermissions;
 import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
 import com.microsoft.azure.storage.blob.CloudBlob;
@@ -16,6 +19,7 @@ import com.microsoft.azure.storage.blob.ListBlobItem;
 import cloudsync.sharedInterface.Metadata;
 
 public class SessionBlob {
+	final private static String DEFAULTCONTAINER = "bolbpool".toLowerCase();
 	
 	public void blobTest(){
 		// Define the connection-string with your values
@@ -161,18 +165,114 @@ public class SessionBlob {
 		    e.printStackTrace();
 		}
 	}
+	
+	private boolean uploadLocalFileToAzureStorageBlob(String filename, String azureConnection, String containerName, String blobName){
+		try
+		{
+			// Retrieve storage account from connection-string.
+			CloudStorageAccount storageAccount = CloudStorageAccount.parse(azureConnection);
+			
+			// Create the blob client.
+			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
+			
+			// Get a reference to a container.
+			// The container name must be lower case
+			CloudBlobContainer container = blobClient.getContainerReference(containerName);
+			
+			// Create the container if it does not exist.
+			container.createIfNotExists();
+			
+			//------ Optional: Configure a container for public access ------
+			// Create a permissions object.
+			BlobContainerPermissions containerPermissions = new BlobContainerPermissions();
+
+			// Include public access in the permissions object.
+			containerPermissions.setPublicAccess(BlobContainerPublicAccessType.CONTAINER);
+
+			// Set the permissions on the container.
+			container.uploadPermissions(containerPermissions);
+			
+		    // Create or overwrite the blob with contents from a local file.
+		    CloudBlockBlob blob = container.getBlockBlobReference(blobName);
+		    File source = new File(filename);
+		    FileInputStream iStream = new FileInputStream(source);
+		    blob.upload(iStream, source.length());
+		    iStream.close();
+		}
+		catch (Exception e)
+		{
+			// Output the stack trace.
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean downloadAzureStorageBlobToLocalFile(String azureConnection, String containerName, String blobName, String filename) {
+		try
+		{
+			// Retrieve storage account from connection-string.
+			CloudStorageAccount storageAccount = CloudStorageAccount.parse(azureConnection);
+			
+			// Create the blob client.
+			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
+			
+			// Retrieve reference to a previously created container.
+			CloudBlobContainer container = blobClient.getContainerReference(containerName);
+			
+			CloudBlob blob = container.getBlockBlobReference(blobName);
+			
+			FileOutputStream oStream = new FileOutputStream(filename);
+			blob.download(oStream);
+			oStream.close();
+		}
+		catch (Exception e)
+		{
+		    // Output the stack trace.
+		    e.printStackTrace();
+		    return false;
+		}
+		return true;
+	}
+	
+	private boolean deleteAzureStorageBlob(String azureConnection, String containerName, String blobName){
+		try {
+			CloudStorageAccount storageAccount = CloudStorageAccount.parse(azureConnection);
+			
+			// Create the blob client.
+			CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
+			
+			// Retrieve reference to a previously created container.
+			CloudBlobContainer container = blobClient.getContainerReference(containerName);
+			
+			CloudBlob blob = container.getBlockBlobReference(blobName);
+			
+			// Delete the blob
+			return blob.deleteIfExists();
+		} catch (Exception e) {
+			// Output the stack trace.
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public boolean uploadFile(String filename, Metadata metadata){
 		//update file, specified by filename to Blob server
 		//Blob server and Blob name are specified in metadata
 		//If there are Backup blob server, they should all be updated in parallel thread
-		return false;
+
+		boolean suc = uploadLocalFileToAzureStorageBlob(filename, metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+		return suc;
 	}
 	
-	public boolean downloadFile(Metadata metadata){
-		return false;
+	public boolean downloadFile(Metadata metadata, String filename){
+		boolean suc = downloadAzureStorageBlobToLocalFile(metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey, filename);
+		return suc;
 	}
 	
 	public boolean deleteFile(Metadata metadata){
-		return false;
+		boolean suc = deleteAzureStorageBlob(metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+		return suc;
 	}
 }

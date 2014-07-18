@@ -6,7 +6,6 @@ import java.util.concurrent.locks.Lock;
 
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
-import cloudsync.sharedInterface.SessionBlob;
 
 public class FileSysPerformer {
 	//FileSysPerformer should be singleton design pattern
@@ -80,7 +79,7 @@ public class FileSysPerformer {
 			deleteFile(metadata.filename);
 		}else{
 			prepareFolder(metadata.filename);
-			SessionBlob blobSession = new SessionBlob();
+			SessionBlobClient blobSession = new SessionBlobClient();
 			blobSession.downloadFile(metadata);
 		}
 		
@@ -126,16 +125,26 @@ public class FileSysPerformer {
 	
 	public String getAbsoluteFilename(String baseFilename){
 		String rootDir = ClientSettings.getInstance().getRootDir();
-		if( rootDir.endsWith(File.separator) && baseFilename.startsWith(File.separator) ){
-			return rootDir + baseFilename.substring(1);	//skip the first character in baseFilename, e.g. "c:/abc/" + "/def.txt" = "c:/adc/def.txt" 
-		} else if ( !rootDir.endsWith(File.separator) && !baseFilename.startsWith(File.separator) ){
-			return rootDir + File.separator + baseFilename;
-		} else {
-			return rootDir + baseFilename;
-		}
+		return Metadata.mixRootAndFilename(rootDir, baseFilename);
 	}
 	
 	public String getAbsoluteFilename(Metadata metadata){
 		return getAbsoluteFilename(metadata.filename);
+	}
+	
+	public String getBaseFilename(String absoluteFilename){
+		String rootDir = ClientSettings.getInstance().getRootDir();;
+		if(rootDir==null || rootDir.length()==0)
+			return null;	//error
+		
+		if(!rootDir.endsWith(File.separator)){
+			rootDir += File.separator;
+		}
+		
+		if(absoluteFilename.startsWith(rootDir)){
+			return absoluteFilename.substring(rootDir.length());
+		}else{
+			return null;	//the file is NOT in root directory
+		}
 	}
 }

@@ -52,6 +52,10 @@ public class ClientSettings {
 	
 	private ClientSettings(){
 		//private constructor to secure singleton
+		
+		//set default value, to be over written in loading setting file
+		String userHome = System.getProperty( "user.home" );
+		setRootDir( userHome );
 	}
 	
 	public static ClientSettings getInstance(){
