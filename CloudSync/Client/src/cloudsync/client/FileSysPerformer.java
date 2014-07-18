@@ -123,4 +123,19 @@ public class FileSysPerformer {
 			thread = null;	//quit the thread
 		}
 	}
+	
+	public String getAbsoluteFilename(String baseFilename){
+		String rootDir = ClientSettings.getInstance().getRootDir();
+		if( rootDir.endsWith(File.separator) && baseFilename.startsWith(File.separator) ){
+			return rootDir + baseFilename.substring(1);	//skip the first character in baseFilename, e.g. "c:/abc/" + "/def.txt" = "c:/adc/def.txt" 
+		} else if ( !rootDir.endsWith(File.separator) && !baseFilename.startsWith(File.separator) ){
+			return rootDir + File.separator + baseFilename;
+		} else {
+			return rootDir + baseFilename;
+		}
+	}
+	
+	public String getAbsoluteFilename(Metadata metadata){
+		return getAbsoluteFilename(metadata.filename);
+	}
 }
