@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+
 
 
 
 import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.ServerLocation;
 
 /**
  * Class that manages the all the metadata for
