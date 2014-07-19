@@ -126,4 +126,4 @@ packages/
 *.testsettings
 
 #Application Settings
-*.settings 
+*.settings
