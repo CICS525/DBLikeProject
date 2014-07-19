@@ -68,12 +68,14 @@ public class ClientSettings {
 	}
 	
 	public boolean loadSettings(){
-		//Read all settings from file SettingsFileName
+		// Read all settings from file SettingsFileName
+		
 		return false;
 	}
 	
 	public boolean saveSettings(){
-		//Write all settings into file SettingsFileName
+		// Write all settings into file SettingsFileName
+		
 		return false;
 	}
 }

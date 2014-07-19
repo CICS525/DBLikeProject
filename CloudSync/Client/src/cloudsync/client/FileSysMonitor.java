@@ -123,7 +123,7 @@ public class FileSysMonitor {
 	 * @param filename
 	 * @return
 	 */
-	public boolean startIgnoreFile(String filename){
+	public synchronized boolean startIgnoreFile(String filename){
 		//FileSysPerformer.java may need to update files. These action should be ignored.
 		ignoreList.add(filename);
 		return false;
@@ -134,7 +134,7 @@ public class FileSysMonitor {
 	 * @param filename
 	 * @return
 	 */
-	public boolean stopIgnoreFile(String filename){
+	public synchronized boolean stopIgnoreFile(String filename){
 		ignoreList.remove(filename);
 		return false;
 	}
