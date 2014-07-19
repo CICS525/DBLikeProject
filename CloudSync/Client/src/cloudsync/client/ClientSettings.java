@@ -1,9 +1,11 @@
 package cloudsync.client;
 
+import java.io.*; 
+
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
-public class ClientSettings {
+public class ClientSettings implements Serializable{                          // serialzation intialized 
 	//Client Settings should be singleton design patten
 	private static ClientSettings that = null;
 	private final String fSettingsFileName = ".ClientSettings.dat";		//auto hidden file on Linux & MacOS
@@ -12,7 +14,7 @@ public class ClientSettings {
 	private String DeviceName = null;				//a account many have several devices, each device should have a unique name
 	private String RootDir = null;					//the root (base) directory to sync
 	private ServerLocation RecentMaster = null;		//backup the recent Master Server location
-	
+	ClientSettings css=new ClientSettings();
 
 	public String getUsername() {
 		return Username;
@@ -69,11 +71,52 @@ public class ClientSettings {
 	
 	public boolean loadSettings(){
 		//Read all settings from file SettingsFileName
+		ObjectInputStream iss=null;
+		try {
+			
+			iss=new ObjectInputStream(new FileInputStream(fSettingsFileName));
+			iss.readObject();
+		} catch (Exception e) {
+			// TODO: handle exception
+            System.out.println("ERROR"+e);
+		}
+		finally{
+			try {
+				iss.close();
+			} catch (IOException e) {
+				System.out.println("ERROR"+e);
+				e.printStackTrace();
+			}
+			
+		}
 		return false;
 	}
 	
 	public boolean saveSettings(){
 		//Write all settings into file SettingsFileName
+		css.getUsername();
+		css.getPassword();
+		css.getDeviceName();
+		css.getRootDir();
+		css.getRecentMaster();
+		ObjectOutputStream os=null;
+		try {
+			
+			os=new ObjectOutputStream(new FileOutputStream(fSettingsFileName));
+			os.writeObject(css);
+			
+		} catch (Exception e) {
+			System.out.println("ERROR"+e);
+		}
+		finally{
+			try {
+				os.close();
+			} catch (IOException e) {
+				System.out.println("ERROR"+e);
+				e.printStackTrace();
+			}
+		}
+		
 		return false;
 	}
 }
