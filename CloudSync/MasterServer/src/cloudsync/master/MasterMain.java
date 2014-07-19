@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.AccountInfo;
 
 public class MasterMain {
