@@ -56,12 +56,14 @@ public class ClientMain {
 		masterSession.connect(settings.getUsername(), settings.getPassword());
 		
 		//--- wait here forever ---
+		/*
 		try {
 			byte[] buff = new byte[128];
 			System.in.read(buff);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }

@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import cloudsync.sharedInterface.AccountInfo;
+import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
 public class MasterMain {

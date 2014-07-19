@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
 public class SessionMaster {
@@ -59,11 +60,11 @@ public class SessionMaster {
 		AccountInfo account = new AccountInfo(username, password);
 		//Write account into socket. If server respond, means login OK.
 		
-		SocketStream socketStream = new SocketStream();
+		socketStream = new SocketStream();
 		socketStream.initStream(socket);
 		socketStream.writeObject(account);
 		
-		System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + socketStream.getStreamOut());
+		System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + ";" + socketStream.getStreamOut());
 		
 		//Then, create a new thread to wait in-coming message for master server
 		thread = new SocketThread();
@@ -106,19 +107,36 @@ public class SessionMaster {
 
 		@Override
 		public void run() {
-			System.out.println("SocketThread@SessionMaster: thread started.");
-			while( socketStream!=null && socketStream.getSocket()!=null && socketStream.getSocket().isConnected() ){
+			while( SessionMaster.this.socketStream!=null ) {
+				Socket socket = SessionMaster.this.socketStream.getSocket();
+				if(socket==null)
+					break;
+
 				//Waiting incoming command
+				SocketMessage message = (SocketMessage)socketStream.readObject();
+				if(message==null){
+					System.out.println("SocketThread@SessionMaster: message null error, connection lost!");
+					break;
+				}else{
+					System.out.println("SocketThread@SessionMaster: message=" + message.command);
+				}
 				
-				MetadataManager metadataManage = MetadataManager.getInstance();
-				long globalCounter = metadataManage.getGlobalWriteCounter();
-				System.out.println("SocketThread@SessionMaster: globalCounter="+globalCounter);
-				ArrayList<Metadata> newMetaList = getCompleteMetadata( globalCounter );
-				for(Metadata aMeta: newMetaList){
-					metadataManage.updateLocalMetadate(aMeta);	//update local metadata info
-					
-					FileSysPerformer performer = FileSysPerformer.getInstance(); 
-					performer.addUpdateLocalTask(aMeta);					
+				if(message.command==SocketMessage.COMMAND.EMPTY){
+					//do nothing
+				}else if(message.command==SocketMessage.COMMAND.UPDATE){
+					//global write counter increased
+					MetadataManager metadataManage = MetadataManager.getInstance();
+					long globalCounter = metadataManage.getGlobalWriteCounter();
+					System.out.println("SocketThread@SessionMaster: globalCounter="+globalCounter);
+					ArrayList<Metadata> newMetaList = getCompleteMetadata( globalCounter );
+					for(Metadata aMeta: newMetaList){
+						metadataManage.updateLocalMetadate(aMeta);	//update local metadata info
+						
+						FileSysPerformer performer = FileSysPerformer.getInstance(); 
+						performer.addUpdateLocalTask(aMeta);					
+					}
+				}else if(message.command==SocketMessage.COMMAND.DISCONNECT){
+					break;	//do disconnect
 				}
 			}
 			System.out.println("SocketThread@SessionMaster: thread finished.");

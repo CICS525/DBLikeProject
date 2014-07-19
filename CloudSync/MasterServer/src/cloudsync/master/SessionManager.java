@@ -2,6 +2,7 @@ package cloudsync.master;
 
 import java.util.ArrayList;
 
+import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
 public class SessionManager {
@@ -23,6 +24,11 @@ public class SessionManager {
 	
 	public boolean acceptClient(String username, SocketStream socketStream ){	//parameter may need be modified
 		//the coming client should be dispatched into a new / existing AccountSession to handle.
+		for(int i=0; i<10; i++){
+			System.out.println("test" + i);
+			socketStream.writeObject(new SocketMessage());
+		}
+
 		return false;
 	}
 }
