@@ -19,6 +19,7 @@ public class ClientMain {
 		
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
+		settings.saveSettings();
 
 		//SessionBlobClient sessionBlod = new SessionBlobClient();
 		////sessionBlod.blobTest();

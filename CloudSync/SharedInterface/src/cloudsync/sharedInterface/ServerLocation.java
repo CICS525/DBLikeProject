@@ -1,6 +1,10 @@
 package cloudsync.sharedInterface;
 
-public class ServerLocation {
+import java.io.Serializable;
+
+public class ServerLocation implements Serializable {
+
+	private static final long serialVersionUID = -570150120132915738L;
 	public String url = null;
 	public int port = 0;
 	

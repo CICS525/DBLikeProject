@@ -5,17 +5,18 @@ import java.io.*;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
-public class ClientSettings implements Serializable{                          // serialzation intialized 
-	//Client Settings should be singleton design patten
+public class ClientSettings implements Serializable {	// Serialization initialized 
+	//Client Settings should be singleton design pattern
+	private static final long serialVersionUID = -3650388503954215299L;
+
 	private static ClientSettings that = null;
-	private final String fSettingsFileName = ".ClientSettings.dat";		//auto hidden file on Linux & MacOS
+	private final String fSettingsFileName = ".ClientSettings.settings";		//auto hidden file on Linux & MacOS
 	private String Username = null;
 	private String Password = null;
 	private String DeviceName = null;				//a account many have several devices, each device should have a unique name
 	private String RootDir = null;					//the root (base) directory to sync
 	private ServerLocation RecentMaster = null;		//backup the recent Master Server location
-	ClientSettings css=new ClientSettings();
-
+	
 	public String getUsername() {
 		return Username;
 	}
@@ -59,7 +60,7 @@ public class ClientSettings implements Serializable{                          //
 		String userHome = System.getProperty( "user.home" );
 		setRootDir(userHome);
 		setUsername("Tom");
-		setPassword("123456");
+		setPassword("123456x");
 	}
 	
 	public static ClientSettings getInstance(){
@@ -72,54 +73,54 @@ public class ClientSettings implements Serializable{                          //
 	public boolean loadSettings(){
 
 		//Read all settings from file SettingsFileName
-		ObjectInputStream iss=null;
+		boolean ans = false;
+		ObjectInputStream is=null;
 		try {
 			
-			iss=new ObjectInputStream(new FileInputStream(fSettingsFileName));
-			iss.readObject();
+			is=new ObjectInputStream(new FileInputStream(fSettingsFileName));
+			ClientSettings temp = (ClientSettings)is.readObject();
+			setUsername(temp.getUsername());
+			setPassword(temp.getPassword());
+			setDeviceName(temp.getDeviceName());
+			setRootDir(temp.getRootDir());
+			setRecentMaster(temp.getRecentMaster());
+			ans = true;
 		} catch (Exception e) {
-			// TODO: handle exception
             System.out.println("ERROR"+e);
 		}
 		finally{
 			try {
-				iss.close();
+				if(is!=null)
+					is.close();
 			} catch (IOException e) {
 				System.out.println("ERROR"+e);
 				e.printStackTrace();
 			}
-			
 		}
-		return false;
-		//add comment
+		return ans;
 	}
 	
 	public boolean saveSettings(){
 
 		//Write all settings into file SettingsFileName
-		css.getUsername();
-		css.getPassword();
-		css.getDeviceName();
-		css.getRootDir();
-		css.getRecentMaster();
+		boolean ans = false;
 		ObjectOutputStream os=null;
 		try {
-			
 			os=new ObjectOutputStream(new FileOutputStream(fSettingsFileName));
-			os.writeObject(css);
-			
+			os.writeObject(this);
+			ans = true;
 		} catch (Exception e) {
 			System.out.println("ERROR"+e);
 		}
 		finally{
 			try {
-				os.close();
+				if(os!=null)
+					os.close();
 			} catch (IOException e) {
 				System.out.println("ERROR"+e);
 				e.printStackTrace();
 			}
 		}
-		
-		return false;
+		return ans;
 	}
 }
