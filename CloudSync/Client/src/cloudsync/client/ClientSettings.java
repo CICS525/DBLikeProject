@@ -57,7 +57,7 @@ public class ClientSettings {
 		String userHome = System.getProperty( "user.home" );
 		setRootDir(userHome);
 		setUsername("Tom");
-		setPassword("123456x");
+		setPassword("123456");
 	}
 	
 	public static ClientSettings getInstance(){

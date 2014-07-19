@@ -7,7 +7,6 @@ package cloudsync.client;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -19,6 +18,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
 
 public class FileSysMonitor {
 

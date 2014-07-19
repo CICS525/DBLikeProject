@@ -3,10 +3,6 @@ package cloudsync.client;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cloudsync.sharedInterface.AzureConnection;
-import cloudsync.sharedInterface.Metadata;
-import cloudsync.sharedInterface.SessionBlob;
-
 public class ClientMain {
 
 	private static SessionMaster masterSession = null;
