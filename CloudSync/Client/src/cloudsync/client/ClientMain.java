@@ -7,9 +7,10 @@ public class ClientMain {
 
 	private static SessionMaster masterSession = null;
 	private static ClientSettings settings = null;
-	private static ArrayList<FileSysMonitor> allFileMonitors = null;
+	private static ArrayList<FileSysMonitor> allFileMonitors = new ArrayList<FileSysMonitor>();
 	
 	public static ArrayList<FileSysMonitor> getAllFileMonitors(){
+		
 		return allFileMonitors;
 	}
 

@@ -28,7 +28,10 @@ public class FileSysPerformerTest {
 		FileSysPerformer fileSysPerformer = null;
 		fileSysPerformer = FileSysPerformer.getInstance();
 		Metadata metadata = new Metadata("Desktop\\test.docx");
+		fileSysPerformer.addUpdateLocalTask(metadata);
+		System.out.println(metadata.status);
 		metadata.status = STATUS.DELETE;
 		fileSysPerformer.addUpdateLocalTask(metadata);
+		System.out.println(metadata.status);
 	}
 }
