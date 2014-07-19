@@ -5,18 +5,18 @@ import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
 import java.io.*;
-public class MasterSettings implements Serializable{      //serialization intialized 
+public class MasterSettings implements Serializable{      //serialization initialized 
 	
-
-	//Master Settings should be singleton design patten
+	//Master Settings should be singleton design paten
+	private static final long serialVersionUID = -1026245079078573719L;
 	
 	private static MasterSettings that = null;
 	private int LocalPort = 0; 
 	private ServerLocation MasterBackup = null;
 	private ServerLocation BlobFirst = null;
 	private ServerLocation BlobSecond = null;
-
-MasterSettings mss=new MasterSettings();
+	
+	private final String fSettingsFileName = ".MasterSettings.settings";
 
 	public int getLocalPort() {
 		if(LocalPort!=0){
@@ -49,8 +49,6 @@ MasterSettings mss=new MasterSettings();
 	
 	private MasterSettings(){
 		//private constructor to secure singleton
-		
-			
 	}
 	
 	public static MasterSettings getInstance(){
@@ -61,38 +59,42 @@ MasterSettings mss=new MasterSettings();
 	}
 
 	public boolean loadSettings(){
+		boolean ans = false;
 		//Read all settings from file SettingsFileName
-		ObjectInputStream ip = null;
+		ObjectInputStream is = null;
 		try {
+			is = new ObjectInputStream(new FileInputStream(fSettingsFileName));
 			
-			ip = new ObjectInputStream(new FileInputStream("mastersettings.dat"));
-			ip.readObject();
+			MasterSettings temp = (MasterSettings)is.readObject();
+			setLocalPort(temp.getLocalPort());
+			setMasterBackup(temp.getMasterBackup());
+			setBlobFirst(temp.getBlobFirst());
+			setBlobSecond(temp.getBlobSecond());
 			
+			ans = true;
 		} catch (Exception e) {
 			System.out.println("ERROR"+e);
 		}
 		finally{
 			try {
-				ip.close();
+				if(is!=null)
+					is.close();
 			} catch (IOException e) {
 				System.out.println("ERROR"+e);
 				e.printStackTrace();
 			}
 		}
-		return false;
+		return ans;
 	}
 	
 	public boolean saveSettings(){
+		boolean ans = false;
 		//Write all settings into file SettingsFileName
-
-		mss.setLocalPort(LocalPort);
-		mss.setMasterBackup(MasterBackup);
-		mss.setBlobFirst(BlobFirst);
-		mss.setBlobSecond(BlobSecond);
 		ObjectOutputStream os = null;
 		try {
-			os=new ObjectOutputStream(new FileOutputStream("mastersettings.dat"));
-			os.writeObject(mss);
+			os=new ObjectOutputStream(new FileOutputStream(fSettingsFileName));
+			os.writeObject(this);
+			ans = true;
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR"+e);
 			e.printStackTrace();
@@ -102,14 +104,13 @@ MasterSettings mss=new MasterSettings();
 		}
 		finally{
 			try {
-				os.close();
+				if(os!=null)
+					os.close();
 			} catch (IOException e) {
 				System.out.println("ERROR"+e);
 				e.printStackTrace();
 			}
 		}
-		
-		
-		return false;
+		return ans;
 	}
 }

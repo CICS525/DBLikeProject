@@ -1,6 +1,13 @@
 package cloudsync.client;
 
-import java.io.*; 
+
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
@@ -78,12 +85,14 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		try {
 			
 			is=new ObjectInputStream(new FileInputStream(fSettingsFileName));
+			
 			ClientSettings temp = (ClientSettings)is.readObject();
 			setUsername(temp.getUsername());
 			setPassword(temp.getPassword());
 			setDeviceName(temp.getDeviceName());
 			setRootDir(temp.getRootDir());
 			setRecentMaster(temp.getRecentMaster());
+			
 			ans = true;
 		} catch (Exception e) {
             System.out.println("ERROR"+e);
