@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketMessage;
+import cloudsync.sharedInterface.SocketStream;
 
 public class SessionMaster {
 	//SessionMaster should be singleton design pattern
 	private static SessionMaster that = null;
 	
 	private ServerLocation masterLocation = null;
-	private Socket socket = null;
+	private SocketStream socketStream = null;
 	private SocketThread thread = null;
 	
 	private SessionMaster(){
@@ -33,7 +35,7 @@ public class SessionMaster {
 	}
 
 	public boolean setMasterServerLocation(ServerLocation masterServerLocation) {
-		if(socket==null){	//master server location can only be set when there is socket is not active
+		if(socketStream==null){	//master server location can only be set when there is socket is not active
 			masterLocation = masterServerLocation;
 			return true;
 		}else{
@@ -43,6 +45,7 @@ public class SessionMaster {
 
 	public boolean connect(String username, String password) {
 		//for the entry server and master server at separated, so here may need to check username & password again
+		Socket socket = null;
 		try {
 			socket = new Socket(masterLocation.url, masterLocation.port);
 		} catch (UnknownHostException e) {
@@ -52,9 +55,16 @@ public class SessionMaster {
 			e.printStackTrace();
 			return false;
 		}
+		System.out.println("Connected to MasterServer: " + socket.getRemoteSocketAddress().toString());
 		
 		AccountInfo account = new AccountInfo(username, password);
 		//Write account into socket. If server respond, means login OK.
+		
+		socketStream = new SocketStream();
+		socketStream.initStream(socket);
+		socketStream.writeObject(account);
+		
+		System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + ";" + socketStream.getStreamOut());
 		
 		//Then, create a new thread to wait in-coming message for master server
 		thread = new SocketThread();
@@ -64,15 +74,9 @@ public class SessionMaster {
 	}
 	
 	public boolean disconnect(){
-		try {
-			socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		socket = null;
-		return false;
+		boolean suc = socketStream.deinitStream();
+		socketStream = null;
+		return suc;
 	}
 	
 	public ArrayList<Metadata> getCompleteMetadata(long sinceCounter){
@@ -96,20 +100,39 @@ public class SessionMaster {
 
 		@Override
 		public void run() {
-			while( socket.isConnected() ){
+			while( SessionMaster.this.socketStream!=null ) {
+				Socket socket = SessionMaster.this.socketStream.getSocket();
+				if(socket==null)
+					break;
+
 				//Waiting incoming command
+				SocketMessage message = (SocketMessage)socketStream.readObject();
+				if(message==null){
+					System.out.println("SocketThread@SessionMaster: message null error, connection lost!");
+					break;
+				}else{
+					System.out.println("SocketThread@SessionMaster: message=" + message.command);
+				}
 				
-				MetadataManager metadataManage = MetadataManager.getInstance();
-				long globalCounter = metadataManage.getGlobalWriteCounter();
-				System.out.println("SocketThread@SessionMaster: globalCounter="+globalCounter);
-				ArrayList<Metadata> newMetaList = getCompleteMetadata( globalCounter );
-				for(Metadata aMeta: newMetaList){
-					metadataManage.updateLocalMetadate(aMeta);	//update local metadata info
-					
-					FileSysPerformer performer = FileSysPerformer.getInstance(); 
-					performer.addUpdateLocalTask(aMeta);					
+				if(message.command==SocketMessage.COMMAND.EMPTY){
+					//do nothing
+				}else if(message.command==SocketMessage.COMMAND.UPDATE){
+					//global write counter increased
+					MetadataManager metadataManage = MetadataManager.getInstance();
+					long globalCounter = metadataManage.getGlobalWriteCounter();
+					System.out.println("SocketThread@SessionMaster: globalCounter="+globalCounter);
+					ArrayList<Metadata> newMetaList = getCompleteMetadata( globalCounter );
+					for(Metadata aMeta: newMetaList){
+						metadataManage.updateLocalMetadata(aMeta);	//update local metadata info
+						
+						FileSysPerformer performer = FileSysPerformer.getInstance(); 
+						performer.addUpdateLocalTask(aMeta);					
+					}
+				}else if(message.command==SocketMessage.COMMAND.DISCONNECT){
+					break;	//do disconnect
 				}
 			}
+			System.out.println("SocketThread@SessionMaster: thread finished.");
 			super.run();
 		}
 		

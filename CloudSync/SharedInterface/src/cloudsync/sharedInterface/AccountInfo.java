@@ -30,4 +30,9 @@ public class AccountInfo implements Serializable{
 		this.username = username;
 		this.password = password;
 	}
+
+	@Override
+	public String toString() {
+		return "AccountInfo:[" + username + "#" + password + "]";
+	}
 }

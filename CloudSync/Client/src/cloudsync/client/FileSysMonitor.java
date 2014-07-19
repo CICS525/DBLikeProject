@@ -7,7 +7,6 @@ package cloudsync.client;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -19,46 +18,63 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
 
 public class FileSysMonitor {
 
 	private static boolean isListening = true;
 	private ArrayList<String> ignoreList = new ArrayList<String>();
+	private Thread watcherThread;
+	private WatchService watcher;
+	private Path filePath;
+	private WatchKey key;
 	
 	/**
 	 * Watches a directory for changes, sends to FileSysMontiorCallback
 	 * when event is fired, and file is available (not locked).
 	 * 
-	 * Watches directory only, is NOT recursive (does not handle multiple
+	 * Watches directory only, is NOT recursive (does not handle folders)
 	 * directories)
-	 * @param directory
-	 * @param callback
-	 * @throws IOException should an IOException occur
-	 * @throws InterruptedException should an InterrupedException (thread terminated, etc...) occurs.
+	 * @param directory name of the directory to watch.
+	 * @param callback the callback object
 	 */
-	public boolean StartListen(String directory, FileSysMonitorCallback callback) {
+	public boolean StartListen(String directory, final FileSysMonitorCallback callback) {
 		try {
-			WatchService watcher = FileSystems.getDefault().newWatchService();
-			Path filePath = Paths.get(directory);
-			WatchKey key;
+			watcher = FileSystems.getDefault().newWatchService();
+			filePath = Paths.get(directory);
 			filePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
 			
-			while (isListening) {
-				key = watcher.take();
-				for (WatchEvent<?> event: key.pollEvents()) {
-					callback.Callback(event.context().toString());			
+			watcherThread = new Thread(new Runnable() {
+				
+				public void run() {
+					try
+					{
+						while (isListening)
+						{
+							key = watcher.take();
+							for (WatchEvent<?> event: key.pollEvents()) {
+								String filename = event.context().toString();
+								if (!ignoreList.contains(filename))
+								{
+									callback.Callback(event.context().toString());
+								}
+							}
+							boolean valid = key.reset();
+							if (!valid) {
+								break;
+							}
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-				boolean valid = key.reset();
-				if (!valid) {
-					break;
-				}
-			}
+			});
+			watcherThread.start(); //start the watcher service thread
 		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -67,11 +83,15 @@ public class FileSysMonitor {
 	
 	/**
 	 * Stops the watcher.
-	 * @return
+	 * Synchronized to prevent multiple access to the the isListening variable.
+	 * @return true if isListening has been stopped, false otherwise.
 	 */
 	public boolean StopListen(){
-		isListening = false;
-		return false;
+		synchronized (this)
+		{
+			isListening = false;
+		}
+		return !isListening ? true : false;
 	}
 	
 	/**
@@ -83,15 +103,19 @@ public class FileSysMonitor {
 	public boolean isLocked(String filename) throws IOException {
 		boolean isLocked = true;
 		FileChannel fileChannel = new RandomAccessFile(filename, "rw").getChannel();
+		FileLock lock = null;
 		try 
 		{
-			FileLock lock = fileChannel.tryLock();
+			lock = fileChannel.tryLock();
 			if (lock != null) {
 				lock.close(); //file isn't locked. we clsoe because trylock will actually return a lock.
-				isLocked = true;
+				isLocked = false;
 			}
-		} catch (OverlappingFileLockException e) {
+		} catch (Exception e) {
 			isLocked = true;
+		} finally {
+			lock.release();
+			lock.close();
 		}
 		fileChannel.close();
 		return isLocked;		
@@ -102,7 +126,7 @@ public class FileSysMonitor {
 	 * @param filename
 	 * @return
 	 */
-	public boolean startIgnoreFile(String filename){
+	public synchronized boolean startIgnoreFile(String filename){
 		//FileSysPerformer.java may need to update files. These action should be ignored.
 		ignoreList.add(filename);
 		return false;
@@ -113,7 +137,7 @@ public class FileSysMonitor {
 	 * @param filename
 	 * @return
 	 */
-	public boolean stopIgnoreFile(String filename){
+	public synchronized boolean stopIgnoreFile(String filename){
 		ignoreList.remove(filename);
 		return false;
 	}

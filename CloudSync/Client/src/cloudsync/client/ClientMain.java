@@ -3,24 +3,23 @@ package cloudsync.client;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cloudsync.sharedInterface.AzureConnection;
-import cloudsync.sharedInterface.Metadata;
-import cloudsync.sharedInterface.SessionBlob;
-
 public class ClientMain {
 
 	private static SessionMaster masterSession = null;
 	private static ClientSettings settings = null;
-	private static ArrayList<FileSysMonitor> allFileMonitors = null;
+	private static ArrayList<FileSysMonitor> allFileMonitors = new ArrayList<FileSysMonitor>();
 	
 	public static ArrayList<FileSysMonitor> getAllFileMonitors(){
+		
 		return allFileMonitors;
 	}
 
 	public static void main(String[] args) {
+		System.out.println("ClientMain starts ...");
 		
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
+		settings.saveSettings();
 
 		//SessionBlobClient sessionBlod = new SessionBlobClient();
 		////sessionBlod.blobTest();
@@ -33,6 +32,7 @@ public class ClientMain {
 		//sessionBlod.downloadFile(metadata);
 		//boolean suc = sessionBlod.deleteFile(metadata);
 		
+		/*
 		if(allFileMonitors==null){
 			allFileMonitors = new ArrayList<FileSysMonitor>();
 		}
@@ -47,6 +47,7 @@ public class ClientMain {
 			
 		});
 		allFileMonitors.add(fileMonitor);
+		*/
 		
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
@@ -54,15 +55,17 @@ public class ClientMain {
 		
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
-		masterSession.connect(settings.getUsername(), settings.getUsername());
+		masterSession.connect(settings.getUsername(), settings.getPassword());
 		
 		//--- wait here forever ---
+		/*
 		try {
 			byte[] buff = new byte[128];
 			System.in.read(buff);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }
