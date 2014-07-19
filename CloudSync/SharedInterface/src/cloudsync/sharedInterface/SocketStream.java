@@ -27,10 +27,12 @@ public class SocketStream {
 	
 	public boolean deinitStream(){
 		try {
-			if(streamIn!=null)
-				streamIn.close();
 			if(streamOut!=null)
 				streamOut.close();
+			if(streamIn!=null)
+				streamIn.close();
+			if(socket!=null)
+				socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;

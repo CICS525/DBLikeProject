@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import cloudsync.sharedInterface.AccountInfo;
-import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
 public class MasterMain {
@@ -47,14 +46,18 @@ public class MasterMain {
 				}else{
 					//login fail, then close the connection at once
 					socketStream.deinitStream();
-					socket.close();
+					socket = null;
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			
 		}
 		
+		try {
+			serverSocket.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		//--- wait here forever ---
 		try {

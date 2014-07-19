@@ -74,16 +74,9 @@ public class SessionMaster {
 	}
 	
 	public boolean disconnect(){
-		try {
-			socketStream.deinitStream();
-			socketStream.getSocket().close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
+		boolean suc = socketStream.deinitStream();
 		socketStream = null;
-		return false;
+		return suc;
 	}
 	
 	public ArrayList<Metadata> getCompleteMetadata(long sinceCounter){
