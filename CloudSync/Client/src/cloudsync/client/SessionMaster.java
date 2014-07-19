@@ -130,7 +130,7 @@ public class SessionMaster {
 					System.out.println("SocketThread@SessionMaster: globalCounter="+globalCounter);
 					ArrayList<Metadata> newMetaList = getCompleteMetadata( globalCounter );
 					for(Metadata aMeta: newMetaList){
-						metadataManage.updateLocalMetadate(aMeta);	//update local metadata info
+						metadataManage.updateLocalMetadata(aMeta);	//update local metadata info
 						
 						FileSysPerformer performer = FileSysPerformer.getInstance(); 
 						performer.addUpdateLocalTask(aMeta);					
