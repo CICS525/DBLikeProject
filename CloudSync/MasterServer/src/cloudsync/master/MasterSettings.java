@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
@@ -18,10 +19,11 @@ public class MasterSettings implements Serializable{      //serialization initia
 	private static final long serialVersionUID = -1026245079078573719L;
 	
 	private static MasterSettings that = null;
+	
 	private int LocalPort = 0; 
 	private ServerLocation MasterBackup = null;
-	private ServerLocation BlobFirst = null;
-	private ServerLocation BlobSecond = null;
+	private AzureConnection BlobFirst = null;
+	private AzureConnection BlobSecond = null;
 	
 	private final String fSettingsFileName = ".MasterSettings.settings";
 
@@ -41,16 +43,16 @@ public class MasterSettings implements Serializable{      //serialization initia
 	public void setMasterBackup(ServerLocation masterBackup) {
 		MasterBackup = masterBackup;
 	}
-	public ServerLocation getBlobFirst() {
+	public AzureConnection getBlobFirst() {
 		return BlobFirst;
 	}
-	public void setBlobFirst(ServerLocation blobFirst) {
+	public void setBlobFirst(AzureConnection blobFirst) {
 		BlobFirst = blobFirst;
 	}
-	public ServerLocation getBlobSecond() {
+	public AzureConnection getBlobSecond() {
 		return BlobSecond;
 	}
-	public void setBlobSecond(ServerLocation blobSecond) {
+	public void setBlobSecond(AzureConnection blobSecond) {
 		BlobSecond = blobSecond;
 	}
 	

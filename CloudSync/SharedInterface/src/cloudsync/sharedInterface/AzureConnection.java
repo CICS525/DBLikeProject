@@ -1,6 +1,10 @@
 package cloudsync.sharedInterface;
 
-public class AzureConnection {
+import java.io.Serializable;
+
+public class AzureConnection implements Serializable{
+
+	private static final long serialVersionUID = -6481061029956180656L;
 	final private String accountInfo;
 	
 	public AzureConnection(){
@@ -26,5 +30,4 @@ public class AzureConnection {
 	public String toString() {
 		return accountInfo;	//super.toString();
 	}
-	
 }
