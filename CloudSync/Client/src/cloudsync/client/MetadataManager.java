@@ -1,19 +1,17 @@
 package cloudsync.client;
 
-import java.io.BufferedWriter;
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Scanner;
+
+
 
 import cloudsync.sharedInterface.Metadata;
-import cloudsync.sharedInterface.ServerLocation;
 
 /**
  * Class that manages the all the metadata for
@@ -23,8 +21,8 @@ import cloudsync.sharedInterface.ServerLocation;
  */
 public class MetadataManager {
 
-	private long GlobalWriteCounter;
-	private ArrayList<Metadata> LocalMetadata;
+	private static long GlobalWriteCounter = 1;
+	private ArrayList<Metadata> LocalMetadata = new ArrayList<Metadata>();
 	private static MetadataManager that = null;
 	private static String META_FILENAME = "metadata.dat";
 	
@@ -43,11 +41,6 @@ public class MetadataManager {
 		return GlobalWriteCounter;
 	}
 	
-	public boolean setGlobalWriteCounter(long newValue) {
-		GlobalWriteCounter = newValue;
-		return (GlobalWriteCounter == newValue);
-	}
-
 	public ArrayList<Metadata> getLocalMetadata() {
 		return LocalMetadata;
 	}
@@ -57,6 +50,7 @@ public class MetadataManager {
 	 * Also loads the GlobalWriteCounter
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean readLocalMetadata() {
 		try {
 			FileInputStream fs = new FileInputStream(META_FILENAME);
@@ -104,17 +98,18 @@ public class MetadataManager {
 	}
 
 	/**
-	 * Update a metadata object
+	 * Update a metadata object.
+	 * TODO: Currently fails as there is no way to tell if
+	 * two metadata objects are equal or not.
 	 * @param aMetadata
 	 * @return
 	 */
-	public boolean updateLocalMetadate(Metadata aMetadata){
+	public boolean updateLocalMetadata(Metadata aMetadata){
 		if (LocalMetadata.contains(aMetadata)) {
 			LocalMetadata.remove(aMetadata); //remove the old version
 		}
 		LocalMetadata.add(aMetadata); // add the new version
-		saveLocalMetadata(); //maybe save at once
-		return false;
+		return saveLocalMetadata(); //maybe save at once
 	}
 	
 	/**
