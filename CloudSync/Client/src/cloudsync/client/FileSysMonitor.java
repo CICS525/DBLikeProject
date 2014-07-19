@@ -71,8 +71,6 @@ public class FileSysMonitor {
 				}
 			});
 			watcherThread.start(); //start the watcher service thread
-			
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;

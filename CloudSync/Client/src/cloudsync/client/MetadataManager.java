@@ -2,10 +2,12 @@ package cloudsync.client;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -40,6 +42,11 @@ public class MetadataManager {
 	public long getGlobalWriteCounter() {
 		return GlobalWriteCounter;
 	}
+	
+	public boolean setGlobalWriteCounter(long newValue) {
+		GlobalWriteCounter = newValue;
+		return (GlobalWriteCounter == newValue);
+	}
 
 	public ArrayList<Metadata> getLocalMetadata() {
 		return LocalMetadata;
@@ -47,52 +54,44 @@ public class MetadataManager {
 
 	/**
 	 * Reads the local metadata information from the file
+	 * Also loads the GlobalWriteCounter
 	 * @return
 	 */
 	public boolean readLocalMetadata() {
-		Scanner scan = null; 
 		try {
-			scan = new Scanner(META_FILENAME);
-			LocalMetadata = new ArrayList<Metadata>();
-			LocalMetadata.clear(); // clear completely before adding
-			String url;
-			int port;
-			String backupUrl;
-			int backupPort;
-
-			GlobalWriteCounter = scan.nextInt();
-			while (scan.hasNext()) {
-				Metadata temp = new Metadata();
-				temp.status = Metadata.STATUS.valueOf(scan.next());
-				temp.parent = scan.nextLong();
-				temp.blobKey = scan.next();
-				url = scan.next();
-				port = scan.nextInt();
-				backupUrl = scan.next();
-				backupPort = scan.nextInt();
-				temp.blobServer = new ServerLocation(url, port);
-				temp.blobBackup = new ServerLocation(backupUrl, backupPort);
-				LocalMetadata.add(temp);
-			}
+			FileInputStream fs = new FileInputStream(META_FILENAME);
+			ObjectInputStream objInput = new ObjectInputStream(fs);
+			GlobalWriteCounter = objInput.readLong();
+			LocalMetadata = (ArrayList<Metadata>) objInput.readObject();
+			objInput.close();
 			return true;
-			
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
-		} finally {
-			scan.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
 		}
 	}
 	
 	/**
 	 * Saves the list of metadata to the file.
+	 * Also saves the GlobalWriteCounter.
 	 * @return
 	 */
 	public boolean saveLocalMetadata() {
 		try {
 			FileOutputStream fo = new FileOutputStream(META_FILENAME);
 			ObjectOutputStream objStream = new ObjectOutputStream(fo);
+			objStream.writeLong(GlobalWriteCounter);
 			objStream.writeObject(LocalMetadata);
+			objStream.close();
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
