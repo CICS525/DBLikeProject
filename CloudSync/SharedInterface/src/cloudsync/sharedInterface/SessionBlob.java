@@ -258,7 +258,18 @@ public class SessionBlob {
 		//Blob server and Blob name are specified in metadata
 		//If there are Backup blob server, they should all be updated in parallel thread
 
-		boolean suc = uploadLocalFileToAzureStorageBlob(filename, metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+		
+	    boolean suc = uploadLocalFileToAzureStorageBlob(filename, metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+		if (!suc) {
+		    return suc;
+		}
+		
+	    suc = uploadLocalFileToAzureStorageBlob(filename, metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+        if (!suc) {
+            deleteAzureStorageBlob(metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+            return suc;
+        }
+	    
 		return suc;
 	}
 	
@@ -269,6 +280,7 @@ public class SessionBlob {
 	
 	public boolean deleteFile(Metadata metadata){
 		boolean suc = deleteAzureStorageBlob(metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
-		return suc;
+		boolean suc2 = deleteAzureStorageBlob(metadata.blobBackup.toString(), DEFAULTCONTAINER, metadata.blobKey);
+		return suc2 && suc;
 	}
 }

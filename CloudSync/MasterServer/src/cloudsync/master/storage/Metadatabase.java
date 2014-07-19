@@ -11,12 +11,12 @@ import com.microsoft.azure.storage.table.TableOperation;
 import com.microsoft.azure.storage.table.TableQuery;
 import com.microsoft.azure.storage.table.TableQuery.Operators;
 import com.microsoft.azure.storage.table.TableQuery.QueryComparisons;
-import com.sun.org.apache.xml.internal.dtm.ref.IncrementalSAXSource_Xerces;
 
-import cloudsync.sharedInterface.Blobdata;
+import cloudsync.master.MasterSettings;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 import cloudsync.sharedInterface.AzureConnection;
+import cloudsync.sharedInterface.SessionBlob;
 
 public class Metadatabase {
 
@@ -29,7 +29,7 @@ public class Metadatabase {
     private CloudTable table;
 
     public static Metadata acceptFileUpdate(String username,
-            Metadata incompleteMetadata, Blobdata blobdata) {
+            Metadata incompleteMetadata, String fileToUpload) {
         // if NO conflict, save the Metadata in local database & save Blobdata
         // in Blob Server, then update FileMetadata and return
         // if conflict, reject this update and return error reason in
@@ -38,14 +38,20 @@ public class Metadatabase {
         // but need a mechanism to collect garbage if client does not update
         // again.
 
+        if (incompleteMetadata.status != STATUS.LAST
+                && incompleteMetadata.status != STATUS.DELETE) {
+            incompleteMetadata.status = STATUS.ERROR;
+            return incompleteMetadata;
+        }
+
         // get account
         AccountDBRow account = AccountDatabase.getInstance().getAccount(
                 username);
-
         Metadatabase db = getServer(username);
 
         // verify
-        if (db.hasConflict(incompleteMetadata, username)) {
+        MetadataDBRow last = db.getLast(incompleteMetadata, username);
+        if (db.hasConflict(last, incompleteMetadata, username)) {
             incompleteMetadata.status = STATUS.CONFLICT;
             return incompleteMetadata;
         }
@@ -55,28 +61,46 @@ public class Metadatabase {
         // TODO: generate key, read blob servers;
         incompleteMetadata.timestamp = new Date();
         incompleteMetadata.blobKey = "some key";
+
+        MasterSettings settings = MasterSettings.getInstance();
+
         incompleteMetadata.blobServer = new AzureConnection(
                 storageConnectionString);
         incompleteMetadata.blobBackup = new AzureConnection(
                 storageConnectionString);
+        Metadata completeMetadata = incompleteMetadata;
 
-        MetadataDBRow metaRow = new MetadataDBRow(username, incompleteMetadata);
+        MetadataDBRow metaRow = new MetadataDBRow(username, completeMetadata);
 
         // update meta data
         Metadatabase main = new Metadatabase(account.getMainServer(), tableName);
-        main.addRecord(metaRow);
         Metadatabase backup = new Metadatabase(account.getBackupServer(),
                 tableName);
+        
+        // add new
+        main.addRecord(metaRow);
         backup.addRecord(metaRow);
         
+        // update previous last
+        if (last != null) {
+            last.setStatus(STATUS.HISTORY.toString());
+            main.updateRecord(metaRow);
+            backup.updateRecord(metaRow);
+        }
+
         // update blob
+        SessionBlob sb = new SessionBlob();
+        if (completeMetadata.status == STATUS.LAST) {
+            sb.uploadFile(fileToUpload, completeMetadata);
+        } else {
+            sb.deleteFile(completeMetadata);
+        }
 
         // update account
         account.setGlobalCounter(account.getGlobalCounter() + 1);
         AccountDatabase.getInstance().updateAccount(account);
 
-        // fill metadata
-        return incompleteMetadata;
+        return completeMetadata;
     }
 
     public static ArrayList<Metadata> getCompleteMetadata(String username,
@@ -93,6 +117,10 @@ public class Metadatabase {
         return result;
     }
 
+    private Metadatabase(String connString, String tableName) {
+        table = AzureStorageConnection.connectToTable(connString, tableName);
+    }
+
     private static Metadatabase getServer(String username) {
         AccountDBRow account = AccountDatabase.getInstance().getAccount(
                 username);
@@ -101,11 +129,7 @@ public class Metadatabase {
         return server;
     }
 
-    public Metadatabase(String connString, String tableName) {
-        table = AzureStorageConnection.connectToTable(connString, tableName);
-    }
-
-    public boolean addRecord(MetadataDBRow meta) {
+    private boolean addRecord(MetadataDBRow meta) {
         TableOperation insert = TableOperation.insert(meta);
         try {
             table.execute(insert);
@@ -116,8 +140,20 @@ public class Metadatabase {
             return false;
         }
     }
+    
+    private boolean updateRecord(MetadataDBRow meta) {
+        TableOperation update = TableOperation.insertOrReplace(meta);
+        try {
+            table.execute(update);
+            System.out.println("Insert complete");
+            return true;
+        } catch (StorageException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-    public MetadataDBRow retrieveRecord(String username, long counter) {
+    private MetadataDBRow retrieveRecord(String username, long counter) {
         TableOperation retrieveRecord = TableOperation.retrieve(username,
                 String.valueOf(counter), MetadataDBRow.class);
         try {
@@ -130,7 +166,7 @@ public class Metadatabase {
         }
     }
 
-    public Iterable<MetadataDBRow> retrieveRecordSince(String username,
+    private Iterable<MetadataDBRow> retrieveRecordSince(String username,
             long counter) {
         String partitionFilter = TableQuery.generateFilterCondition(
                 "PartitionKey", QueryComparisons.EQUAL, username);
@@ -150,10 +186,8 @@ public class Metadatabase {
         return result;
     }
 
-    public boolean hasConflict(Metadata meta, String username) {
-        // return true if there is conflict
-        MetadataDBRow last = getLast(meta, username);
-
+    private boolean hasConflict(MetadataDBRow last, Metadata meta,
+            String username) {
         if (meta.parent == 0) { // new file
             if (last != null) { // conflict existing file
                 return true;
@@ -161,7 +195,6 @@ public class Metadatabase {
                 return false;
             }
         }
-
         return (last.getGlobalCounter() != meta.parent);
     }
 

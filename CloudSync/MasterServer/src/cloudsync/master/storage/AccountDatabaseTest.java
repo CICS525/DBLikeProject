@@ -6,8 +6,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import sun.security.util.Password;
-
 public class AccountDatabaseTest {
     private static String storageConnectionString = "DefaultEndpointsProtocol=http;"
             + "AccountName=portalvhds96n2s1jyj5b5k;"

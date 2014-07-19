@@ -1,18 +1,13 @@
 package cloudsync.master.storage;
 
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-
 import com.microsoft.azure.storage.*;
 import com.microsoft.azure.storage.table.*;
-import com.microsoft.azure.storage.table.TableQuery.*;
 
 public class AccountDatabase {
     // Singleton design pattern
     private static AccountDatabase that = null;
 
-    // temperal storage key
-    // TODO: read from config
+    // TODO: read from config, entry server
     private String storageConnectionString = "DefaultEndpointsProtocol=http;"
             + "AccountName=portalvhds96n2s1jyj5b5k;"
             + "AccountKey=vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA==";
@@ -36,7 +31,6 @@ public class AccountDatabase {
         try {
             table.delete();
         } catch (StorageException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -64,7 +58,7 @@ public class AccountDatabase {
         AccountDBRow acc = new AccountDBRow(username, password);
         acc.setGlobalCounter(0);
         
-        // TODO: read server config
+        // TODO: read server config, main master server, backup master server
         String testConn = "DefaultEndpointsProtocol=http;"
                 + "AccountName=portalvhds96n2s1jyj5b5k;"
                 + "AccountKey=vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA==";
@@ -118,7 +112,6 @@ public class AccountDatabase {
             AccountDBRow acc = table.execute(retrieveUser).getResultAsType();
             return acc;
         } catch (StorageException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }

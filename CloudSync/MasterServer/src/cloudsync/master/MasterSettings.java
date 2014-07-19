@@ -55,7 +55,7 @@ public class MasterSettings implements Serializable{      //serialization initia
 	}
 	
 	private MasterSettings(){
-		//private constructor to secure singleton
+		loadSettings();
 	}
 	
 	public static MasterSettings getInstance(){

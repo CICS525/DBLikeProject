@@ -4,7 +4,6 @@ import java.util.Date;
 
 import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.Metadata;
-import cloudsync.sharedInterface.Metadata.STATUS;
 
 import com.microsoft.azure.storage.table.*;
 
@@ -14,12 +13,11 @@ public class MetadataDBRow extends TableServiceEntity {
     private long globalCounter;
     private long parent;
     private String status;
-    private Date time = null;    // this maps to timestamp in Metadata, because table already have timestamp
+    private Date time = null; // this maps to timestamp in Metadata, because
+                              // table already have timestamp
     private String blobKey = null;
     private String blobServer;
     private String blobBackup;
-    
-    
 
     public MetadataDBRow() {
     }
@@ -28,7 +26,7 @@ public class MetadataDBRow extends TableServiceEntity {
         this.partitionKey = username;
         this.rowKey = String.valueOf(meta.globalCounter);
         this.globalCounter = meta.globalCounter;
-        
+
         this.filename = meta.filename;
         this.setParent(meta.parent);
         this.status = meta.status.toString();
@@ -36,7 +34,7 @@ public class MetadataDBRow extends TableServiceEntity {
         this.setBlobKey(meta.blobKey);
         this.setBlobServer(meta.blobServer.toString());
         this.setBlobBackup(meta.blobBackup.toString());
-        
+
     }
 
     public String getStatus() {
@@ -94,28 +92,28 @@ public class MetadataDBRow extends TableServiceEntity {
     public void setBlobBackup(String blobBackup) {
         this.blobBackup = blobBackup;
     }
-    
+
     public String getUsername() {
         return partitionKey;
     }
-    
+
     public void setUsername(String username) {
         this.partitionKey = username;
     }
-    
+
     public long getGlobalCounter() {
-        
+
         return this.globalCounter;
     }
-    
+
     public void setGlobalCounter(long counter) {
         this.rowKey = String.valueOf(counter);
         this.globalCounter = counter;
     }
-    
+
     public Metadata toMetadata() {
+        // get correspond metadata
         Metadata meta = new Metadata();
-        
         meta.filename = this.getFilename();
         meta.globalCounter = this.getGlobalCounter();
         meta.parent = this.getParent();
@@ -124,7 +122,7 @@ public class MetadataDBRow extends TableServiceEntity {
         meta.blobKey = this.getBlobKey();
         meta.blobServer = new AzureConnection(this.getBlobServer());
         meta.blobBackup = new AzureConnection(this.getBlobBackup());
-         
+
         return meta;
     }
 
