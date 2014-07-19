@@ -90,6 +90,7 @@ public class ClientSettings implements Serializable{                          //
 			
 		}
 		return false;
+		//add comment
 	}
 	
 	public boolean saveSettings(){
