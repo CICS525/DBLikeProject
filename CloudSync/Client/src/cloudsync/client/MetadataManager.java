@@ -1,17 +1,28 @@
 package cloudsync.client;
 
+<<<<<<< HEAD
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+=======
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+>>>>>>> 4ee1819492a8e0a17d070feaccd62f23f10ea0cb
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 
 import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.ServerLocation;
 
 /**
  * Class that manages the all the metadata for
@@ -47,6 +58,7 @@ public class MetadataManager {
 
 	/**
 	 * Reads the local metadata information from the file
+<<<<<<< HEAD
 	 * Also loads the GlobalWriteCounter
 	 * @return
 	 */
@@ -71,22 +83,65 @@ public class MetadataManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
+=======
+	 * @return
+	 */
+	public boolean readLocalMetadata() {
+		Scanner scan = null; 
+		try {
+			scan = new Scanner(META_FILENAME);
+			LocalMetadata = new ArrayList<Metadata>();
+			LocalMetadata.clear(); // clear completely before adding
+			String url;
+			int port;
+			String backupUrl;
+			int backupPort;
+
+			GlobalWriteCounter = scan.nextInt();
+			while (scan.hasNext()) {
+				Metadata temp = new Metadata();
+				temp.status = Metadata.STATUS.valueOf(scan.next());
+				temp.parent = scan.nextLong();
+				temp.blobKey = scan.next();
+				url = scan.next();
+				port = scan.nextInt();
+				backupUrl = scan.next();
+				backupPort = scan.nextInt();
+				temp.blobServer = new ServerLocation(url, port);
+				temp.blobBackup = new ServerLocation(backupUrl, backupPort);
+				LocalMetadata.add(temp);
+			}
+			return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			scan.close();
+>>>>>>> 4ee1819492a8e0a17d070feaccd62f23f10ea0cb
 		}
 		
 	}
 	
 	/**
 	 * Saves the list of metadata to the file.
+<<<<<<< HEAD
 	 * Also saves the GlobalWriteCounter.
+=======
+>>>>>>> 4ee1819492a8e0a17d070feaccd62f23f10ea0cb
 	 * @return
 	 */
 	public boolean saveLocalMetadata() {
 		try {
 			FileOutputStream fo = new FileOutputStream(META_FILENAME);
 			ObjectOutputStream objStream = new ObjectOutputStream(fo);
+<<<<<<< HEAD
 			objStream.writeLong(GlobalWriteCounter);
 			objStream.writeObject(LocalMetadata);
 			objStream.close();
+=======
+			objStream.writeObject(LocalMetadata);
+>>>>>>> 4ee1819492a8e0a17d070feaccd62f23f10ea0cb
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -98,6 +153,7 @@ public class MetadataManager {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Update a metadata object.
 	 * TODO: Currently fails as there is no way to tell if
 	 * two metadata objects are equal or not.
@@ -105,11 +161,23 @@ public class MetadataManager {
 	 * @return
 	 */
 	public boolean updateLocalMetadata(Metadata aMetadata){
+=======
+	 * Update a metadata object
+	 * @param aMetadata
+	 * @return
+	 */
+	public boolean updateLocalMetadate(Metadata aMetadata){
+>>>>>>> 4ee1819492a8e0a17d070feaccd62f23f10ea0cb
 		if (LocalMetadata.contains(aMetadata)) {
 			LocalMetadata.remove(aMetadata); //remove the old version
 		}
 		LocalMetadata.add(aMetadata); // add the new version
+<<<<<<< HEAD
 		return saveLocalMetadata(); //maybe save at once
+=======
+		saveLocalMetadata(); //maybe save at once
+		return false;
+>>>>>>> 4ee1819492a8e0a17d070feaccd62f23f10ea0cb
 	}
 	
 	/**
