@@ -55,8 +55,11 @@ public class FileSysMonitor {
 						{
 							key = watcher.take();
 							for (WatchEvent<?> event: key.pollEvents()) {
-								System.out.println(event.kind().toString());
-								callback.Callback(event.context().toString());
+								String filename = event.context().toString();
+								if (!ignoreList.contains(filename))
+								{
+									callback.Callback(event.context().toString());
+								}
 							}
 							boolean valid = key.reset();
 							if (!valid) {
