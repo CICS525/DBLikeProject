@@ -39,7 +39,7 @@ public class ClientSettings {
 		this.RootDir = rootDir;
 	}
 	public ServerLocation getRecentMaster() {
-		if(RecentMaster==null){
+		if(RecentMaster!=null){
 			return RecentMaster;
 		}else{
 			return new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_SERVEL_PORT);
@@ -55,7 +55,9 @@ public class ClientSettings {
 		
 		//set default value, to be over written in loading setting file
 		String userHome = System.getProperty( "user.home" );
-		setRootDir( userHome );
+		setRootDir(userHome);
+		setUsername("Tom");
+		setPassword("123456x");
 	}
 	
 	public static ClientSettings getInstance(){

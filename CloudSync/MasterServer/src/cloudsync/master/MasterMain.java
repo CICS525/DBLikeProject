@@ -7,10 +7,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import cloudsync.sharedInterface.AccountInfo;
+import cloudsync.sharedInterface.SocketStream;
 
 public class MasterMain {
 
 	public static void main(String[] args) {
+		System.out.println("MasterMain starts ...");
 		MasterSettings settings = MasterSettings.getInstance();
 		settings.loadSettings();
 		SessionManager sessionManager = SessionManager.getInstance();
@@ -18,7 +20,6 @@ public class MasterMain {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(settings.getLocalPort());
-			
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return;
@@ -28,32 +29,29 @@ public class MasterMain {
 		while(loop)
 		{
 			Socket socket = null;
-			ObjectInputStream  streamIn = null;
-			ObjectOutputStream streamOut = null;
 			
 			AccountInfo account = null;
 			try {
 				socket = serverSocket.accept();
-				streamIn  = new ObjectInputStream(socket.getInputStream());
-				streamOut = new ObjectOutputStream(socket.getOutputStream());
-				account = (AccountInfo)streamIn.readObject();
+				System.out.println("MasterMain: Client socket coming. " + socket.getRemoteSocketAddress().toString());
+				SocketStream socketStream = new SocketStream();
+				socketStream.initStream(socket);
+
+				account = (AccountInfo)(socketStream.readObject());
 				
 				AccountDatabase accountDB = AccountDatabase.getInstance();
 				boolean suc = accountDB.login(account.getUsername(), account.getPassword());
+				System.out.println("login@MasterMain: " + account.toString() + " -> " + suc);
 				if(suc){
 					//login success, then let session manager to take over
-					SocketStream socketStream = new SocketStream(socket, streamIn, streamOut);
 					sessionManager.acceptClient(account.getUsername(), socketStream);
 				}else{
 					//login fail, then close the connection at once
-					streamIn.close();
-					streamOut.close();
+					socketStream.deinitStream();
 					socket.close();
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 			
 		}

@@ -18,6 +18,7 @@ public class ClientMain {
 	}
 
 	public static void main(String[] args) {
+		System.out.println("ClientMain starts ...");
 		
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
@@ -33,6 +34,7 @@ public class ClientMain {
 		//sessionBlod.downloadFile(metadata);
 		//boolean suc = sessionBlod.deleteFile(metadata);
 		
+		/*
 		if(allFileMonitors==null){
 			allFileMonitors = new ArrayList<FileSysMonitor>();
 		}
@@ -47,6 +49,7 @@ public class ClientMain {
 			
 		});
 		allFileMonitors.add(fileMonitor);
+		*/
 		
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
@@ -54,7 +57,7 @@ public class ClientMain {
 		
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
-		masterSession.connect(settings.getUsername(), settings.getUsername());
+		masterSession.connect(settings.getUsername(), settings.getPassword());
 		
 		//--- wait here forever ---
 		try {

@@ -2,6 +2,8 @@ package cloudsync.master;
 
 import java.util.ArrayList;
 
+import cloudsync.sharedInterface.SocketStream;
+
 public class SessionManager {
 	//singleton design pattern
 	private static SessionManager that = null;

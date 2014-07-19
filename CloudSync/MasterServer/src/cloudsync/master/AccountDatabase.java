@@ -17,7 +17,11 @@ public class AccountDatabase {
 	
     public boolean login(String username, String password)
     {
-        return false;
+    	if( "Tom".compareTo(username)==0 && "123456".compareTo(password)==0 ){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
     public boolean createAccount(String username, String password)    //this method should be triggered by entry server in final release
     {

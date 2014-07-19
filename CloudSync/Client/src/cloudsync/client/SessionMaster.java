@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketStream;
 
 public class SessionMaster {
 	//SessionMaster should be singleton design pattern
 	private static SessionMaster that = null;
 	
 	private ServerLocation masterLocation = null;
-	private Socket socket = null;
+	private SocketStream socketStream = null;
 	private SocketThread thread = null;
 	
 	private SessionMaster(){
@@ -33,7 +34,7 @@ public class SessionMaster {
 	}
 
 	public boolean setMasterServerLocation(ServerLocation masterServerLocation) {
-		if(socket==null){	//master server location can only be set when there is socket is not active
+		if(socketStream==null){	//master server location can only be set when there is socket is not active
 			masterLocation = masterServerLocation;
 			return true;
 		}else{
@@ -43,6 +44,7 @@ public class SessionMaster {
 
 	public boolean connect(String username, String password) {
 		//for the entry server and master server at separated, so here may need to check username & password again
+		Socket socket = null;
 		try {
 			socket = new Socket(masterLocation.url, masterLocation.port);
 		} catch (UnknownHostException e) {
@@ -52,9 +54,16 @@ public class SessionMaster {
 			e.printStackTrace();
 			return false;
 		}
+		System.out.println("Connected to MasterServer: " + socket.getRemoteSocketAddress().toString());
 		
 		AccountInfo account = new AccountInfo(username, password);
 		//Write account into socket. If server respond, means login OK.
+		
+		SocketStream socketStream = new SocketStream();
+		socketStream.initStream(socket);
+		socketStream.writeObject(account);
+		
+		System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + socketStream.getStreamOut());
 		
 		//Then, create a new thread to wait in-coming message for master server
 		thread = new SocketThread();
@@ -65,13 +74,14 @@ public class SessionMaster {
 	
 	public boolean disconnect(){
 		try {
-			socket.close();
+			socketStream.deinitStream();
+			socketStream.getSocket().close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
-		socket = null;
+		socketStream = null;
 		return false;
 	}
 	
@@ -96,7 +106,8 @@ public class SessionMaster {
 
 		@Override
 		public void run() {
-			while( socket.isConnected() ){
+			System.out.println("SocketThread@SessionMaster: thread started.");
+			while( socketStream!=null && socketStream.getSocket()!=null && socketStream.getSocket().isConnected() ){
 				//Waiting incoming command
 				
 				MetadataManager metadataManage = MetadataManager.getInstance();
@@ -110,6 +121,7 @@ public class SessionMaster {
 					performer.addUpdateLocalTask(aMeta);					
 				}
 			}
+			System.out.println("SocketThread@SessionMaster: thread finished.");
 			super.run();
 		}
 		
