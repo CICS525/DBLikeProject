@@ -54,8 +54,9 @@ public class Metadatabase {
         // generate complete metadata
         incompleteMetadata.globalCounter = account.getGlobalCounter() + 1;
         incompleteMetadata.timestamp = new Date();
-        
-        String strToSHA = incompleteMetadata.filename + incompleteMetadata.timestamp.toString();
+
+        String strToSHA = incompleteMetadata.filename
+                + incompleteMetadata.timestamp.toString();
         incompleteMetadata.blobKey = getSha1(strToSHA);
 
         MasterSettings settings = MasterSettings.getInstance();
@@ -65,12 +66,19 @@ public class Metadatabase {
 
         MetadataDBRow metaRow = new MetadataDBRow(username, completeMetadata);
 
+        /*
+         * Do tables update: add new metadata, update last metadata, add blob,
+         * update account's global count
+         */
+
+        // update account
+        account.setGlobalCounter(account.getGlobalCounter() + 1);
+        AccountDatabase.getInstance().updateAccount(account);
+
         // update meta data
         Metadatabase main = new Metadatabase(account.getMainServer(), tableName);
         Metadatabase backup = new Metadatabase(account.getBackupServer(),
                 tableName);
-
-        // add new
         main.addRecord(metaRow);
         backup.addRecord(metaRow);
 
@@ -88,10 +96,6 @@ public class Metadatabase {
         } else {
             sb.deleteFile(completeMetadata);
         }
-
-        // update account
-        account.setGlobalCounter(account.getGlobalCounter() + 1);
-        AccountDatabase.getInstance().updateAccount(account);
 
         return completeMetadata;
     }
@@ -123,7 +127,7 @@ public class Metadatabase {
     }
 
     private boolean addRecord(MetadataDBRow meta) {
-        TableOperation insert = TableOperation.insert(meta);
+        TableOperation insert = TableOperation.insertOrReplace(meta);
         try {
             table.execute(insert);
             System.out.println("Insert complete");
@@ -147,19 +151,12 @@ public class Metadatabase {
     }
 
     /*
-    private MetadataDBRow retrieveRecord(String username, long counter) {
-        TableOperation retrieveRecord = TableOperation.retrieve(username,
-                String.valueOf(counter), MetadataDBRow.class);
-        try {
-            MetadataDBRow meta = table.execute(retrieveRecord)
-                    .getResultAsType();
-            return meta;
-        } catch (StorageException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    */
+     * private MetadataDBRow retrieveRecord(String username, long counter) {
+     * TableOperation retrieveRecord = TableOperation.retrieve(username,
+     * String.valueOf(counter), MetadataDBRow.class); try { MetadataDBRow meta =
+     * table.execute(retrieveRecord) .getResultAsType(); return meta; } catch
+     * (StorageException e) { e.printStackTrace(); return null; } }
+     */
 
     private Iterable<MetadataDBRow> retrieveRecordSince(String username,
             long counter) {
@@ -241,6 +238,11 @@ public class Metadatabase {
         String result = formatter.toString();
         formatter.close();
         return result;
+    }
+    
+    static void testSha() {
+        String result = getSha1("teststr" + new Date().toString());
+        System.out.println(result);
     }
 
 }
