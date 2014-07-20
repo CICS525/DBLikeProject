@@ -3,6 +3,8 @@ package cloudsync.client;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cloudsync.sharedInterface.Metadata;
+
 public class ClientMain {
 
 	private static SessionMaster masterSession = null;
@@ -56,6 +58,11 @@ public class ClientMain {
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		masterSession.connect(settings.getUsername(), settings.getPassword());
+		
+		boolean b = masterSession.rmiCheckUsernamePassword("someone", "aPassword");
+		long l = masterSession.rmiGetMasterServerGlobalCounter();
+		ArrayList<Metadata> a = masterSession.rmiGetCompleteMetadata(10);
+		Metadata m = masterSession.rmiCommitFileUpdate(null, "info");
 		
 		//--- wait here forever ---
 		/*
