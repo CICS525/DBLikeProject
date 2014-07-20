@@ -45,8 +45,8 @@ public class Metadatabase {
         Metadatabase db = getServer(username);
 
         // verify
-        MetadataDBRow last = db.getLast(incompleteMetadata, username);
-        if (db.hasConflict(last, incompleteMetadata, username)) {
+        MetadataDBRow last = db.getLast(incompleteMetadata.filename, username);
+        if (db.hasConflict(last, incompleteMetadata)) {
             incompleteMetadata.status = STATUS.CONFLICT;
             return incompleteMetadata;
         }
@@ -85,14 +85,15 @@ public class Metadatabase {
         // update previous last
         if (last != null) {
             last.setStatus(STATUS.HISTORY.toString());
-            main.updateRecord(metaRow);
-            backup.updateRecord(metaRow);
+            main.updateRecord(last);
+            backup.updateRecord(last);
         }
 
         // update blob
         SessionBlob sb = new SessionBlob();
         if (completeMetadata.status == STATUS.LAST) {
-            sb.uploadFile(fileToUpload, completeMetadata);
+            boolean b = sb.uploadFile(fileToUpload, completeMetadata);
+            System.out.println("Update " + b);
         } else {
             sb.deleteFile(completeMetadata);
         }
@@ -118,6 +119,9 @@ public class Metadatabase {
         table = AzureStorageConnection.connectToTable(connString, tableName);
     }
 
+    private Metadatabase() {
+    }
+
     private static Metadatabase getServer(String username) {
         AccountDBRow account = AccountDatabase.getInstance().getAccount(
                 username);
@@ -127,10 +131,9 @@ public class Metadatabase {
     }
 
     private boolean addRecord(MetadataDBRow meta) {
-        TableOperation insert = TableOperation.insertOrReplace(meta);
+        TableOperation insert = TableOperation.insert(meta);
         try {
             table.execute(insert);
-            System.out.println("Insert complete");
             return true;
         } catch (StorageException e) {
             e.printStackTrace();
@@ -142,7 +145,7 @@ public class Metadatabase {
         TableOperation update = TableOperation.insertOrReplace(meta);
         try {
             table.execute(update);
-            System.out.println("Insert complete");
+            System.out.println("update complete");
             return true;
         } catch (StorageException e) {
             e.printStackTrace();
@@ -178,8 +181,7 @@ public class Metadatabase {
         return result;
     }
 
-    private boolean hasConflict(MetadataDBRow last, Metadata meta,
-            String username) {
+    private boolean hasConflict(MetadataDBRow last, Metadata meta) {
         if (meta.parent == 0) { // new file
             if (last != null) { // conflict existing file
                 return true;
@@ -190,11 +192,11 @@ public class Metadatabase {
         return (last.getGlobalCounter() != meta.parent);
     }
 
-    private MetadataDBRow getLast(Metadata meta, String username) {
+    private MetadataDBRow getLast(String filename, String username) {
         String partitionFilter = TableQuery.generateFilterCondition(
                 "PartitionKey", QueryComparisons.EQUAL, username);
         String fileFilter = TableQuery.generateFilterCondition("Filename",
-                QueryComparisons.EQUAL, meta.filename);
+                QueryComparisons.EQUAL, filename);
         String statusFilterString = TableQuery.generateFilterCondition(
                 "Status", QueryComparisons.EQUAL, "LAST");
 
@@ -239,10 +241,70 @@ public class Metadatabase {
         formatter.close();
         return result;
     }
-    
-    static void testSha() {
-        String result = getSha1("teststr" + new Date().toString());
-        System.out.println(result);
+
+    static boolean testRecord() {
+        Metadatabase db = new Metadatabase();
+        db.table = AzureStorageConnection.connectToTable(MasterSettings
+                .getInstance().getMasterFirst().toString(), "testmeta");
+        
+        Metadata meta = new Metadata();
+        
+        meta.parent = 0;
+        meta.status = STATUS.HISTORY;
+        meta.blobServer = MasterSettings.getInstance().getBlobFirst();
+        meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
+        
+        for (int i = 0; i < 5; i++) {
+            meta.filename = "testfile" + String.valueOf(i);
+            meta.globalCounter = 1 + i;
+            
+            meta.timestamp = new Date();
+            meta.blobKey = getSha1(meta.filename + meta.timestamp.toString());
+            MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
+            
+            db.addRecord(metadb);
+        }
+        
+        meta.parent = 5;
+        meta.globalCounter = 6;
+        meta.status = STATUS.LAST;
+        meta.blobServer = MasterSettings.getInstance().getBlobFirst();
+        meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
+        
+        MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
+        
+        db.addRecord(metadb);
+        
+        MetadataDBRow last = db.getLast("testfile4", "testuser");
+        
+        if (last == null) {
+            try {
+                db.table.delete();
+            } catch (StorageException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        
+        meta.parent = 5;
+        meta.globalCounter = 7;
+        
+        last.setStatus(STATUS.HISTORY.toString());
+        db.updateRecord(last);
+        
+        Iterable<MetadataDBRow> ma = db.retrieveRecordSince("testuser", 1);
+        for (MetadataDBRow row : ma) {
+            System.out.println(row.getFilename() + row.getRowKey());
+        }
+        
+        
+        try {
+            db.table.delete();
+        } catch (StorageException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
+    
 
 }
