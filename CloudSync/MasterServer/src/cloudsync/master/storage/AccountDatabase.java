@@ -1,5 +1,7 @@
 package cloudsync.master.storage;
 
+import cloudsync.master.MasterSettings;
+
 import com.microsoft.azure.storage.*;
 import com.microsoft.azure.storage.table.*;
 
@@ -7,26 +9,22 @@ public class AccountDatabase {
     // Singleton design pattern
     private static AccountDatabase that = null;
 
-    // TODO: read from config, entry server
-    private String storageConnectionString = "DefaultEndpointsProtocol=http;"
-            + "AccountName=portalvhds96n2s1jyj5b5k;"
-            + "AccountKey=vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA==";
-    private String tableName = "account";
+    private final String tableName = "account";
 
     private CloudTable table;
 
     private AccountDatabase() {
-        table = AzureStorageConnection.connectToTable(storageConnectionString,
-                tableName);
+        String conn = MasterSettings.getInstance().getEntryServer().toString();
+        table = AzureStorageConnection.connectToTable(conn, tableName);
     }
 
-    public AccountDatabase(String connStr, String tableName) {
+    AccountDatabase(String connStr, String tableName) {
         // connect to a specific azure table
         // is used for test now
         table = AzureStorageConnection.connectToTable(connStr, tableName);
     }
 
-    public void deleteTable() {
+    void deleteTable() {
         // delete table, for test use only
         try {
             table.delete();
@@ -57,15 +55,12 @@ public class AccountDatabase {
     {
         AccountDBRow acc = new AccountDBRow(username, password);
         acc.setGlobalCounter(0);
-        
-        // TODO: read server config, main master server, backup master server
-        String testConn = "DefaultEndpointsProtocol=http;"
-                + "AccountName=portalvhds96n2s1jyj5b5k;"
-                + "AccountKey=vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA==";
 
-        acc.setMainServer(testConn);
-        acc.setBackupServer(testConn);
-        
+        MasterSettings settings = MasterSettings.getInstance();
+
+        acc.setMainServer(settings.getMasterFirst().toString());
+        acc.setBackupServer(settings.getMasterSecond().toString());
+
         return addAccount(acc);
     }
 

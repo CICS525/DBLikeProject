@@ -1,12 +1,12 @@
 package cloudsync.master.storage;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Formatter;
 
-import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
-import com.microsoft.azure.storage.table.CloudTableClient;
 import com.microsoft.azure.storage.table.TableOperation;
 import com.microsoft.azure.storage.table.TableQuery;
 import com.microsoft.azure.storage.table.TableQuery.Operators;
@@ -15,16 +15,11 @@ import com.microsoft.azure.storage.table.TableQuery.QueryComparisons;
 import cloudsync.master.MasterSettings;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
-import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.SessionBlob;
 
 public class Metadatabase {
 
-    // TODO: replace default server with config
-    private static String storageConnectionString = "DefaultEndpointsProtocol=http;"
-            + "AccountName=portalvhds96n2s1jyj5b5k;"
-            + "AccountKey=vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA==";
-    private static String tableName = "meta";
+    private static final String tableName = "meta";
 
     private CloudTable table;
 
@@ -58,16 +53,14 @@ public class Metadatabase {
 
         // generate complete metadata
         incompleteMetadata.globalCounter = account.getGlobalCounter() + 1;
-        // TODO: generate key, read blob servers;
         incompleteMetadata.timestamp = new Date();
-        incompleteMetadata.blobKey = "some key";
+        
+        String strToSHA = incompleteMetadata.filename + incompleteMetadata.timestamp.toString();
+        incompleteMetadata.blobKey = getSha1(strToSHA);
 
         MasterSettings settings = MasterSettings.getInstance();
-
-        incompleteMetadata.blobServer = new AzureConnection(
-                storageConnectionString);
-        incompleteMetadata.blobBackup = new AzureConnection(
-                storageConnectionString);
+        incompleteMetadata.blobServer = settings.getBlobFirst();
+        incompleteMetadata.blobBackup = settings.getBlobSecond();
         Metadata completeMetadata = incompleteMetadata;
 
         MetadataDBRow metaRow = new MetadataDBRow(username, completeMetadata);
@@ -76,11 +69,11 @@ public class Metadatabase {
         Metadatabase main = new Metadatabase(account.getMainServer(), tableName);
         Metadatabase backup = new Metadatabase(account.getBackupServer(),
                 tableName);
-        
+
         // add new
         main.addRecord(metaRow);
         backup.addRecord(metaRow);
-        
+
         // update previous last
         if (last != null) {
             last.setStatus(STATUS.HISTORY.toString());
@@ -140,7 +133,7 @@ public class Metadatabase {
             return false;
         }
     }
-    
+
     private boolean updateRecord(MetadataDBRow meta) {
         TableOperation update = TableOperation.insertOrReplace(meta);
         try {
@@ -153,6 +146,7 @@ public class Metadatabase {
         }
     }
 
+    /*
     private MetadataDBRow retrieveRecord(String username, long counter) {
         TableOperation retrieveRecord = TableOperation.retrieve(username,
                 String.valueOf(counter), MetadataDBRow.class);
@@ -165,6 +159,7 @@ public class Metadatabase {
             return null;
         }
     }
+    */
 
     private Iterable<MetadataDBRow> retrieveRecordSince(String username,
             long counter) {
@@ -223,6 +218,29 @@ public class Metadatabase {
         }
 
         return null; // not exist
+    }
+
+    private static String getSha1(String str) {
+        String sha1 = "";
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(str.getBytes("UTF-8"));
+            sha1 = byteToHex(crypt.digest());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    private static String byteToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 
 }
