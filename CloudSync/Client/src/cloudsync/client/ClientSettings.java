@@ -64,10 +64,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		//private constructor to secure singleton
 		
 		//set default value, to be over written in loading setting file
-		String userHome = System.getProperty( "user.home" );
-		setRootDir(userHome);
-		setUsername("Tom");
-		setPassword("123456x");
+		
 	}
 	
 	public static ClientSettings getInstance(){
