@@ -30,11 +30,7 @@ public class MasterSettings implements Serializable { // serialization
     private final String fSettingsFileName = ".MasterSettings.settings";
 
     public int getLocalPort() {
-        if (LocalPort != 0) {
-            return LocalPort;
-        } else {
-            return DefaultSetting.DEFAULT_MASTER_SERVEL_PORT;
-        }
+        return LocalPort;
     }
 
     public void setLocalPort(int localPort) {
@@ -82,6 +78,10 @@ public class MasterSettings implements Serializable { // serialization
     }
 
     private MasterSettings() {
+    	//set default value
+    	LocalPort = DefaultSetting.DEFAULT_MASTER_SERVEL_PORT;
+    	
+    	//over write default with settings file
         loadSettings();
     }
 

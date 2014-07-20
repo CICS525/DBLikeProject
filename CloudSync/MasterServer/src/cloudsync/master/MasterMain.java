@@ -3,22 +3,40 @@ package cloudsync.master;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.AccountInfo;
+import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.SocketStream;
 
 public class MasterMain {
 
 	public static void main(String[] args) {
 		System.out.println("MasterMain starts ...");
+		
 		MasterSettings settings = MasterSettings.getInstance();
 		settings.loadSettings();
 		SessionManager sessionManager = SessionManager.getInstance();
 		
+		try {
+			RemoteMethodProvider remoteMethodProvider = new RemoteMethodProvider();
+			Registry registry = LocateRegistry.createRegistry(RemoteInterface.RMI_PORT);
+			registry.bind(RemoteInterface.RMI_ID, remoteMethodProvider);
+			System.out.println("MasterMain RIM wating ...");
+		} catch (RemoteException | AlreadyBoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(settings.getLocalPort());
+			System.out.println("MasterMain Server Socket ready ...");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return;
