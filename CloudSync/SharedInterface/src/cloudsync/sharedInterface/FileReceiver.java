@@ -12,9 +12,8 @@ public class FileReceiver {
 	//File Receiver should be singleton design pattern
 	
 	private final int FILE_RECEVER_PORT = 234;
-	
 	private ServerSocket serverSocket = null;
-	private FileReceiver that = null;
+	private static FileReceiver that = null;
 	private BackgroundThread thread = null;
 	
 	private FileReceiver(){
@@ -24,7 +23,7 @@ public class FileReceiver {
 		thread.start();
 	}
 	
-	public FileReceiver getInstance(){
+	public static FileReceiver getInstance(){
 		if(that==null){
 			that = new FileReceiver();
 		}
@@ -73,6 +72,7 @@ public class FileReceiver {
 
 		public FileReceiverThread(Socket socket, String filename) {
 			super();
+			this.filename = filename;
 			this.streams = new SocketStream();
 			this.streams.initStream(socket);
 		}
