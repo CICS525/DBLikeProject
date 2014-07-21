@@ -20,7 +20,6 @@ public class ClientMain {
 		System.out.println("ClientMain starts ...");
 		
 		settings = ClientSettings.getInstance();
-		settings.loadSettings();
 		settings.saveSettings();
 
 		//SessionBlobClient sessionBlod = new SessionBlobClient();

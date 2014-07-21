@@ -49,11 +49,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		this.RootDir = rootDir;
 	}
 	public ServerLocation getRecentMaster() {
-		if(RecentMaster!=null){
-			return RecentMaster;
-		}else{
-			return new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_SERVEL_PORT);
-		}
+		return RecentMaster;
 	}
 	public void setRecentMaster(ServerLocation recentMaster) {
 		RecentMaster = recentMaster;
@@ -64,7 +60,14 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		//private constructor to secure singleton
 		
 		//set default value, to be over written in loading setting file
+		String userHome = System.getProperty( "user.home" );
 		
+		setUsername("testuser");
+		setPassword("testpass");
+		setRootDir(userHome);
+		setRecentMaster(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));
+		
+		loadSettings();
 	}
 	
 	public static ClientSettings getInstance(){

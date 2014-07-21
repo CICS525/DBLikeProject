@@ -109,7 +109,6 @@ public class UISwingFrame extends JFrame implements Runnable{
 			@Override
             public void windowStateChanged(WindowEvent e) {
 				System.out.println(e.getNewState());
-				System.out.println("Hellooooossosososososos");
 				
                 if(e.getNewState()==ICONIFIED){
                     setVisible(false);
@@ -248,10 +247,10 @@ public class UISwingFrame extends JFrame implements Runnable{
 	{
 		if(Application_Main.settings.loadSettings())
 		{
-		usernameTF.setText(Application_Main.settings.getUsername());
-		passwordField.setText(Application_Main.settings.getPassword());
-		directoryTF.setText(Application_Main.settings.getRootDir());
-		deviceTF.setText(frame.populateDevice());
+			usernameTF.setText(Application_Main.settings.getUsername());
+			passwordField.setText(Application_Main.settings.getPassword());
+			directoryTF.setText(Application_Main.settings.getRootDir());
+			deviceTF.setText(frame.populateDevice());
 		}else
 		{
 			deviceTF.setText(frame.populateDevice());

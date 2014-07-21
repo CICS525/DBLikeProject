@@ -20,7 +20,9 @@ public class MasterSettings implements Serializable { // serialization
 
     private static MasterSettings that = null;
 
-    private int LocalPort = 0;
+    private int LocalMessagePort = 0;
+    private int LocalRmiPort = 0;
+    private int LocalUploadPort = 0;
     private AzureConnection MasterFirst = null;
     private AzureConnection MasterSecond = null;
     private AzureConnection BlobFirst = null;
@@ -29,15 +31,31 @@ public class MasterSettings implements Serializable { // serialization
 
     private final String fSettingsFileName = ".MasterSettings.settings";
 
-    public int getLocalPort() {
-        return LocalPort;
+    public int getLocalMessagePort() {
+        return LocalMessagePort;
     }
 
-    public void setLocalPort(int localPort) {
-        LocalPort = localPort;
+    public void setLocalMessagePort(int localPort) {
+        LocalMessagePort = localPort;
     }
 
-    public AzureConnection getBlobFirst() {
+    public int getLocalRmiPort() {
+		return LocalRmiPort;
+	}
+
+	public void setLocalRmiPort(int locaLRmiPort) {
+		LocalRmiPort = locaLRmiPort;
+	}
+
+	public int getLocalUploadPort() {
+		return LocalUploadPort;
+	}
+
+	public void setLocalUploadPort(int localUploadPort) {
+		LocalUploadPort = localUploadPort;
+	}
+
+	public AzureConnection getBlobFirst() {
         return BlobFirst;
     }
 
@@ -79,7 +97,9 @@ public class MasterSettings implements Serializable { // serialization
 
     private MasterSettings() {
     	//set default value
-    	LocalPort = DefaultSetting.DEFAULT_MASTER_SERVEL_PORT;
+    	setLocalMessagePort( DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT );
+    	setLocalRmiPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
+    	setLocalUploadPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
         setBlobFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
         setBlobSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
         setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
@@ -105,7 +125,7 @@ public class MasterSettings implements Serializable { // serialization
             is = new ObjectInputStream(new FileInputStream(fSettingsFileName));
 
             MasterSettings temp = (MasterSettings) is.readObject();
-            setLocalPort(temp.getLocalPort());
+            setLocalMessagePort(temp.getLocalMessagePort());
             setMasterFirst(temp.getMasterFirst());
             setMasterSecond(temp.getMasterSecond());
             setBlobFirst(temp.getBlobFirst());

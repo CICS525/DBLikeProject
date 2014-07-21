@@ -55,21 +55,19 @@ public class Application_Main {
 	public static void initializeApplication() throws InterruptedException {
 		settings = ClientSettings.getInstance();
 
-		if (settings.loadSettings()) {
-			settings.saveSettings();
+		//if (settings.loadSettings()) {
+		//} else {
+		//	launchSwingUI();
+		//}
+		//settings.saveSettings();
 
-			masterSession = SessionMaster.getInstance();
-			masterSession.setMasterServerLocation(settings.getRecentMaster());
+		masterSession = SessionMaster.getInstance();
+		masterSession.setMasterServerLocation(settings.getRecentMaster());
 
-			System.out.println("Helloooo");
-			if (masterSession.connect(settings.getUsername(), settings.getPassword())) {
-				System.out.println("Hellooosdadasdasdadasdasdasdso");
-
-				createSystemTrayThread();
-			} else {
-				launchSwingUI();
-
-			}
+		System.out.println("Helloooo");
+		if (masterSession.connect(settings.getUsername(), settings.getPassword())) {
+			System.out.println("ApplicationMain: masterSession connect success! create SystemTray icon.");
+			createSystemTrayThread();
 		} else {
 			launchSwingUI();
 		}

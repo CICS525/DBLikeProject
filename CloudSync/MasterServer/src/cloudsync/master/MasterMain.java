@@ -19,7 +19,7 @@ public class MasterMain {
 		System.out.println("MasterMain starts ...");
 		
 		MasterSettings settings = MasterSettings.getInstance();
-		settings.loadSettings();
+
 		SessionManager sessionManager = SessionManager.getInstance();
 		
 		try {
@@ -38,7 +38,7 @@ public class MasterMain {
 		
 		ServerSocket serverSocket = null;
 		try {
-			serverSocket = new ServerSocket(settings.getLocalPort());
+			serverSocket = new ServerSocket(settings.getLocalMessagePort());
 			System.out.println("MasterMain Server Socket ready ...");
 		} catch (IOException e1) {
 			e1.printStackTrace();
