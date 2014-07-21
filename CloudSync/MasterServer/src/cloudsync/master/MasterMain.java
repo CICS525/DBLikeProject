@@ -27,10 +27,13 @@ public class MasterMain {
 			Registry registry = LocateRegistry.createRegistry(RemoteInterface.RMI_PORT);
 			registry.bind(RemoteInterface.RMI_ID, remoteMethodProvider);
 			System.out.println("MasterMain RIM wating ...");
-		} catch (RemoteException | AlreadyBoundException e1) {
+		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 			return;
+		} catch (AlreadyBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		ServerSocket serverSocket = null;

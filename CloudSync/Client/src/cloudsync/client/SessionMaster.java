@@ -59,9 +59,12 @@ public class SessionMaster {
 			Registry registry = LocateRegistry.getRegistry(masterLocation.url, RemoteInterface.RMI_PORT);
 			rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
 			System.out.println("Connected to MasterServer - RIM: " + rmi.toString());
-		} catch (RemoteException | NotBoundException e1) {
-			e1.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
 			return false;
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		//initialize the stock long link for message pushing.
