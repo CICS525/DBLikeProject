@@ -61,4 +61,14 @@ public class RemoteMethodProvider extends UnicastRemoteObject implements
         return result;
     }
 
+	@Override
+	public boolean RmiCreateAccount(String username, String password)
+			throws RemoteException {
+        System.out.println("RmiCreateAccount@RemoteMethodProvider["
+                + username + "]:" + password);
+        boolean result = AccountDatabase.getInstance()
+                .createAccount(username, password);
+        return result;
+	}
+
 }

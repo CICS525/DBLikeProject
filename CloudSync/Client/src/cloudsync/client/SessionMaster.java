@@ -69,6 +69,18 @@ public class SessionMaster {
 			return false;
 		}
 		
+		try {
+			boolean suc = rmi.RmiCheckUsernamePassword(username, password);
+			if(!suc){
+				suc = rmi.RmiCreateAccount(username, password);
+				if(!suc)
+					return false;
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
 		//initialize the stock long link for message pushing.
 		Socket socket = null;
 		try {
