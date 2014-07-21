@@ -5,10 +5,12 @@ public class DefaultSetting {
 	
 	public final static String	DEFAULT_MASTER_SERVER_URL = "127.0.0.1";
 	
-	public final static int		DEFAULT_MASTER_MESSAGE_PORT  = 389;	//use LDAP default port number to facilitate Azure Virtual Machine configure
-	public final static int		DEFAULT_MASTER_RMI_PORT     = 143;
-	public final static int		DEFAULT_MASTER_UPLOAD_PORT  = 110;
-	
+	public final static int		DEFAULT_MASTER_MESSAGE_PORT = 2001;
+	public final static int		DEFAULT_MASTER_RMI_PORT     = 2002;
+	public final static int		DEFAULT_MASTER_UPLOAD_PORT  = 2003;
+
+	public final static String	ELI_AZURE_SERVER_PUBLIC_IP = "137.135.59.120";
+
 	public final static String eli_storageConnectionString = 
 		    "DefaultEndpointsProtocol=http;" + 
 		    "AccountName=portalvhdsql3h2lbtq12d7;" + 
