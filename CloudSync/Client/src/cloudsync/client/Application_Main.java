@@ -2,6 +2,7 @@ package cloudsync.client;
 
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
@@ -15,10 +16,12 @@ public class Application_Main {
 
 	public static Thread FXThread;
 	public static Thread systemTrayThread;
+	private static Stage newStage;
+	
 	public static ClientSettings settings = null;
 	public static SessionMaster masterSession = null;
+	public static FileSysMonitor fileMonitor = null;
 
-	static Stage newStage;
 
 	public static void main(String[] args) throws InterruptedException {
 		// TODO Auto-generated method stub
@@ -53,17 +56,27 @@ public class Application_Main {
 	}
 
 	public static void initializeApplication() throws InterruptedException {
-		settings = ClientSettings.getInstance();
-		settings.loadSettings();
-
 		//if (settings.loadSettings()) {
 		//} else {
 		//	launchSwingUI();
 		//}
 		//settings.saveSettings();
 
+		settings = ClientSettings.getInstance();
+		settings.loadSettings();
+
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
+		
+		fileMonitor = new FileSysMonitor();
+		fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
+			@Override
+			public void Callback(String filename, Action action) {
+				System.out.println(filename + " " + action);
+				//SessionMaster masterSession = SessionMaster.getInstance();
+				//masterSession.uploadFile(filename);
+			}
+		});
 
 		System.out.println("Helloooo");
 		if (masterSession.connect(settings.getUsername(), settings.getPassword())) {

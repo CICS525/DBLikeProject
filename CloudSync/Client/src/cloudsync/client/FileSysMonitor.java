@@ -16,9 +16,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+
+import cloudsync.client.FileSysMonitorCallback.Action;
 
 public class FileSysMonitor {
 
@@ -28,6 +31,7 @@ public class FileSysMonitor {
 	private WatchService watcher;
 	private Path filePath;
 	private WatchKey key;
+	
 	
 	/**
 	 * Watches a directory for changes, sends to FileSysMontiorCallback
@@ -58,7 +62,14 @@ public class FileSysMonitor {
 								String filename = event.context().toString();
 								if (!ignoreList.contains(filename))
 								{
-									callback.Callback(event.context().toString());
+									Action action = FileSysMonitorCallback.Action.ERROR;
+									Kind<?> type = event.kind();
+
+									if(type==StandardWatchEventKinds.ENTRY_CREATE) { action = FileSysMonitorCallback.Action.MODIFY; } else 
+									if(type==StandardWatchEventKinds.ENTRY_MODIFY) { action = FileSysMonitorCallback.Action.MODIFY; } else 
+									if(type==StandardWatchEventKinds.ENTRY_DELETE) { action = FileSysMonitorCallback.Action.DELETE; }
+									
+									callback.Callback(event.context().toString(), action);
 								}
 							}
 							boolean valid = key.reset();

@@ -16,7 +16,7 @@ public class ClientMain {
 		return allFileMonitors;
 	}
 
-	public static void main(String[] args) {
+	public static void main_toDel(String[] args) {
 		System.out.println("ClientMain starts ...");
 		
 		settings = ClientSettings.getInstance();

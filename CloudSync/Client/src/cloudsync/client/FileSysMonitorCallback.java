@@ -1,5 +1,8 @@
 package cloudsync.client;
 
+
 public interface FileSysMonitorCallback {
-	public void Callback(String filename);
+	public enum Action {MODIFY, DELETE, ERROR};
+
+	public void Callback(String filename, Action action);
 }
