@@ -63,7 +63,9 @@ public class AccountDatabase {
         acc.setMainServer(settings.getMasterFirst().toString());
         acc.setBackupServer(settings.getMasterSecond().toString());
 
-        return addAccount(acc);
+        boolean ans = addAccount(acc);
+        System.out.println("AccountDatabase:createAccount(" + username + "," + password + ")=" + ans);
+        return ans;
     }
 
     public boolean updateAccount(AccountDBRow acc) {
