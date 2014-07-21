@@ -12,17 +12,19 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.nio.file.attribute.*;
 import static java.nio.file.LinkOption.*;
-
 import cloudsync.client.FileSysMonitorCallback.Action;
 
 public class FileSysMonitor {
@@ -31,8 +33,11 @@ public class FileSysMonitor {
 	private ArrayList<String> ignoreList = new ArrayList<String>();
 	private Thread watcherThread;
 	private WatchService watcher;
-	private Path filePath;
+	private Path rootFolder;
 	private WatchKey key;
+	
+	private Object watcherLock = new Object();
+	private Object eventLock = new Object();
 	
 	
 	/**
@@ -46,9 +51,9 @@ public class FileSysMonitor {
 	 */
 	public boolean StartListen(String directory, final FileSysMonitorCallback callback) {
 		try {
-			watcher = FileSystems.getDefault().newWatchService();
-			filePath = Paths.get(directory);
-			filePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+			synchronized (watcherLock)  { watcher = FileSystems.getDefault().newWatchService(); } //lock the watcher
+			rootFolder = Paths.get(directory);
+			rootFolder.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
 			
@@ -97,6 +102,18 @@ public class FileSysMonitor {
 			return false;
 		}
 		return true;
+	}
+	
+	private void registerSubfolders(final Path root) throws IOException {
+		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+			@Override 
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException
+			{
+				dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
+						StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+				return FileVisitResult.CONTINUE;
+			}
+		});
 	}
 	
 	/**
