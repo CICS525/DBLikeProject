@@ -12,6 +12,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -20,6 +21,7 @@ import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import static java.nio.file.LinkOption.*;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
 
@@ -60,11 +62,16 @@ public class FileSysMonitor {
 							key = watcher.take();
 							for (WatchEvent<?> event: key.pollEvents()) {
 								String filename = event.context().toString();
+								Path child = (Path) event.context();
+								
+								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+									break; // ignore because it is a folder.
+								}
+								
 								if (!ignoreList.contains(filename))
 								{
 									Action action = FileSysMonitorCallback.Action.ERROR;
 									Kind<?> type = event.kind();
-
 									if(type==StandardWatchEventKinds.ENTRY_CREATE) { action = FileSysMonitorCallback.Action.MODIFY; } else 
 									if(type==StandardWatchEventKinds.ENTRY_MODIFY) { action = FileSysMonitorCallback.Action.MODIFY; } else 
 									if(type==StandardWatchEventKinds.ENTRY_DELETE) { action = FileSysMonitorCallback.Action.DELETE; }

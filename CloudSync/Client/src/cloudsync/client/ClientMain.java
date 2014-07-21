@@ -36,19 +36,21 @@ public class ClientMain {
 		/*
 		if(allFileMonitors==null){
 			allFileMonitors = new ArrayList<FileSysMonitor>();
-		}
+		} */
 		FileSysMonitor fileMonitor = new FileSysMonitor();
-		fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
+		fileMonitor.StartListen(System.getProperty("user.dir"), new FileSysMonitorCallback(){
 
 			@Override
-			public void Callback(String filename) {
-				SessionMaster masterSession = SessionMaster.getInstance();
-				masterSession.uploadFile(filename);
+			public void Callback(String filename, Action action) {
+				// TODO Auto-generated method stub
+				System.out.println("Callback fired!");
+				System.out.println("This is the callback action :"+ action.toString());
+				
 			}
 			
 		});
-		allFileMonitors.add(fileMonitor);
-		*/
+		//allFileMonitors.add(fileMonitor);
+		
 		
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
