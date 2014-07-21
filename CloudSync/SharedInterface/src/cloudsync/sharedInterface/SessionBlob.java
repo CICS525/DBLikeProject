@@ -19,10 +19,7 @@ public class SessionBlob {
 	
 	public void blobTest(){
 		// Define the connection-string with your values
-		final String storageConnectionString = 
-			    "DefaultEndpointsProtocol=http;" + 
-			    "AccountName=portalvhdsql3h2lbtq12d7;" + 
-			    "AccountKey=uC6oYc8BafbOaFme6dZp5MKgZUQrDk+wAz0vCf7ISC1JHDolgwIYxlHuKgAXWseRxMNlHpqjNRgtw90qE7wvzA==";
+		final String storageConnectionString = DefaultSetting.eli_storageConnectionString;
 		
 		String containerName = "MyTestContainerInJava".toLowerCase();
 		

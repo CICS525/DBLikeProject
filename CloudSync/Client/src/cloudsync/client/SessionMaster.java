@@ -90,7 +90,7 @@ public class SessionMaster {
 		thread = new SocketThread();
 		thread.start();
 		
-		return false;
+		return true;
 	}
 	
 	public boolean disconnect(){

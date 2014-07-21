@@ -8,11 +8,7 @@ public class AzureConnection implements Serializable{
 	final private String accountInfo;
 	
 	public AzureConnection(){
-		final String defaultStorageConnectionString = 
-			    "DefaultEndpointsProtocol=http;" + 
-			    "AccountName=portalvhdsql3h2lbtq12d7;" + 
-			    "AccountKey=uC6oYc8BafbOaFme6dZp5MKgZUQrDk+wAz0vCf7ISC1JHDolgwIYxlHuKgAXWseRxMNlHpqjNRgtw90qE7wvzA==";
-		accountInfo = defaultStorageConnectionString; 
+		accountInfo = DefaultSetting.eli_storageConnectionString;	//default setting 
 	}
 	
 	public AzureConnection(String accountInfo){

@@ -80,6 +80,11 @@ public class MasterSettings implements Serializable { // serialization
     private MasterSettings() {
     	//set default value
     	LocalPort = DefaultSetting.DEFAULT_MASTER_SERVEL_PORT;
+        setBlobFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        setBlobSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
+        setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        setMasterFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        setMasterSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
     	
     	//over write default with settings file
         loadSettings();
