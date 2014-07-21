@@ -10,6 +10,7 @@ import java.rmi.registry.Registry;
 
 import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.AccountInfo;
+import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.SocketStream;
 
@@ -24,10 +25,11 @@ public class MasterMain {
 		SessionManager sessionManager = SessionManager.getInstance();
 		
 		try {
+			int rmiPort = settings.getLocalRmiPort();
 			RemoteMethodProvider remoteMethodProvider = new RemoteMethodProvider();
-			Registry registry = LocateRegistry.createRegistry(RemoteInterface.RMI_PORT);
+			Registry registry = LocateRegistry.createRegistry(rmiPort);
 			registry.bind(RemoteInterface.RMI_ID, remoteMethodProvider);
-			System.out.println("MasterMain RIM wating ...");
+			System.out.println("MasterMain Server: RIM wating ...@" + rmiPort);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,10 +41,11 @@ public class MasterMain {
 		
 		ServerSocket serverSocket = null;
 		try {
-			serverSocket = new ServerSocket(settings.getLocalMessagePort());
-			System.out.println("MasterMain Server Socket ready ...");
-		} catch (IOException e1) {
-			e1.printStackTrace();
+			int msgPort = settings.getLocalMessagePort();
+			serverSocket = new ServerSocket(msgPort);
+			System.out.println("MasterMain Server: Command Message waiting ...@" + msgPort);
+		} catch (IOException e) {
+			e.printStackTrace();
 			return;
 		}
 		
@@ -54,7 +57,7 @@ public class MasterMain {
 			AccountInfo account = null;
 			try {
 				socket = serverSocket.accept();
-				System.out.println("MasterMain: Client socket coming. " + socket.getRemoteSocketAddress().toString());
+				System.out.println("MasterMain Server: Client socket coming. " + socket.getRemoteSocketAddress().toString());
 				SocketStream socketStream = new SocketStream();
 				socketStream.initStream(socket);
 

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public interface RemoteInterface extends Remote{
 	public final String RMI_ID = "CloudSync_RMI";
-	public final int RMI_PORT = 123;
 
 	public boolean RmiCheckUsernamePassword(String username, String password) throws RemoteException;
 	

@@ -10,6 +10,7 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 import cloudsync.sharedInterface.AccountInfo;
+import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
@@ -56,9 +57,10 @@ public class SessionMaster {
 		
 		//initialize the RMI interface.
 		try {
-			Registry registry = LocateRegistry.getRegistry(masterLocation.url, RemoteInterface.RMI_PORT);
+			System.out.println("Connecting to MasterServer - RIM: " + masterLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+			Registry registry = LocateRegistry.getRegistry(masterLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
 			rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
-			System.out.println("Connected to MasterServer - RIM: " + rmi.toString());
+			System.out.println("~Connected to MasterServer - RIM: " + rmi.toString());
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			return false;
@@ -70,8 +72,9 @@ public class SessionMaster {
 		//initialize the stock long link for message pushing.
 		Socket socket = null;
 		try {
-			socket = new Socket(masterLocation.url, masterLocation.port);
-			System.out.println("Connected to MasterServer - Command Message: " + socket.getRemoteSocketAddress().toString());
+			System.out.println("Connecting to MasterServer - Command Message: " + masterLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
+			socket = new Socket(masterLocation.url, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
+			System.out.println("~Connected to MasterServer - Command Message: " + socket.getRemoteSocketAddress().toString());
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			return false;
