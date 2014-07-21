@@ -16,11 +16,11 @@ public class ClientMain {
 		return allFileMonitors;
 	}
 
-	public static void main_toDel(String[] args) {
+	public static void main(String[] args) {
 		System.out.println("ClientMain starts ...");
 		
-		settings = ClientSettings.getInstance();
-		settings.loadSettings();
+		//settings = ClientSettings.getInstance();
+		//settings.loadSettings();
 
 		//SessionBlobClient sessionBlod = new SessionBlobClient();
 		////sessionBlod.blobTest();
@@ -56,6 +56,7 @@ public class ClientMain {
 		// This is in order to handle the file could be modified when the client is not running.
 		// Here should scan all local file timestamps to compate with the one in local metadata.
 		
+		/*
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		masterSession.connect(settings.getUsername(), settings.getPassword());
