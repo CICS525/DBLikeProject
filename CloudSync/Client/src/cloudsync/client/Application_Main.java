@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import cloudsync.sharedInterface.AzureConnection;
+import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.SessionBlob;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -75,6 +79,22 @@ public class Application_Main {
 				System.out.println(filename + " " + action);
 				//SessionMaster masterSession = SessionMaster.getInstance();
 				//masterSession.uploadFile(filename);
+				
+				String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
+				SessionBlob sessionBlob = new SessionBlob();
+				Metadata metadata = new Metadata();
+				metadata.filename = filename;
+				metadata.blobKey = filename;
+				metadata.blobServer = new AzureConnection(DefaultSetting.eli_storageConnectionString);
+				metadata.blobBackup = new AzureConnection(DefaultSetting.chris_storageConnectionString);
+				boolean suc = false;
+				if ( FileSysMonitorCallback.Action.MODIFY == action ) {
+					suc = sessionBlob.uploadFile(absoluteFilename, metadata);
+					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
+				} else if ( FileSysMonitorCallback.Action.DELETE == action) {
+					suc = sessionBlob.deleteFile(metadata);
+					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
+				}
 			}
 		});
 

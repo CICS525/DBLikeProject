@@ -261,7 +261,7 @@ public class SessionBlob {
 		    return suc;
 		}
 		
-	    suc = uploadLocalFileToAzureStorageBlob(filename, metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
+	    suc = uploadLocalFileToAzureStorageBlob(filename, metadata.blobBackup.toString(), DEFAULTCONTAINER, metadata.blobKey);
         if (!suc) {
             deleteAzureStorageBlob(metadata.blobServer.toString(), DEFAULTCONTAINER, metadata.blobKey);
             return suc;
