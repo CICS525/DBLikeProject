@@ -16,10 +16,9 @@ import cloudsync.master.MasterSettings;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 import cloudsync.sharedInterface.SessionBlob;
+import cloudsync.sharedInterface.DefaultSetting;
 
 public class Metadatabase {
-
-    private static final String tableName = "meta";
 
     private CloudTable table;
 
@@ -76,9 +75,10 @@ public class Metadatabase {
         AccountDatabase.getInstance().updateAccount(account);
 
         // update meta data
-        Metadatabase main = new Metadatabase(account.getMainServer(), tableName);
+        Metadatabase main = new Metadatabase(account.getMainServer(),
+                DefaultSetting.metadatabase_table_name);
         Metadatabase backup = new Metadatabase(account.getBackupServer(),
-                tableName);
+                DefaultSetting.metadatabase_table_name);
         main.addRecord(metaRow);
         backup.addRecord(metaRow);
 
@@ -126,7 +126,7 @@ public class Metadatabase {
         AccountDBRow account = AccountDatabase.getInstance().getAccount(
                 username);
         Metadatabase server = new Metadatabase(account.getMainServer(),
-                tableName);
+                DefaultSetting.metadatabase_table_name);
         return server;
     }
 
@@ -246,37 +246,37 @@ public class Metadatabase {
         Metadatabase db = new Metadatabase();
         db.table = AzureStorageConnection.connectToTable(MasterSettings
                 .getInstance().getMasterFirst().toString(), "testmeta");
-        
+
         Metadata meta = new Metadata();
-        
+
         meta.parent = 0;
         meta.status = STATUS.HISTORY;
         meta.blobServer = MasterSettings.getInstance().getBlobFirst();
         meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
-        
+
         for (int i = 0; i < 5; i++) {
             meta.filename = "testfile" + String.valueOf(i);
             meta.globalCounter = 1 + i;
-            
+
             meta.timestamp = new Date();
             meta.blobKey = getSha1(meta.filename + meta.timestamp.toString());
             MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
-            
+
             db.addRecord(metadb);
         }
-        
+
         meta.parent = 5;
         meta.globalCounter = 6;
         meta.status = STATUS.LAST;
         meta.blobServer = MasterSettings.getInstance().getBlobFirst();
         meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
-        
+
         MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
-        
+
         db.addRecord(metadb);
-        
+
         MetadataDBRow last = db.getLast("testfile4", "testuser");
-        
+
         if (last == null) {
             try {
                 db.table.delete();
@@ -285,19 +285,18 @@ public class Metadatabase {
             }
             return false;
         }
-        
+
         meta.parent = 5;
         meta.globalCounter = 7;
-        
+
         last.setStatus(STATUS.HISTORY.toString());
         db.updateRecord(last);
-        
+
         Iterable<MetadataDBRow> ma = db.retrieveRecordSince("testuser", 1);
         for (MetadataDBRow row : ma) {
             System.out.println(row.getFilename() + row.getRowKey());
         }
-        
-        
+
         try {
             db.table.delete();
         } catch (StorageException e) {
@@ -305,6 +304,5 @@ public class Metadatabase {
         }
         return true;
     }
-    
 
 }

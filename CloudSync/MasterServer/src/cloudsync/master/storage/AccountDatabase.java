@@ -1,6 +1,7 @@
 package cloudsync.master.storage;
 
 import cloudsync.master.MasterSettings;
+import cloudsync.sharedInterface.DefaultSetting;
 
 import com.microsoft.azure.storage.*;
 import com.microsoft.azure.storage.table.*;
@@ -9,13 +10,12 @@ public class AccountDatabase {
     // Singleton design pattern
     private static AccountDatabase that = null;
 
-    private final String tableName = "account";
-
     private CloudTable table;
 
     private AccountDatabase() {
         String conn = MasterSettings.getInstance().getEntryServer().toString();
-        table = AzureStorageConnection.connectToTable(conn, tableName);
+        table = AzureStorageConnection.connectToTable(conn,
+                DefaultSetting.account_table_name);
     }
 
     AccountDatabase(String connStr, String tableName) {
