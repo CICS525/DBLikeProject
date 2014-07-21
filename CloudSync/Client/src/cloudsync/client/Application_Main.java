@@ -78,7 +78,7 @@ public class Application_Main {
 			}
 		});
 
-		System.out.println("Helloooo");
+		System.out.println("Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
 		if (masterSession.connect(settings.getUsername(), settings.getPassword())) {
 			System.out.println("ApplicationMain: masterSession connect success! create SystemTray icon.");
 			createSystemTrayThread();

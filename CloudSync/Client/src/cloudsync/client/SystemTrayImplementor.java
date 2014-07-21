@@ -28,6 +28,7 @@ public class SystemTrayImplementor implements Runnable {
 			// TODO Auto-generated method stub
 			System.out.println("Inside creating System Tray");
 			try {
+				String iconfile = "/images/home_2.png";
 				if (SystemTray.isSupported()) {
 					System.out.println("system tray supported");
 					tray = SystemTray.getSystemTray();
@@ -61,7 +62,7 @@ public class SystemTrayImplementor implements Runnable {
 					popup.add(defaultItem);
 					popup.add(exitItem);
 					System.out.println(image.toString());
-					trayIcon = new TrayIcon(createImage("/images/icon.png",
+					trayIcon = new TrayIcon(createImage(iconfile,
 							"tray icon"), "Dropbox Application", popup);
 					trayIcon.setImageAutoSize(true);
 					tray.add(trayIcon);

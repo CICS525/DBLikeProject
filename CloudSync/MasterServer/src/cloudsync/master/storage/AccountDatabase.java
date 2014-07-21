@@ -47,7 +47,9 @@ public class AccountDatabase {
             return false;
         }
 
-        return acc.getPassword().equals(password);
+        boolean ans = acc.getPassword().equals(password);
+        System.out.println("AccountDatabase:login(" + username + "," + password + ")=" + ans);
+        return ans;
     }
 
     public boolean createAccount(String username, String password)
