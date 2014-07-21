@@ -54,6 +54,7 @@ public class Application_Main {
 
 	public static void initializeApplication() throws InterruptedException {
 		settings = ClientSettings.getInstance();
+		settings.loadSettings();
 
 		//if (settings.loadSettings()) {
 		//} else {

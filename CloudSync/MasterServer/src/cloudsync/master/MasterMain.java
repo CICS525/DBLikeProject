@@ -19,6 +19,7 @@ public class MasterMain {
 		System.out.println("MasterMain starts ...");
 		
 		MasterSettings settings = MasterSettings.getInstance();
+		settings.loadSettings();
 
 		SessionManager sessionManager = SessionManager.getInstance();
 		

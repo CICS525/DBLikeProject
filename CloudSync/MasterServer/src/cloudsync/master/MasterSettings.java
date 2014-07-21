@@ -10,7 +10,6 @@ import java.io.Serializable;
 
 import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.DefaultSetting;
-import cloudsync.sharedInterface.ServerLocation;
 
 public class MasterSettings implements Serializable { // serialization
                                                       // initialized
@@ -102,12 +101,9 @@ public class MasterSettings implements Serializable { // serialization
     	setLocalUploadPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
         setBlobFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
         setBlobSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
-        setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
         setMasterFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
         setMasterSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
-    	
-    	//over write default with settings file
-        loadSettings();
+        setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
     }
 
     public static MasterSettings getInstance() {
@@ -126,6 +122,8 @@ public class MasterSettings implements Serializable { // serialization
 
             MasterSettings temp = (MasterSettings) is.readObject();
             setLocalMessagePort(temp.getLocalMessagePort());
+        	setLocalRmiPort( temp.getLocalRmiPort() );
+        	setLocalUploadPort( temp.getLocalUploadPort() );
             setMasterFirst(temp.getMasterFirst());
             setMasterSecond(temp.getMasterSecond());
             setBlobFirst(temp.getBlobFirst());

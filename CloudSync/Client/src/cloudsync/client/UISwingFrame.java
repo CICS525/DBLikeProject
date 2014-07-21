@@ -42,7 +42,7 @@ public class UISwingFrame extends JFrame implements Runnable{
 	private JPasswordField passwordField;
 	private JButton btnRunInBackground;
 	private JButton btnNewButton;
-	private JButton btnNewButton_1;
+	private JButton btnNewButtonOpen;
 
 
 	/**
@@ -74,6 +74,7 @@ public class UISwingFrame extends JFrame implements Runnable{
 		btnRunInBackground = new JButton("Run in Background");
 		btnRunInBackground.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("ActionEvent: RunInBackground");
 			}
 		});
 		
@@ -96,10 +97,10 @@ public class UISwingFrame extends JFrame implements Runnable{
 			}
 		});
 		
-		btnNewButton_1 = new JButton("Open");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		btnNewButtonOpen = new JButton("Open");
+		btnNewButtonOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				System.out.println("ActionEvent: ButtonOpen");
 				Submit();
 			}
 		});
@@ -153,7 +154,7 @@ public class UISwingFrame extends JFrame implements Runnable{
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addGap(103)
-								.addComponent(btnNewButton_1, GroupLayout.PREFERRED_SIZE, 88, Short.MAX_VALUE))
+								.addComponent(btnNewButtonOpen, GroupLayout.PREFERRED_SIZE, 88, Short.MAX_VALUE))
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addComponent(directoryTF, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED)
@@ -188,7 +189,7 @@ public class UISwingFrame extends JFrame implements Runnable{
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnRunInBackground)
-						.addComponent(btnNewButton_1))
+						.addComponent(btnNewButtonOpen))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
@@ -245,29 +246,23 @@ public class UISwingFrame extends JFrame implements Runnable{
 	
 	public void initializeFrame()
 	{
-		if(Application_Main.settings.loadSettings())
-		{
-			usernameTF.setText(Application_Main.settings.getUsername());
-			passwordField.setText(Application_Main.settings.getPassword());
-			directoryTF.setText(Application_Main.settings.getRootDir());
-			deviceTF.setText(frame.populateDevice());
-		}else
-		{
-			deviceTF.setText(frame.populateDevice());
-		}
+		usernameTF.setText(Application_Main.settings.getUsername());
+		passwordField.setText(Application_Main.settings.getPassword());
+		directoryTF.setText(Application_Main.settings.getRootDir());
+		deviceTF.setText(frame.populateDevice());
+		
+		//if(Application_Main.settings.loadSettings())
+		//{
+		//}else
+		//{
+		//	deviceTF.setText(frame.populateDevice());
+		//}
 	}
 	
 	public  String  populateDevice()
 	{
-		String hostname="";
-		try {
-            InetAddress addr;
-            addr = InetAddress.getLocalHost();
-            hostname = addr.getHostName();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-		System.out.println(hostname + "here");
+		String hostname = ClientSettings.getSystemHostname();
+		System.out.println("populateDevice() hostname=" + hostname);
 		return hostname;
 	}
 	

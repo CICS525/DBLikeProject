@@ -63,8 +63,8 @@ public class SessionMaster {
 			e.printStackTrace();
 			return false;
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 		
 		//initialize the stock long link for message pushing.

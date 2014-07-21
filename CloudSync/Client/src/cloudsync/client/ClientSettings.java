@@ -2,12 +2,17 @@ package cloudsync.client;
 
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
@@ -61,13 +66,24 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		
 		//set default value, to be over written in loading setting file
 		String userHome = System.getProperty( "user.home" );
+		String folder = null;
+		if(!userHome.endsWith(File.separator))
+			folder = userHome + File.separator;
+		else
+			folder = userHome;
+		folder += DefaultSetting.DEFAULT_SYNC_DIR_NAME;
 		
+		File directory = new File(folder);
+		if(!directory.exists()){
+			if( !directory.mkdir() )
+				folder = userHome;
+		}
+
 		setUsername("testuser");
 		setPassword("testpass");
-		setRootDir(userHome);
+		setDeviceName(getSystemHostname());
+		setRootDir(folder);
 		setRecentMaster(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));
-		
-		loadSettings();
 	}
 	
 	public static ClientSettings getInstance(){
@@ -131,5 +147,17 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 			}
 		}
 		return ans;
+	}
+	
+	public static String getSystemHostname(){
+		String hostname=null;
+		try {
+            InetAddress addr;
+            addr = InetAddress.getLocalHost();
+            hostname = addr.getHostName();
+        } catch (UnknownHostException ex) {
+            //Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+		return hostname;
 	}
 }
