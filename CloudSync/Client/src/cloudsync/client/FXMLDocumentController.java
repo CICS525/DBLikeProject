@@ -68,7 +68,8 @@ public class FXMLDocumentController implements Initializable {
      * Initializes the controller class.
      */
     public void initialize(URL url, ResourceBundle rb) {
-        
+    	initializeComponents();
+        InitializeUI();
        
 	}    
 
@@ -76,6 +77,9 @@ public class FXMLDocumentController implements Initializable {
 	@FXML
     private void OpenSessionButtonAction(ActionEvent event) throws InterruptedException {
     	Application_Main.createSystemTrayThread();
+    	OpenSession.setDisable(true);
+    	StopSession.setDisable(false);
+    	RunInBackGround.setDisable(false);
     }
 
     @FXML // Directory Button Code
@@ -119,15 +123,27 @@ public class FXMLDocumentController implements Initializable {
         SystemTrayImplementor.tray.remove(SystemTrayImplementor.trayIcon);
         SystemTrayImplementor.added = false;
         Application_Main.systemTrayThread.stop();
+        OpenSession.setDisable(false);
+        RunInBackGround.setDisable(true);
+        StopSession.setDisable(true);
+        
         
         
     }
     
     public void InitializeUI()
     {
-    	if(!Application_Main.systemTrayThread.equals(null))
+    	UsernameTF.setText(Application_Main.settings.getUsername());
+    	PasswordTF.setText(Application_Main.settings.getPassword());
+    	DirectoryTF.setText(Application_Main.settings.getRootDir());
+    	if(SystemTrayImplementor.added)
     	{
-    		
+    		OpenSession.setDisable(true);
+    	}else
+    	{
+    		OpenSession.setDisable(false);
+    		StopSession.setDisable(true);
+    		RunInBackGround.setDisable(true);
     	}
     }
     
