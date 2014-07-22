@@ -4,10 +4,9 @@ package cloudsync.client;
  * Class that represents a file system monitor.
  * @author Aaron Cheng
  * 
- * TODO: Only catch the SECOND modify event by comparing modify event times.
- *
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -43,7 +42,6 @@ public class FileSysMonitor {
 	private final HashMap<WatchKey, Path> keys = new HashMap<WatchKey, Path>();
 	
 	private Object watcherLock = new Object();
-	private Object eventLock = new Object();
 	
 	
 	/**
@@ -68,11 +66,15 @@ public class FileSysMonitor {
 					try
 					{
 						WatchKey key;
+						long oldTimeStamp = 0;
+						long newTimeStamp = 0;
 						while (isListening)
 						{
 							key = watcher.take();
 							for (WatchEvent<?> event: key.pollEvents()) {
 								Path child = (Path) event.context();
+								File currFile = child.toFile();
+								newTimeStamp = currFile.lastModified();
 								String filename = child.toAbsolutePath().toString();
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
@@ -82,11 +84,17 @@ public class FileSysMonitor {
 								{
 									Action action = FileSysMonitorCallback.Action.ERROR;
 									Kind<?> type = event.kind();
-									if(type==StandardWatchEventKinds.ENTRY_CREATE) { action = FileSysMonitorCallback.Action.MODIFY; } else 
-									if(type==StandardWatchEventKinds.ENTRY_MODIFY) { action = FileSysMonitorCallback.Action.MODIFY; } else 
-									if(type==StandardWatchEventKinds.ENTRY_DELETE) { action = FileSysMonitorCallback.Action.DELETE; }
+									if(type==StandardWatchEventKinds.ENTRY_CREATE){	action = FileSysMonitorCallback.Action.MODIFY;} else 
+									if((type==StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp))
+									{ 
+										action = FileSysMonitorCallback.Action.MODIFY;
+									} else if (type == StandardWatchEventKinds.ENTRY_MODIFY && (newTimeStamp <= oldTimeStamp))
+									{
+										continue;
+									} else if(type==StandardWatchEventKinds.ENTRY_DELETE) {	action = FileSysMonitorCallback.Action.DELETE; }
 									callback.Callback(child.toAbsolutePath().toString(), action);
 								}
+								oldTimeStamp = newTimeStamp;
 							}
 							boolean valid = key.reset();
 							if (!valid) {
@@ -146,33 +154,6 @@ public class FileSysMonitor {
 			isListening = false;
 		}
 		return !isListening ? true : false;
-	}
-	
-	/**
-	 * Checks if the file is currently locked.
-	 * Default value is true; do not assumed file is not locked.
-	 * @param filename
-	 * @return
-	 */
-	private boolean isLocked(String filename) throws IOException {
-		boolean isLocked = true;
-		FileChannel fileChannel = new RandomAccessFile(filename, "rw").getChannel();
-		FileLock lock = null;
-		try 
-		{
-			lock = fileChannel.tryLock();
-			if (lock != null) {
-				lock.close(); //file isn't locked. we clsoe because trylock will actually return a lock.
-				isLocked = false;
-			}
-		} catch (Exception e) {
-			isLocked = true;
-		} finally {
-			lock.release();
-			lock.close();
-		}
-		fileChannel.close();
-		return isLocked;		
 	}
 	
 	/**
