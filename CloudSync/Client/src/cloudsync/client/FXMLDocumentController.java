@@ -6,14 +6,6 @@
 
 package cloudsync.client;
 
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowStateListener;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URL;
@@ -22,7 +14,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -32,7 +23,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
@@ -53,6 +43,14 @@ public class FXMLDocumentController implements Initializable {
     private Button ChooseDirectoryButton;
     @FXML
     public CheckBox remembercheck;
+    @FXML
+    public Button OpenSession;
+    @FXML 
+    public Button StopSession;
+    @FXML
+    public Button NewUser;
+    @FXML
+    public Button RunInBackGround;
     
     
 
@@ -71,38 +69,13 @@ public class FXMLDocumentController implements Initializable {
      */
     public void initialize(URL url, ResourceBundle rb) {
         
-        // Initializing the Choose Directory Button Event Handler
-        ChooseDirectoryButton.setOnAction(new EventHandler<ActionEvent>() {
-             public void handle(ActionEvent event) {
-                  DirectoryChooser directoryChooser = new DirectoryChooser();
-                  directoryChooser.setTitle("This is my file ch");
-                  //Show open file dialog
-                  File file = directoryChooser.showDialog(null);
-                 if(file!=null){
-                      DirectoryTF.setText(file.getPath());
-                 }
-              }
-        });
-        
-        // Code to get the Host Name
-        try {
-            InetAddress addr;
-            addr = InetAddress.getLocalHost();
-            String hostname = addr.getHostName();
-            DeviceNameTF.setText(hostname);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
        
 	}    
 
-    @FXML
+    @SuppressWarnings("deprecation")
+	@FXML
     private void OpenSessionButtonAction(ActionEvent event) throws InterruptedException {
-             System.out.println(Application_Main.systemTrayThread.getName());
-             SystemTrayImplementor.tray.remove(SystemTrayImplementor.trayIcon);
-             SystemTrayImplementor.added = false;
-             Application_Main.systemTrayThread.stop();
+    	Application_Main.createSystemTrayThread();
     }
 
     @FXML // Directory Button Code
@@ -120,28 +93,70 @@ public class FXMLDocumentController implements Initializable {
         this.thisStage = currentStage;
         thisStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
      	   public void handle(WindowEvent t) {
-     	      System.out.println("It is here");
      	      //Platform.exit();
      	   }
      	});
     }
-    
-    // Validate the Username and Password and create the master Connection,Socket
-    public boolean validateWithMaster()
-    {
-    	/*masterSession = SessionMaster.getInstance();
-		masterSession.setMasterServerLocation(settings.getRecentMaster());
-		masterSession.connect(settings.getUsername(), settings.getPassword());
-    	return masterSession.connect(settings.getUsername(), settings.getPassword());*/
-    	return true;
-    }
-    
+   
     @FXML
     public void runBackGroundButtonAction(ActionEvent event)
     {
+    	UIThread.closeStage();
         Application_Main.createSystemTrayThread();
+        //thisStage.getOwner().hide();
     }
     
-   
+    @FXML
+    public void NewUserButtonAction(ActionEvent event)
+    {
+    	
+    }
     
+    @FXML
+    public void StopSessionButtonAction(ActionEvent event)
+    {
+    	System.out.println("Stopping the SystemTray Thread");
+        SystemTrayImplementor.tray.remove(SystemTrayImplementor.trayIcon);
+        SystemTrayImplementor.added = false;
+        Application_Main.systemTrayThread.stop();
+        
+        
+    }
+    
+    public void InitializeUI()
+    {
+    	if(!Application_Main.systemTrayThread.equals(null))
+    	{
+    		
+    	}
+    }
+    
+    public void initializeComponents()
+    {
+    	System.out.println("Initialize components");
+    	 // Initializing the Choose Directory Button Event Handler
+        ChooseDirectoryButton.setOnAction(new EventHandler<ActionEvent>() {
+             public void handle(ActionEvent event) {
+                  DirectoryChooser directoryChooser = new DirectoryChooser();
+                  directoryChooser.setTitle("This is my file ch");
+                  //Show open file dialog
+                  File file = directoryChooser.showDialog(null);
+                  if(file!=null){
+                      DirectoryTF.setText(file.getPath());
+                 }
+              }
+        });
+        
+        // Code to get the Host Name
+        try {
+            InetAddress addr;
+            addr = InetAddress.getLocalHost();
+            String hostname = addr.getHostName();
+            DeviceNameTF.setText(hostname);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+       
+    }
 }

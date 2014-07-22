@@ -36,11 +36,15 @@ public class SystemTrayImplementor implements Runnable {
 
 					Image image = Toolkit.getDefaultToolkit().getImage(
 							"/images/icon.png");
-					System.out.println("Hello");
 					ActionListener UIListener = new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
-							System.out.println("I am here inside the Event111");
-							UISwingFrame.frame.makeVisible();
+							if(UIThread.added)
+							{
+								UIThread.openStage();
+							}else
+							{
+								Application_Main.launchUIThread();
+							}
 						}
 					};
 

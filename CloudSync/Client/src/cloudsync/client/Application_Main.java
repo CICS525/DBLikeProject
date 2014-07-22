@@ -1,26 +1,14 @@
 package cloudsync.client;
-
-import java.awt.EventQueue;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
 import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.SessionBlob;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Application_Main {
 
 	public static Thread FXThread;
 	public static Thread systemTrayThread;
-	private static Stage newStage;
 	
 	public static ClientSettings settings = null;
 	public static SessionMaster masterSession = null;
@@ -28,17 +16,18 @@ public class Application_Main {
 
 
 	public static void main(String[] args) throws InterruptedException {
-		// TODO Auto-generated method stub
-		// launchSwingUI();
-		// createSystemTrayThread();
-		// launchUIThread();
+		UIThread.added = false;
+		SystemTrayImplementor.added = false;
 		initializeApplication();
 	}
 
 	public static void createSystemTrayThread() {
 		System.out.println("Creating the System Tray Thread");
+		if(!SystemTrayImplementor.added)
+		{
 		systemTrayThread = new Thread(new SystemTrayImplementor());
 		systemTrayThread.start();
+		}
 	}
 
 	public static void clearSystemTray() {
@@ -50,8 +39,12 @@ public class Application_Main {
 	}
 
 	public static void launchUIThread() {
+		if(!UIThread.added)
+		{
 		FXThread = new Thread(new UIThread());
 		FXThread.start();
+		}
+		
 	}
 
 	public static void launchSwingUI() throws InterruptedException {
@@ -60,12 +53,6 @@ public class Application_Main {
 	}
 
 	public static void initializeApplication() throws InterruptedException {
-		//if (settings.loadSettings()) {
-		//} else {
-		//	launchSwingUI();
-		//}
-		//settings.saveSettings();
-
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
 
@@ -77,9 +64,6 @@ public class Application_Main {
 			@Override
 			public void Callback(String filename, Action action) {
 				System.out.println(filename + " " + action);
-				//SessionMaster masterSession = SessionMaster.getInstance();
-				//masterSession.uploadFile(filename);
-				
 				String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
 				SessionBlob sessionBlob = new SessionBlob();
 				Metadata metadata = new Metadata();
@@ -101,10 +85,11 @@ public class Application_Main {
 		System.out.println("Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
 		if (masterSession.connect(settings.getUsername(), settings.getPassword())) {
 			System.out.println("ApplicationMain: masterSession connect success! create SystemTray icon.");
+			System.out.println("Launching System Tray");
 			createSystemTrayThread();
 		} else {
-			launchSwingUI();
+			System.out.println("Launching UI");
+			launchUIThread();
 		}
 	}
-
 }
