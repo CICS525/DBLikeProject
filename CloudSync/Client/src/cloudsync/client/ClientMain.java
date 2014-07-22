@@ -16,11 +16,11 @@ public class ClientMain {
 		return allFileMonitors;
 	}
 
-	public static void main(String[] args) {
+	public static void main_toDel(String[] args) {
 		System.out.println("ClientMain starts ...");
 		
-		//settings = ClientSettings.getInstance();
-		//settings.loadSettings();
+		settings = ClientSettings.getInstance();
+		settings.loadSettings();
 
 		//SessionBlobClient sessionBlod = new SessionBlobClient();
 		////sessionBlod.blobTest();
@@ -36,27 +36,24 @@ public class ClientMain {
 		/*
 		if(allFileMonitors==null){
 			allFileMonitors = new ArrayList<FileSysMonitor>();
-		} */
+		}
 		FileSysMonitor fileMonitor = new FileSysMonitor();
-		fileMonitor.StartListen(System.getProperty("user.dir"), new FileSysMonitorCallback(){
+		fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
 
 			@Override
-			public void Callback(String filename, Action action) {
-				// TODO Auto-generated method stub
-				System.out.println("Callback fired!");
-				System.out.println("This is the callback action :"+ action.toString());
-				
+			public void Callback(String filename) {
+				SessionMaster masterSession = SessionMaster.getInstance();
+				masterSession.uploadFile(filename);
 			}
 			
 		});
-		//allFileMonitors.add(fileMonitor);
-		
+		allFileMonitors.add(fileMonitor);
+		*/
 		
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
 		// Here should scan all local file timestamps to compate with the one in local metadata.
 		
-		/*
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		masterSession.connect(settings.getUsername(), settings.getPassword());
