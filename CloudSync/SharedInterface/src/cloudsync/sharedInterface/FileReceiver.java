@@ -16,6 +16,7 @@ public class FileReceiver {
 	private static FileReceiver that = null;
 	private BackgroundThread thread = null;
 	
+	
 	private FileReceiver(){
 		//private constructor to secure singleton
 		ServerSocket serverSocket = null;
@@ -81,7 +82,8 @@ public class FileReceiver {
 		@Override
 		public void run() {
 			boolean finish = false;
-			Integer length = (Integer) streams.readObject();
+			Long length = (Long) streams.readObject();
+			System.out.println("Server: "+ length);
 			int len = 0;
 			if(length!=null){
 				try {
@@ -97,9 +99,12 @@ public class FileReceiver {
 						break;
 					}else{
 						try {
-							byte[] buff = null;
-							len += streams.getStreamIn().read(buff);
-							os.write(buff);
+							byte[] buff = new byte[1024];
+							int readCount = streams.getStreamIn().read(buff);
+							System.out.println(readCount);
+							len += readCount;
+							os.write(buff, 0, readCount);
+							
 						} catch (IOException e) {
 							e.printStackTrace();
 							break;
@@ -127,7 +132,7 @@ public class FileReceiver {
 						file.delete();
 				}
 			}
-			super.run();
+			//super.run();
 		}
 		
 	}

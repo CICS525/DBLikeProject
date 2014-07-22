@@ -1,10 +1,11 @@
 package cloudsync.sharedInterface;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -16,7 +17,8 @@ public class FileSender {
 	private String filePath = "C:\\Users\\Tianlai Dong\\Desktop\\test.docx";
 	private File file = null;
 	private FileInputStream fis = null;
-	private DataOutputStream dos = null;
+	private ObjectOutputStream dos = null;
+	private ObjectInputStream dis = null;
 	private final int BUFF_SIZE = 8192;
 	private int read = 0;
 	private byte[] buff = null;
@@ -38,12 +40,13 @@ public class FileSender {
 			try {
 				clientSocket = new Socket(hostname, portNum);
 				fis = new FileInputStream(getFilePath());
-				dos = new DataOutputStream(clientSocket.getOutputStream());
+				dos = new ObjectOutputStream(clientSocket.getOutputStream());
+				dis = new ObjectInputStream(clientSocket.getInputStream());
 				file = new File(getFilePath());
-				// dos.writeLong((long)file.length());
-				// dos.flush();
+				dos.writeObject((Long)file.length());
+				dos.flush();
 				buff = new byte[BUFF_SIZE];
-				sendMessage();
+				sendFile();
 			} catch (UnknownHostException e) {
 				System.err.println("Client: Don't know about host " + hostname);
 	            System.exit(1);
@@ -51,7 +54,7 @@ public class FileSender {
 				System.err.println("Client: Couldn't get I/O for the connection to " + hostname);
 		        System.exit(1);
 			} 
-			super.run();
+			//super.run();
 		}	
 	}
 	
@@ -64,10 +67,16 @@ public class FileSender {
 	}
 	
 	private boolean continueSendFile(){
-		return true;
+		boolean status = true;
+		if(status)
+			return true;
+		else {
+			thread = null;
+			return false;
+		}
 	}
 	
-	private void sendMessage(){
+	private void sendFile(){
 		finished = false;
 		while (continueSendFile()){
 			try {
@@ -90,6 +99,16 @@ public class FileSender {
 		finally {
 			if(finished){
 				System.out.println("FileSender: File Send Completed...");
+				try {
+					String filename = (String) dis.readObject();
+					System.out.println("Filename from Server: "+ filename);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			try {
 				clientSocket.close();

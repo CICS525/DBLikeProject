@@ -112,6 +112,7 @@ public class FileSysPerformer {
 					boolean suc = FilePerform(aMeta);
 					if(suc){
 						synchronized (metaList) {
+							
 							metaList.remove(aMeta);
 						}
 					}
