@@ -70,6 +70,7 @@ public class FileSysMonitor {
 								Path child = (Path) event.context();
 								
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+									registerSubfolders(child);
 									break; // ignore because it is a folder.
 								}
 								
@@ -109,8 +110,12 @@ public class FileSysMonitor {
 			@Override 
 			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException
 			{
-				dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
-						StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+				synchronized (watcherLock)
+				{
+					dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
+							StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+					System.out.println("Registered!");
+				}
 				return FileVisitResult.CONTINUE;
 			}
 		});
@@ -135,7 +140,7 @@ public class FileSysMonitor {
 	 * @param filename
 	 * @return
 	 */
-	public boolean isLocked(String filename) throws IOException {
+	private boolean isLocked(String filename) throws IOException {
 		boolean isLocked = true;
 		FileChannel fileChannel = new RandomAccessFile(filename, "rw").getChannel();
 		FileLock lock = null;
