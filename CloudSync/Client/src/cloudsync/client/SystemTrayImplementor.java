@@ -57,13 +57,31 @@ public class SystemTrayImplementor implements Runnable {
 						}
 
 					};
+					
+					
+					ActionListener BrowserListener = new ActionListener() {
+						public void actionPerformed(java.awt.event.ActionEvent e) {
+							System.out.println("Open the Browser here");
+							if(BrowserThread.added)
+							{
+								System.out.println("Inside if");
+								BrowserThread.openStage();
+							}else
+							{
+								System.out.println("Inside else");
+								Application_Main.launchBrowserThread();
+							}
+						}
+
+					};
 
 					PopupMenu popup = new PopupMenu();
-					MenuItem defaultItem = new MenuItem("Open UI");
+					MenuItem defaultItem = new MenuItem("Applcation Control");
 					MenuItem exitItem = new MenuItem("Exit");
-					MenuItem browserItem = new MenuItem("Open File Browser");
+					MenuItem browserItem = new MenuItem("Cloud Browser");
 					exitItem.addActionListener(exitListener);
 					defaultItem.addActionListener(UIListener);
+					browserItem.addActionListener(BrowserListener);
 					popup.add(browserItem);
 					popup.add(defaultItem);
 					popup.add(exitItem);

@@ -3,12 +3,14 @@ import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.SessionBlob;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class Application_Main {
 
 	public static Thread FXThread;
 	public static Thread systemTrayThread;
+	public static Thread browserThread;
 	
 	public static ClientSettings settings = null;
 	public static SessionMaster masterSession = null;
@@ -18,6 +20,7 @@ public class Application_Main {
 	public static void main(String[] args) throws InterruptedException {
 		UIThread.added = false;
 		SystemTrayImplementor.added = false;
+		BrowserThread.added = false;
 		initializeApplication();
 	}
 
@@ -44,7 +47,25 @@ public class Application_Main {
 		FXThread = new Thread(new UIThread());
 		FXThread.start();
 		}
-		
+	}
+	
+
+	public static void launchBrowserThread() {
+		// TODO Auto-generated method stub
+		if(!BrowserThread.added)
+		{Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+			try {
+				System.out.println("calling browser");
+				new BrowserThread().start(new Stage());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}});
+			
+		}
 	}
 
 	public static void launchSwingUI() throws InterruptedException {
