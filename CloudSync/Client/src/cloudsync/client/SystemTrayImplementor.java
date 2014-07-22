@@ -61,10 +61,13 @@ public class SystemTrayImplementor implements Runnable {
 					PopupMenu popup = new PopupMenu();
 					MenuItem defaultItem = new MenuItem("Open UI");
 					MenuItem exitItem = new MenuItem("Exit");
+					MenuItem browserItem = new MenuItem("Open File Browser");
 					exitItem.addActionListener(exitListener);
 					defaultItem.addActionListener(UIListener);
+					popup.add(browserItem);
 					popup.add(defaultItem);
 					popup.add(exitItem);
+					
 					System.out.println(image.toString());
 					trayIcon = new TrayIcon(createImage(iconfile,
 							"tray icon"), "Dropbox Application", popup);

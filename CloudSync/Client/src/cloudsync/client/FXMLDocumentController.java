@@ -126,9 +126,6 @@ public class FXMLDocumentController implements Initializable {
         OpenSession.setDisable(false);
         RunInBackGround.setDisable(true);
         StopSession.setDisable(true);
-        
-        
-        
     }
     
     public void InitializeUI()
