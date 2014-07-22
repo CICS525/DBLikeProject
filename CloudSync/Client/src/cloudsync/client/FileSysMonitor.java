@@ -3,6 +3,8 @@ package cloudsync.client;
 /**
  * Class that represents a file system monitor.
  * @author Aaron Cheng
+ * 
+ * TODO: Only catch the SECOND modify event by comparing modify event times.
  *
  */
 
@@ -23,7 +25,10 @@ import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.nio.file.attribute.*;
+
 import static java.nio.file.LinkOption.*;
 import cloudsync.client.FileSysMonitorCallback.Action;
 
@@ -31,10 +36,11 @@ public class FileSysMonitor {
 
 	private static boolean isListening = true;
 	private ArrayList<String> ignoreList = new ArrayList<String>();
+	private ArrayList<String> pathNames = new ArrayList<String>();
 	private Thread watcherThread;
 	private WatchService watcher;
 	private Path rootFolder;
-	private WatchKey key;
+	private final HashMap<WatchKey, Path> keys = new HashMap<WatchKey, Path>();
 	
 	private Object watcherLock = new Object();
 	private Object eventLock = new Object();
@@ -44,8 +50,6 @@ public class FileSysMonitor {
 	 * Watches a directory for changes, sends to FileSysMontiorCallback
 	 * when event is fired, and file is available (not locked).
 	 * 
-	 * Watches directory only, is NOT recursive (does not handle folders)
-	 * directories)
 	 * @param directory name of the directory to watch.
 	 * @param callback the callback object
 	 */
@@ -53,27 +57,27 @@ public class FileSysMonitor {
 		try {
 			synchronized (watcherLock)  { watcher = FileSystems.getDefault().newWatchService(); } //lock the watcher
 			rootFolder = Paths.get(directory);
-			rootFolder.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
+			WatchKey temp = rootFolder.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
 			
+			keys.put(temp, rootFolder); //put into map for monitoring
 			watcherThread = new Thread(new Runnable() {
 				
 				public void run() {
 					try
 					{
+						WatchKey key;
 						while (isListening)
 						{
 							key = watcher.take();
 							for (WatchEvent<?> event: key.pollEvents()) {
-								String filename = event.context().toString();
 								Path child = (Path) event.context();
-								
+								String filename = child.toAbsolutePath().toString();
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
 								}
-								
 								if (!ignoreList.contains(filename))
 								{
 									Action action = FileSysMonitorCallback.Action.ERROR;
@@ -81,13 +85,13 @@ public class FileSysMonitor {
 									if(type==StandardWatchEventKinds.ENTRY_CREATE) { action = FileSysMonitorCallback.Action.MODIFY; } else 
 									if(type==StandardWatchEventKinds.ENTRY_MODIFY) { action = FileSysMonitorCallback.Action.MODIFY; } else 
 									if(type==StandardWatchEventKinds.ENTRY_DELETE) { action = FileSysMonitorCallback.Action.DELETE; }
-									
-									callback.Callback(event.context().toString(), action);
+									callback.Callback(child.toAbsolutePath().toString(), action);
 								}
 							}
 							boolean valid = key.reset();
 							if (!valid) {
-								break;
+								keys.remove(key);
+								if (keys.isEmpty()) { break; }
 							}
 						}
 					} catch (InterruptedException e) {
@@ -105,6 +109,11 @@ public class FileSysMonitor {
 		return true;
 	}
 	
+	/**
+	 * Register the folder along with any child directories for monitoring.
+	 * @param root folder
+	 * @throws IOException
+	 */
 	private void registerSubfolders(final Path root) throws IOException {
 		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
 			@Override 
@@ -112,9 +121,14 @@ public class FileSysMonitor {
 			{
 				synchronized (watcherLock)
 				{
-					dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
+					if (!pathNames.contains(dir.toString()))
+					{
+						WatchKey temp = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
 							StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
-					System.out.println("Registered!");
+						System.out.println("Registered folder!");
+						pathNames.add(dir.toString());
+						keys.put(temp, dir);
+					}
 				}
 				return FileVisitResult.CONTINUE;
 			}
@@ -162,8 +176,9 @@ public class FileSysMonitor {
 	}
 	
 	/**
-	 * Prevents a file from being uploaded to the cloud service
-	 * @param filename
+	 * Prevents a file from being uploaded to the cloud service.
+	 * 
+	 * @param filename absolute path of the file to be ignored.
 	 * @return
 	 */
 	public synchronized boolean startIgnoreFile(String filename){
@@ -174,7 +189,7 @@ public class FileSysMonitor {
 	
 	/**
 	 * Allows a file to be uploaded to the cloud service.
-	 * @param filename
+	 * @param filename absolute path of the file to be ignored.
 	 * @return
 	 */
 	public synchronized boolean stopIgnoreFile(String filename){
