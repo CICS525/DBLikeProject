@@ -22,7 +22,9 @@ public class Application_Main {
 		SystemTrayImplementor.added = false;
 		BrowserThread.added = false;
 		initializeApplication();
+		
 	}
+
 
 	public static void createSystemTrayThread() {
 		System.out.println("Creating the System Tray Thread");

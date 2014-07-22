@@ -1,10 +1,12 @@
 package cloudsync.client;
 
 import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -30,6 +32,7 @@ public class UIThread extends Application implements Runnable{
 			mainController.setStage(newStage);
 			newStage.setScene(scene);
 			added = true;
+			newStage.getIcons().add(new Image("/images/logo.png"));
 			newStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

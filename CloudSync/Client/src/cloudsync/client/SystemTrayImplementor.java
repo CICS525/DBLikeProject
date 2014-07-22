@@ -28,7 +28,7 @@ public class SystemTrayImplementor implements Runnable {
 			// TODO Auto-generated method stub
 			System.out.println("Inside creating System Tray");
 			try {
-				String iconfile = "/images/home_2.png";
+				String iconfile = "/images/logo.png";
 				if (SystemTray.isSupported()) {
 					System.out.println("system tray supported");
 					tray = SystemTray.getSystemTray();

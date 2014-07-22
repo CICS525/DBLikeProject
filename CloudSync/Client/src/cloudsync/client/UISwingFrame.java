@@ -49,6 +49,7 @@ public class UISwingFrame extends JFrame implements Runnable{
 	 * Create the frame.
 	 */
 	public void startUI() {
+	
 		System.out.println("calling constructor");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 379, 268);
