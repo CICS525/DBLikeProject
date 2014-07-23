@@ -60,6 +60,7 @@ public class FileSysMonitor {
 					StandardWatchEventKinds.ENTRY_MODIFY);
 			
 			keys.put(temp, rootFolder); //put into map for monitoring
+			registerSubfolders(rootFolder);
 			watcherThread = new Thread(new Runnable() {
 				
 				public void run() {
@@ -73,18 +74,20 @@ public class FileSysMonitor {
 							key = watcher.take();
 							Path dir = keys.get(key);
 							for (WatchEvent<?> event: key.pollEvents()) {
+								Kind<?> type = event.kind();
 								Path child = dir.resolve((Path) event.context());
 								File currFile = child.toFile();
 								newTimeStamp = currFile.lastModified();
 								String filename = child.toAbsolutePath().toString();
-								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+								if (Files.isDirectory(child, NOFOLLOW_LINKS) && 
+										type == StandardWatchEventKinds.ENTRY_CREATE) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
 								}
 								if (!ignoreList.contains(filename))
 								{
 									Action action = FileSysMonitorCallback.Action.ERROR;
-									Kind<?> type = event.kind();
+									
 									if (type == StandardWatchEventKinds.ENTRY_CREATE) {
 										action = FileSysMonitorCallback.Action.MODIFY;
 									} else if ((type == StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp)) {
