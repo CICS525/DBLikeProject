@@ -71,8 +71,9 @@ public class FileSysMonitor {
 						while (isListening)
 						{
 							key = watcher.take();
+							Path dir = keys.get(key);
 							for (WatchEvent<?> event: key.pollEvents()) {
-								Path child = (Path) event.context();
+								Path child = dir.resolve((Path) event.context());
 								File currFile = child.toFile();
 								newTimeStamp = currFile.lastModified();
 								String filename = child.toAbsolutePath().toString();
@@ -85,16 +86,12 @@ public class FileSysMonitor {
 									Action action = FileSysMonitorCallback.Action.ERROR;
 									Kind<?> type = event.kind();
 									if (type == StandardWatchEventKinds.ENTRY_CREATE) {
-										System.out.println("FileSysMonitor: newTimeStamp = " + newTimeStamp + " ~ ENTRY_CREATE -> MODIFY ");
 										action = FileSysMonitorCallback.Action.MODIFY;
 									} else if ((type == StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp)) {
-										System.out.println("FileSysMonitor: newTimeStamp = " + newTimeStamp + " ~ ENTRY_MODIFY -> MODIFY ");
 										action = FileSysMonitorCallback.Action.MODIFY;
 									} else if (type == StandardWatchEventKinds.ENTRY_MODIFY && (newTimeStamp <= oldTimeStamp)) {
-										System.out.println("FileSysMonitor: newTimeStamp = " + newTimeStamp + " ~ ENTRY_MODIFY -> continue ");
 										continue;
 									} else if (type == StandardWatchEventKinds.ENTRY_DELETE) {
-										System.out.println("FileSysMonitor: newTimeStamp = " + newTimeStamp + " ~ ENTRY_DELETE -> DELETE ");
 										action = FileSysMonitorCallback.Action.DELETE;
 									}
 									callback.Callback(child.toAbsolutePath().toString(), action);
@@ -139,8 +136,8 @@ public class FileSysMonitor {
 						WatchKey temp = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
 							StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
 						System.out.println("Registered folder!");
-						pathNames.add(dir.toString());
 						keys.put(temp, dir);
+						pathNames.add(dir.toString());
 					}
 				}
 				return FileVisitResult.CONTINUE;
