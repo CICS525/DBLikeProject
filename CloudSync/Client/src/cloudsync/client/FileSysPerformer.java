@@ -2,14 +2,29 @@ package cloudsync.client;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 
 public class FileSysPerformer {
+	
+	private class MetadataEx extends Metadata{
+
+		private static final long serialVersionUID = 6819752436364996918L;
+		Metadata metadata = null;
+		FileSysCallback callback = null;
+		
+		MetadataEx(Metadata metadata, FileSysCallback callback){
+			this.metadata = metadata;
+			this.callback = callback;
+		}
+	}
+	
 	//FileSysPerformer should be singleton design pattern
 	private static FileSysPerformer that = null;
 
-	private ArrayList<Metadata> metaList = null;
+	private ArrayList<MetadataEx> metaList = null;
 	private PerformThread thread = null;
 	
 	private FileSysPerformer(){
@@ -91,11 +106,17 @@ public class FileSysPerformer {
 	}
 	
 	public void addUpdateLocalTask(Metadata metadata){
+		addUpdateLocalTask(metadata, null);
+	}
+	
+	public void addUpdateLocalTask(Metadata metadata, FileSysCallback callback){
 		if(metaList == null){
-			metaList = new ArrayList<Metadata>();
+			metaList = new ArrayList<MetadataEx>();
 		}
 		synchronized (metaList) {
-			metaList.add(metadata);
+			//metaList.add(metadata);
+			MetadataEx metadataEx = new MetadataEx(metadata, callback);
+			metaList.add(metadataEx);
 		}
 		if(thread==null){
 			thread = new PerformThread();
@@ -108,12 +129,17 @@ public class FileSysPerformer {
 		@Override
 		public void run() {
 			while( !metaList.isEmpty() ){
-				for( Metadata aMeta : metaList ){
+				for( MetadataEx aMetaEx : metaList ){
+					Metadata aMeta = aMetaEx.metadata;
+					
 					boolean suc = FilePerform(aMeta);
 					if(suc){
 						synchronized (metaList) {
-							
-							metaList.remove(aMeta);
+							FileSysCallback callback = aMetaEx.callback;
+							if(callback!=null){
+								callback.onFinish(suc, aMeta.filename);
+							}
+							metaList.remove(aMetaEx);
 						}
 					}
 				}

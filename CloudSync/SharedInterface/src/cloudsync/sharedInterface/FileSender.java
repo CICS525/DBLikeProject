@@ -24,6 +24,7 @@ public class FileSender {
 	private byte[] buff = null;
 	private boolean finished = false; 
 	private Socket clientSocket = null;
+	private FileSysCallback callback = null;
 	//private static boolean stop = false;
 	
 	
@@ -35,10 +36,15 @@ public class FileSender {
 		// thread.start();
 	}
 	
-	public FileSender(String hostname, String filePath){
+	public FileSender(String hostname, String filePath, FileSysCallback callback){
 		this(DefaultSetting.DEFAULT_MASTER_UPLOAD_PORT, hostname, filePath);
+		this.callback = callback; 
 	}
-	
+
+	public FileSender(String hostname, String filePath){
+		this(hostname, filePath, null);
+	}
+
 	public synchronized void startFileTransfer(){
 		if(thread == null || thread.isInterrupted()){
 			thread = new FileSenderThread();
@@ -61,6 +67,7 @@ public class FileSender {
 
 		@Override
 		public void run() {
+			boolean suc = false;
 			//stop = false;
 			try {
 				clientSocket = new Socket(hostname, portNum);
@@ -71,7 +78,7 @@ public class FileSender {
 				dos.writeObject((Long)file.length());
 				dos.flush();
 				buff = new byte[BUFF_SIZE];
-				sendFile();
+				suc = sendFile();
 			} catch (UnknownHostException e) {
 				System.err.println("Client: Don't know about host " + hostname);
 	            System.exit(1);
@@ -80,6 +87,9 @@ public class FileSender {
 		        System.exit(1);
 			} 
 			//super.run();
+			if(callback!=null){
+				callback.onFinish(suc, filePath);
+			}
 		}	
 	}
 	
@@ -101,7 +111,8 @@ public class FileSender {
 		}
 	}*/
 	
-	private void sendFile(){
+	private boolean sendFile(){
+		boolean ans = false;
 		finished = false;
 		while (true){
 			if(thread.isInterrupted()){
@@ -123,18 +134,17 @@ public class FileSender {
 			dos.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		finally {
 			if(finished){
 				System.out.println("FileSender: File Send Completed...");
 				try {
 					String filename = (String) dis.readObject();
 					System.out.println("Filename from Server: "+ filename);
+					ans = true;
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
@@ -149,5 +159,6 @@ public class FileSender {
 				e.printStackTrace();
 			}
 		}
+		return ans;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.FileSender;
+import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.ServerLocation;
 import cloudsync.sharedInterface.SessionBlob;
@@ -16,6 +17,7 @@ public class ClientMain {
 	private static SessionMaster masterSession = null;
 	//private static FileSysMonitor fileMonitor = null;
 	private static ArrayList<FileSysMonitor> allFileMonitors = new ArrayList<FileSysMonitor>();
+	private static MetadataManager metadataManager = null;
 	
 	public static ArrayList<FileSysMonitor> getAllFileMonitors(){
 		return allFileMonitors;
@@ -36,6 +38,8 @@ public class ClientMain {
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(masterLocation);
 		
+		metadataManager = MetadataManager.getInstance();
+		
 		FileSysMonitor fileMonitor = new FileSysMonitor();
 		boolean bMnt = fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
 			@Override
@@ -45,7 +49,15 @@ public class ClientMain {
 				boolean suc = false;
 				if ( FileSysMonitorCallback.Action.MODIFY == action ) {
 					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
-					//FileSender sender = new FileSender(absoluteFilename, absoluteFilename);
+
+					FileSender sender = new FileSender(absoluteFilename, absoluteFilename, new FileSysCallback(){
+						
+						@Override
+						public void onFinish(boolean success, String filename) {
+						}
+						
+					});
+					
 				} else if ( FileSysMonitorCallback.Action.DELETE == action) {
 					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
 				}

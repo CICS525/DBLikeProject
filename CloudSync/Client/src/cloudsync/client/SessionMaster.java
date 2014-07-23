@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
@@ -55,6 +56,8 @@ public class SessionMaster {
 		//for the entry server and master server at separated, so here may need to check username & password again
 		this.username = username;
 		
+		MetadataManager metadataManager = MetadataManager.getInstance();
+		
 		//initialize the RMI interface.
 		try {
 			System.out.println("Connecting to MasterServer - RIM: " + masterLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
@@ -75,6 +78,26 @@ public class SessionMaster {
 				suc = rmi.RmiCreateAccount(username, password);
 				if(!suc)
 					return false;
+			}
+			
+			if(suc){	//fetch metadata from Master Server
+				long serverCounter = rmi.RmiGetMasterServerGlobalCounter(username);
+				if(serverCounter>metadataManager.getGlobalWriteCounter()){
+					ArrayList<Metadata> metadataArray = rmi.RmiGetCompleteMetadata(username, metadataManager.getGlobalWriteCounter());
+					for(final Metadata one : metadataArray){
+						metadataArray.add(one);		//save the single metadata item into local Metadata database and save 
+						FileSysPerformer performer = FileSysPerformer.getInstance();
+						performer.addUpdateLocalTask(one, new FileSysCallback(){
+
+							@Override
+							public void onFinish(boolean success, String filename) {
+								MetadataManager metaDB = MetadataManager.getInstance();
+								metaDB.updateLocalMetadata(one);
+							}
+							
+						});
+					}
+				}
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -100,9 +123,10 @@ public class SessionMaster {
 		
 		socketStream = new SocketStream();
 		socketStream.initStream(socket);
-		socketStream.writeObject(account);
-		
+
 		System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + ";" + socketStream.getStreamOut());
+
+		socketStream.writeObject(account);
 		
 		//Then, create a new thread to wait in-coming message for master server
 		thread = new SocketThread();
