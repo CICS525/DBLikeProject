@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 public class FileSender {
 	private int portNum = 234;
 	private String hostname = "localhost";
-	private static FileSenderThread thread = null;
+	private FileSenderThread thread = null;
 	private String filePath = "C:\\Users\\Tianlai Dong\\Desktop\\test.docx";
 	private File file = null;
 	private FileInputStream fis = null;
@@ -31,11 +31,18 @@ public class FileSender {
 		this.portNum = portNum;
 		this.hostname = hostname;
 		this.filePath = filePath;
-		thread = new FileSenderThread();
-		thread.start();
+		// thread = new FileSenderThread();
+		// thread.start();
 	}
 	
-	public void stopFileTransfer(String filePath){
+	public synchronized void startFileTransfer(){
+		if(thread == null || thread.isInterrupted()){
+			thread = new FileSenderThread();
+			thread.start();
+		}
+	}
+	
+	public synchronized void stopFileTransfer(String filePath){
 		if(this.filePath.equals(filePath)){
 			thread.interrupt();
 			//stop = true;
@@ -128,6 +135,7 @@ public class FileSender {
 				}
 			} else {
 				System.out.println("FileSender: File Send Terminated...");
+				thread = null;
 			}
 			try {
 				clientSocket.close();
