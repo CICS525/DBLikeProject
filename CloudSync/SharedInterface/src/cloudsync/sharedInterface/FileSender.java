@@ -80,11 +80,9 @@ public class FileSender {
 				buff = new byte[BUFF_SIZE];
 				suc = sendFile();
 			} catch (UnknownHostException e) {
-				System.err.println("Client: Don't know about host " + hostname);
-	            System.exit(1);
+				System.err.println("FileSender: UnknownHostException #" + hostname);
 			} catch (IOException e) {
-				System.err.println("Client: Couldn't get I/O for the connection to " + hostname);
-		        System.exit(1);
+				System.err.println("FileSender: IOException in connecting to #" + hostname);
 			} 
 			//super.run();
 			if(callback!=null){

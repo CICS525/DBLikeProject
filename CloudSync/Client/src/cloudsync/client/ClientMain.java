@@ -53,7 +53,7 @@ public class ClientMain {
 				if ( Action.MODIFY == action ) {
 					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
 
-					FileSender sender = new FileSender(absoluteFilename, absoluteFilename, new FileSysCallback(){
+					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
 						
 						@Override
 						public void onFinish(boolean success, String tempFileOnServer) {
@@ -63,6 +63,7 @@ public class ClientMain {
 						}
 						
 					});
+					sender.startFileTransfer();
 					
 				} else if ( Action.DELETE == action) {
 					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
