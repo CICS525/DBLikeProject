@@ -35,6 +35,10 @@ public class FileSender {
 		// thread.start();
 	}
 	
+	public FileSender(String hostname, String filePath){
+		this(DefaultSetting.DEFAULT_MASTER_UPLOAD_PORT, hostname, filePath);
+	}
+	
 	public synchronized void startFileTransfer(){
 		if(thread == null || thread.isInterrupted()){
 			thread = new FileSenderThread();

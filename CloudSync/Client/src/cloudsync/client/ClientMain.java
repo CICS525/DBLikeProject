@@ -4,13 +4,16 @@ import java.util.ArrayList;
 
 import cloudsync.sharedInterface.AzureConnection;
 import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.FileSender;
 import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.ServerLocation;
 import cloudsync.sharedInterface.SessionBlob;
 
 public class ClientMain {
 
-	private static SessionMaster masterSession = null;
 	private static ClientSettings settings = null;
+	private static ServerLocation masterLocation = null;
+	private static SessionMaster masterSession = null;
 	//private static FileSysMonitor fileMonitor = null;
 	private static ArrayList<FileSysMonitor> allFileMonitors = new ArrayList<FileSysMonitor>();
 	
@@ -27,9 +30,11 @@ public class ClientMain {
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
 		// Here should scan all local file time stamps to compare with the one in local metadata.
+		
+		masterLocation = settings.getRecentMaster();
 
 		masterSession = SessionMaster.getInstance();
-		masterSession.setMasterServerLocation(settings.getRecentMaster());
+		masterSession.setMasterServerLocation(masterLocation);
 		
 		FileSysMonitor fileMonitor = new FileSysMonitor();
 		boolean bMnt = fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
@@ -37,18 +42,11 @@ public class ClientMain {
 			public void Callback(String filename, Action action) {
 				System.out.println(filename + " " + action);
 				String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
-				SessionBlob sessionBlob = new SessionBlob();
-				Metadata metadata = new Metadata();
-				metadata.filename = filename;
-				metadata.blobKey = filename;
-				metadata.blobServer = new AzureConnection(DefaultSetting.eli_storageConnectionString);
-				metadata.blobBackup = new AzureConnection(DefaultSetting.chris_storageConnectionString);
 				boolean suc = false;
 				if ( FileSysMonitorCallback.Action.MODIFY == action ) {
-					//suc = sessionBlob.uploadFile(absoluteFilename, metadata);
 					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
+					//FileSender sender = new FileSender(absoluteFilename, absoluteFilename);
 				} else if ( FileSysMonitorCallback.Action.DELETE == action) {
-					//suc = sessionBlob.deleteFile(metadata);
 					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
 				}
 			}
