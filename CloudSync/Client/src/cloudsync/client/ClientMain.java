@@ -1,77 +1,70 @@
 package cloudsync.client;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
+import cloudsync.sharedInterface.AzureConnection;
+import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.SessionBlob;
 
 public class ClientMain {
 
 	private static SessionMaster masterSession = null;
 	private static ClientSettings settings = null;
+	//private static FileSysMonitor fileMonitor = null;
 	private static ArrayList<FileSysMonitor> allFileMonitors = new ArrayList<FileSysMonitor>();
 	
 	public static ArrayList<FileSysMonitor> getAllFileMonitors(){
-		
 		return allFileMonitors;
 	}
-
-	public static void main_toDel(String[] args) {
+	
+	public static boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 		
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
 
-		//SessionBlobClient sessionBlod = new SessionBlobClient();
-		////sessionBlod.blobTest();
-		//String filename = "C:\\Users\\Elitward\\Capture.JPG";
-		//Metadata metadata = new Metadata();
-		//metadata.filename = FileSysPerformer.getInstance().getBaseFilename(filename);
-		//metadata.blobKey = "Capture.JPG";
-		//metadata.blobServer = new AzureConnection();
-		//sessionBlod.uploadFile(filename, metadata);
-		//sessionBlod.downloadFile(metadata);
-		//boolean suc = sessionBlod.deleteFile(metadata);
-		
-		/*
-		if(allFileMonitors==null){
-			allFileMonitors = new ArrayList<FileSysMonitor>();
-		}
-		FileSysMonitor fileMonitor = new FileSysMonitor();
-		fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
-
-			@Override
-			public void Callback(String filename) {
-				SessionMaster masterSession = SessionMaster.getInstance();
-				masterSession.uploadFile(filename);
-			}
-			
-		});
-		allFileMonitors.add(fileMonitor);
-		*/
-		
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
-		// Here should scan all local file timestamps to compate with the one in local metadata.
-		
+		// Here should scan all local file time stamps to compare with the one in local metadata.
+
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
-		masterSession.connect(settings.getUsername(), settings.getPassword());
 		
-		boolean b = masterSession.rmiCheckUsernamePassword("someone", "aPassword");
-		long l = masterSession.rmiGetMasterServerGlobalCounter();
-		ArrayList<Metadata> a = masterSession.rmiGetCompleteMetadata(10);
-		Metadata m = masterSession.rmiCommitFileUpdate(null, "info");
-		
-		//--- wait here forever ---
-		/*
-		try {
-			byte[] buff = new byte[128];
-			System.in.read(buff);
-		} catch (IOException e) {
-			e.printStackTrace();
+		FileSysMonitor fileMonitor = new FileSysMonitor();
+		boolean bMnt = fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
+			@Override
+			public void Callback(String filename, Action action) {
+				System.out.println(filename + " " + action);
+				String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
+				SessionBlob sessionBlob = new SessionBlob();
+				Metadata metadata = new Metadata();
+				metadata.filename = filename;
+				metadata.blobKey = filename;
+				metadata.blobServer = new AzureConnection(DefaultSetting.eli_storageConnectionString);
+				metadata.blobBackup = new AzureConnection(DefaultSetting.chris_storageConnectionString);
+				boolean suc = false;
+				if ( FileSysMonitorCallback.Action.MODIFY == action ) {
+					//suc = sessionBlob.uploadFile(absoluteFilename, metadata);
+					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
+				} else if ( FileSysMonitorCallback.Action.DELETE == action) {
+					//suc = sessionBlob.deleteFile(metadata);
+					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
+				}
+			}
+		});
+		if(bMnt){
+			System.out.println("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
+			allFileMonitors.add(fileMonitor);
 		}
-		*/
+
+		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
+		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
+		return bCnt;
 	}
 
+	public static void main(String[] args) {
+		boolean suc = initClientMain();
+		System.out.println("main@ClientMain=>" + suc);
+	}
 }
