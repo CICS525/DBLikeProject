@@ -102,8 +102,13 @@ public class FileReceiver {
 							byte[] buff = new byte[1024];
 							int readCount = streams.getStreamIn().read(buff);
 							System.out.println(readCount);
-							len += readCount;
-							os.write(buff, 0, readCount);
+							if(readCount != -1){
+								len += readCount;
+								os.write(buff, 0, readCount);
+							} else {
+								System.out.println("FileReceiver: File Transfer Terminated");
+								break;
+							}
 							
 						} catch (IOException e) {
 							e.printStackTrace();

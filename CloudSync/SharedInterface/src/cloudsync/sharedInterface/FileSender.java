@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 public class FileSender {
 	private int portNum = 234;
 	private String hostname = "localhost";
-	private FileSenderThread thread = null;
+	private static FileSenderThread thread = null;
 	private String filePath = "C:\\Users\\Tianlai Dong\\Desktop\\test.docx";
 	private File file = null;
 	private FileInputStream fis = null;
@@ -24,19 +24,33 @@ public class FileSender {
 	private byte[] buff = null;
 	private boolean finished = false; 
 	private Socket clientSocket = null;
+	//private static boolean stop = false;
 	
 	
-	public FileSender(int portNum, String hostname){
+	public FileSender(int portNum, String hostname, String filePath){
 		this.portNum = portNum;
 		this.hostname = hostname;
+		this.filePath = filePath;
 		thread = new FileSenderThread();
 		thread.start();
+	}
+	
+	public void stopFileTransfer(String filePath){
+		if(this.filePath.equals(filePath)){
+			thread.interrupt();
+			//stop = true;
+		}
+		/*
+		else {
+			stop = false;
+		}*/
 	}
 	
 	private class FileSenderThread extends Thread{
 
 		@Override
 		public void run() {
+			//stop = false;
 			try {
 				clientSocket = new Socket(hostname, portNum);
 				fis = new FileInputStream(getFilePath());
@@ -65,7 +79,7 @@ public class FileSender {
 	public void setFilePath(String filePath){
 		this.filePath = filePath;
 	}
-	
+	/*
 	private boolean continueSendFile(){
 		boolean status = true;
 		if(status)
@@ -74,11 +88,14 @@ public class FileSender {
 			thread = null;
 			return false;
 		}
-	}
+	}*/
 	
 	private void sendFile(){
 		finished = false;
-		while (continueSendFile()){
+		while (true){
+			if(thread.isInterrupted()){
+				break;
+			}
 			try {
 				if(fis != null)
 					read = fis.read(buff);
@@ -109,6 +126,8 @@ public class FileSender {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			} else {
+				System.out.println("FileSender: File Send Terminated...");
 			}
 			try {
 				clientSocket.close();
