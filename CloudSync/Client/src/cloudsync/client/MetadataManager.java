@@ -124,4 +124,8 @@ public class MetadataManager {
 		saveLocalMetadata();	//maybe save at once
 		return false;
 	}
+	
+	public Metadata findByBasename(String filename){
+		return null;
+	}
 }
