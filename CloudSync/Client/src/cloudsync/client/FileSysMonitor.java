@@ -75,6 +75,7 @@ public class FileSysMonitor {
 								Path child = (Path) event.context();
 								File currFile = child.toFile();
 								newTimeStamp = currFile.lastModified();
+								System.out.print("watcher: newTimeStamp = " + newTimeStamp + " ~ ");
 								String filename = child.toAbsolutePath().toString();
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
@@ -84,17 +85,23 @@ public class FileSysMonitor {
 								{
 									Action action = FileSysMonitorCallback.Action.ERROR;
 									Kind<?> type = event.kind();
-									if(type==StandardWatchEventKinds.ENTRY_CREATE){	action = FileSysMonitorCallback.Action.MODIFY;} else 
-									if((type==StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp))
-									{ 
+									if (type == StandardWatchEventKinds.ENTRY_CREATE) {
+										System.out.print("ENTRY_CREATE -> MODIFY ");
 										action = FileSysMonitorCallback.Action.MODIFY;
-									} else if (type == StandardWatchEventKinds.ENTRY_MODIFY && (newTimeStamp <= oldTimeStamp))
-									{
+									} else if ((type == StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp)) {
+										System.out.print("ENTRY_MODIFY -> MODIFY ");
+										action = FileSysMonitorCallback.Action.MODIFY;
+									} else if (type == StandardWatchEventKinds.ENTRY_MODIFY && (newTimeStamp <= oldTimeStamp)) {
+										System.out.println("ENTRY_MODIFY -> continue ");
 										continue;
-									} else if(type==StandardWatchEventKinds.ENTRY_DELETE) {	action = FileSysMonitorCallback.Action.DELETE; }
+									} else if (type == StandardWatchEventKinds.ENTRY_DELETE) {
+										System.out.print("ENTRY_DELETE -> DELETE ");
+										action = FileSysMonitorCallback.Action.DELETE;
+									}
 									callback.Callback(child.toAbsolutePath().toString(), action);
 								}
 								oldTimeStamp = newTimeStamp;
+								System.out.println("...");
 							}
 							boolean valid = key.reset();
 							if (!valid) {
