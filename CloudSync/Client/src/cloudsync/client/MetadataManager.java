@@ -24,7 +24,7 @@ import cloudsync.sharedInterface.ServerLocation;
  */
 public class MetadataManager {
 
-	private static long GlobalWriteCounter = 1;
+	private static long GlobalWriteCounter = 0;
 	private ArrayList<Metadata> LocalMetadata = new ArrayList<Metadata>();
 	private static MetadataManager that = null;
 	private static String META_FILENAME = "metadata.dat";
