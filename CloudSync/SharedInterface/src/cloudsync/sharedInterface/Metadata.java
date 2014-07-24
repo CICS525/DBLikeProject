@@ -46,4 +46,26 @@ public class Metadata implements Serializable{
 	public String getAbsoluteFilename(String rootDir){
 		return mixRootAndFilename(rootDir, filename);
 	}
+
+	/**
+	 * Overriding the equals method for metadata objects.
+	 * Takes only the filename into account.
+	 * 
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Metadata other = (Metadata) obj;
+		if (filename == null) {
+			if (other.filename != null)
+				return false;
+		} else if (!filename.equals(other.filename))
+			return false;
+		return true;
+	}
 } 
