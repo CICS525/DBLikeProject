@@ -25,36 +25,65 @@ public class ClientMain {
 	public static ArrayList<FileSysMonitor> getAllFileMonitors(){
 		return allFileMonitors;
 	}
-	public static void main(String[] args) {
+	
+	public static boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 		
-		//settings = ClientSettings.getInstance();
-		//settings.loadSettings();
+		settings = ClientSettings.getInstance();
+		settings.loadSettings();
 
 		// Client should do upload first & do download. 
 		// This is in order to handle the file could be modified when the client is not running.
 		// Here should scan all local file time stamps to compare with the one in local metadata.
-		/*
-		if(allFileMonitors==null){
-			allFileMonitors = new ArrayList<FileSysMonitor>();
-		}*/
-		FileSysMonitor fileMonitor = new FileSysMonitor(System.getProperty("user.dir"));
-		fileMonitor.StartListen(new FileSysMonitorCallback(){
+		
+		masterLocation = settings.getRecentMaster();
+
+		masterSession = SessionMaster.getInstance();
+		masterSession.setMasterServerLocation(masterLocation);
+		
+		metadataManager = MetadataManager.getInstance();
+		
+		FileSysMonitor fileMonitor = new FileSysMonitor(settings.getRootDir());
+		boolean bMnt = fileMonitor.StartListen( new FileSysMonitorCallback(){
 			@Override
 			public void Callback(String filename, Action action) {
-				// TODO Auto-generated method stub
-				System.out.println(action.toString());
+				System.out.println(filename + " " + action);
+				final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
+				boolean suc = false;
+				if ( Action.MODIFY == action ) {
+					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
+
+					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
+						
+						@Override
+						public void onFinish(boolean success, String tempFileOnServer) {
+							if(success){
+								commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
+							}
+						}
+						
+					});
+					sender.startFileTransfer();
+					
+				} else if ( Action.DELETE == action) {
+					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
+				}
 			}
-		});		
-		
-		// Client should do upload first & do download. 
-		// This is in order to handle the file could be modified when the client is not running.
-		// Here should scan all local file timestamps to compate with the one in local metadata.
-		
-		/*
-		masterSession = SessionMaster.getInstance();
-		masterSession.setMasterServerLocation(settings.getRecentMaster());
-		masterSession.connect(settings.getUsername(), settings.getPassword());
+		});
+		if(bMnt){
+			System.out.println("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
+			allFileMonitors.add(fileMonitor);
+		}
+
+		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
+		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
+		return bCnt;
+	}
+	
+	public static synchronized boolean commitFileUpdate(Action action, String absoluteFilename, String tempFileOnServer){
+		//metadataManager.findByBasename(FileSysPerformer.getInstance().getBaseFilename(absoluteFilename));
+		Metadata incomplete = new Metadata();
+		SessionMaster masterSession = SessionMaster.getInstance();
 		
 		//--- [should not change, unless conflict] ---
 		incomplete.filename = FileSysPerformer.getInstance().getBaseFilename(absoluteFilename);
@@ -111,12 +140,11 @@ public class ClientMain {
 				boolean suc = metadataManager.updateLocalMetadata(complete);
 				return suc;
 			}
-		}*/
+		}
 	}
 
-	/*
 	public static void main(String[] args) {
 		boolean suc = initClientMain();
 		System.out.println("main@ClientMain=>" + suc);
-	}*/
+	}
 }
