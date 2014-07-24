@@ -56,7 +56,8 @@ public class SocketStream {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("SocketStream:readObject->IOException");
 		}
 		return object;
 	}
@@ -64,7 +65,8 @@ public class SocketStream {
 		try {
 			streamOut.writeObject(object);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("SocketStream:writeObject->IOException");
 			return false;
 		}
 		return true;

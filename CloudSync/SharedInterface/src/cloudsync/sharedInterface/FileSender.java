@@ -70,6 +70,7 @@ public class FileSender {
 			boolean suc = false;
 			//stop = false;
 			try {
+				System.out.println("FileSender: Connect to " + hostname + "@" + portNum);
 				clientSocket = new Socket(hostname, portNum);
 				fis = new FileInputStream(getFilePath());
 				dos = new ObjectOutputStream(clientSocket.getOutputStream());

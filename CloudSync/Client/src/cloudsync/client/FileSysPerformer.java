@@ -151,7 +151,10 @@ public class FileSysPerformer {
 	
 	public String getAbsoluteFilename(String baseFilename){
 		String rootDir = ClientSettings.getInstance().getRootDir();
-		return Metadata.mixRootAndFilename(rootDir, baseFilename);
+		if(baseFilename.startsWith(rootDir))
+			return baseFilename;
+		else
+			return Metadata.mixRootAndFilename(rootDir, baseFilename);
 	}
 	
 	public String getAbsoluteFilename(Metadata metadata){

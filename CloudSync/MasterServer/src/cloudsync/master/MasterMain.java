@@ -11,6 +11,7 @@ import java.rmi.registry.Registry;
 import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.FileReceiver;
 import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.SocketStream;
 
@@ -24,6 +25,7 @@ public class MasterMain {
 
 		SessionManager sessionManager = SessionManager.getInstance();
 		
+		//---RMI---
 		try {
 			int rmiPort = settings.getLocalRmiPort();
 			RemoteMethodProvider remoteMethodProvider = new RemoteMethodProvider();
@@ -31,14 +33,19 @@ public class MasterMain {
 			registry.bind(RemoteInterface.RMI_ID, remoteMethodProvider);
 			System.out.println("MasterMain Server: RIM wating ...@" + rmiPort);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
 		} catch (AlreadyBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return;
 		}
+
+		//---Upload File---
+		int uplPort = settings.getLocalUploadPort();
+		FileReceiver.initialize(uplPort);
+		System.out.println("MasterMain Server: Upload wating ...@" + uplPort);
 		
+		//---Command Message---
 		ServerSocket serverSocket = null;
 		try {
 			int msgPort = settings.getLocalMessagePort();
@@ -83,14 +90,8 @@ public class MasterMain {
 			serverSocket.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 
-		//--- wait here forever ---
-		try {
-			byte[] buff = new byte[128];
-			System.in.read(buff);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
