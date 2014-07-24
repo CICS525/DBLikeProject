@@ -44,6 +44,10 @@ public class FileSysMonitor {
 	private Object watcherLock = new Object();
 	
 	
+	public FileSysMonitor(String directory) {
+		rootFolder = Paths.get(directory);
+	}
+	
 	/**
 	 * Watches a directory for changes, sends to FileSysMontiorCallback
 	 * when event is fired, and file is available (not locked).
@@ -51,10 +55,9 @@ public class FileSysMonitor {
 	 * @param directory name of the directory to watch.
 	 * @param callback the callback object
 	 */
-	public boolean StartListen(String directory, final FileSysMonitorCallback callback) {
+	public boolean StartListen(final FileSysMonitorCallback callback) {
 		try {
 			synchronized (watcherLock)  { watcher = FileSystems.getDefault().newWatchService(); } //lock the watcher
-			rootFolder = Paths.get(directory);
 			WatchKey temp = rootFolder.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE,
 					StandardWatchEventKinds.ENTRY_MODIFY);
@@ -79,8 +82,8 @@ public class FileSysMonitor {
 								File currFile = child.toFile();
 								newTimeStamp = currFile.lastModified();
 								String filename = child.toAbsolutePath().toString();
-								if (Files.isDirectory(child, NOFOLLOW_LINKS) && 
-										type == StandardWatchEventKinds.ENTRY_CREATE) {
+								System.out.println(filename);
+								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
 								}
@@ -164,22 +167,42 @@ public class FileSysMonitor {
 	/**
 	 * Prevents a file from being uploaded to the cloud service.
 	 * 
-	 * @param filename absolute path of the file to be ignored.
+	 * @param filenames can be absolute, relative or relative with slash in front.
 	 * @return
 	 */
 	public synchronized boolean startIgnoreFile(String filename){
-		//FileSysPerformer.java may need to update files. These action should be ignored.
-		ignoreList.add(filename);
-		return false;
+		//FileSysPerformer.java may need to update files. These action should be ignored
+		String name = convertToAbsolute(filename);
+		ignoreList.add(name);
+		return ignoreList.contains(name);
 	}
 	
 	/**
 	 * Allows a file to be uploaded to the cloud service.
-	 * @param filename absolute path of the file to be ignored.
-	 * @return
+	 * @param filenames can be absolute, relative or relative with a slash in front.
+	 * @return true if the file is REMOVED from the ignorelist, false otherwise
 	 */
 	public synchronized boolean stopIgnoreFile(String filename){
-		ignoreList.remove(filename);
-		return false;
+		String name = convertToAbsolute(filename);
+		ignoreList.remove(name);
+		return !ignoreList.contains(name); 
+	}
+	
+	/**
+	 * Converts a filename to absolute (if it isn't already)
+	 * @param filename
+	 * @return
+	 */
+	public String convertToAbsolute(String filename) {
+		String file = filename;
+		if (filename.charAt(0) == '\\')
+		{	
+			file = filename.substring(1);
+		}
+		Path filePath = Paths.get(file);
+		if (filePath.isAbsolute()) {
+			return file;
+		}
+		return rootFolder.toString() + "\\" + file;
 	}
 }

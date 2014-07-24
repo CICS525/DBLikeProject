@@ -82,8 +82,8 @@ public class Application_Main {
 		masterSession = SessionMaster.getInstance();
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		
-		fileMonitor = new FileSysMonitor();
-		fileMonitor.StartListen(settings.getRootDir(), new FileSysMonitorCallback(){
+		fileMonitor = new FileSysMonitor(settings.getRootDir());
+		fileMonitor.StartListen(new FileSysMonitorCallback(){
 			@Override
 			public void Callback(String filename, Action action) {
 				System.out.println(filename + " " + action);
