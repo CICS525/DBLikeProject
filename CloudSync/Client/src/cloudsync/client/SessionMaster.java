@@ -23,6 +23,7 @@ public class SessionMaster {
 	private static SessionMaster that = null;
 	
 	private ServerLocation masterLocation = null;
+	private ServerLocation entryLocation = null;
 	private SocketStream socketStream = null;
 	private SocketThread thread = null;
 	private RemoteInterface rmi = null;
@@ -31,6 +32,14 @@ public class SessionMaster {
 	private SessionMaster(){
 		//private constructor to secure singleton
 	}
+	
+    public ServerLocation getEntryLocation() {
+        return entryLocation;
+    }
+
+    public void setEntryLocation(ServerLocation entryLocation) {
+        this.entryLocation = entryLocation;
+    }
 	
 	public static SessionMaster getInstance(){
 		if( that==null ){
@@ -58,10 +67,46 @@ public class SessionMaster {
 		
 		MetadataManager metadataManager = MetadataManager.getInstance();
 		
-		//initialize the RMI interface.
+		Registry registry;
+		boolean suc;
+		
+		// get master server location
+        try {
+            // initialize RMI interface for entry server
+            System.out.println("Connecting to EntryServer - RIM: " + entryLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+            registry = LocateRegistry.getRegistry(entryLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+            rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
+            System.out.println("~Connected to EntryServer - RIM: " + rmi.toString());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return false;
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+        try {
+            // check password at entry server
+            suc = rmi.RmiCheckUsernamePassword(username, password);
+            if(!suc){
+                suc = rmi.RmiCreateAccount(username, password);
+                if(!suc)
+                    return false;
+            }
+            
+            // get master location from entry server
+            ServerLocation master = rmi.RmiGetMasterServerAddress(username);
+            setMasterServerLocation(master);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+		
+		//initialize the RMI interface for master.
 		try {
 			System.out.println("Connecting to MasterServer - RIM: " + masterLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-			Registry registry = LocateRegistry.getRegistry(masterLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+			registry = LocateRegistry.getRegistry(masterLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
 			rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
 			System.out.println("~Connected to MasterServer - RIM: " + rmi.toString());
 		} catch (RemoteException e) {
@@ -73,11 +118,10 @@ public class SessionMaster {
 		}
 		
 		try {
-			boolean suc = rmi.RmiCheckUsernamePassword(username, password);
+			suc = rmi.RmiCheckUsernamePassword(username, password);
 			if(!suc){
-				suc = rmi.RmiCreateAccount(username, password);
-				if(!suc)
-					return false;
+			    // passwork has been checked in entry server, so do not create account
+				return false;
 			}
 			
 			if(suc){	//fetch metadata from Master Server
@@ -198,9 +242,8 @@ public class SessionMaster {
 		//the Master server may return the path & filename on server file system
 		return null;
 	}
-	
-	
-	private class SocketThread extends Thread {
+
+    private class SocketThread extends Thread {
 
 		@Override
 		public void run() {

@@ -2,6 +2,7 @@ package cloudsync.master;
 
 import java.util.ArrayList;
 
+import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
@@ -47,6 +48,10 @@ public class SessionManager {
 		synchronized(accountPool){
 			for(SessionAccount account: accountPool){
 				if( account.isSocketStreamEmpty() ){
+				    
+				    // change entry server flag
+				    AccountDatabase.getInstance().logout(account.getUsername());
+				    
 					accountPool.remove(account);
 					counter++;
 				}

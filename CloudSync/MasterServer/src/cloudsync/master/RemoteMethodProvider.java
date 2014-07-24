@@ -8,6 +8,7 @@ import cloudsync.master.storage.AccountDatabase;
 import cloudsync.master.storage.Metadatabase;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.RemoteInterface;
+import cloudsync.sharedInterface.ServerLocation;
 
 public class RemoteMethodProvider extends UnicastRemoteObject implements
         RemoteInterface {
@@ -70,5 +71,14 @@ public class RemoteMethodProvider extends UnicastRemoteObject implements
                 .createAccount(username, password);
         return result;
 	}
+
+    @Override
+    public ServerLocation RmiGetMasterServerAddress(String username)
+            throws RemoteException {
+        ServerLocation loc = AccountDatabase.getInstance().getServerLocation(username);
+        System.out.println("RmiGetMasterServerAddress@RemoteMethodProvider["
+                + username + "]:" + loc.url);
+        return loc;
+    }
 
 }

@@ -2,6 +2,7 @@ package cloudsync.master.storage;
 
 import cloudsync.master.MasterSettings;
 import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.ServerLocation;
 
 import com.microsoft.azure.storage.*;
 import com.microsoft.azure.storage.table.*;
@@ -46,23 +47,53 @@ public class AccountDatabase {
         if (acc == null) {
             return false;
         }
+        
+        boolean result = acc.getPassword().equals(password);
 
-        boolean ans = acc.getPassword().equals(password);
-        System.out.println("AccountDatabase:login(" + username + "," + password + ")=" + ans);
-        return ans;
+        System.out.println("AccountDatabase:login(" + username + "," + password + ")=" + result);
+        return result;
+    }
+    
+    public synchronized ServerLocation getServerLocation(String username) {
+        // get current server flag, set server flag if current is USING_NONE
+        AccountDBRow acc = getAccount(username);
+        int flag = acc.getServerflag();
+        if (flag == AccountDBRow.USING_NONE) {
+            flag = selectServer();
+            acc.setServerflag(flag);
+            acc.setConnectionCount(acc.getConnectionCount() + 1);
+            updateAccount(acc);
+        }
+        
+        if (flag == AccountDBRow.USING_MAIN) {
+            return acc.getMainServer();
+        } else {
+            return acc.getBackupServer();
+        }
+    }
+    
+    public synchronized void logout(String username) {
+        // logout, if it is the last user, set flag to NONE
+        AccountDBRow acc = getAccount(username);
+        int count = acc.getConnectionCount() - 1;
+        acc.setConnectionCount(count);
+        
+        if (count == 0) {
+            acc.setServerflag(AccountDBRow.USING_NONE);
+        }
+        
+        updateAccount(acc);
+    }
+    
+    private int selectServer() {
+        // select a server from main and backup, may be expanded
+        return AccountDBRow.USING_MAIN;
     }
 
     public boolean createAccount(String username, String password)
     // this method should be triggered by entry server in final release
     {
         AccountDBRow acc = new AccountDBRow(username, password);
-        acc.setGlobalCounter(0);
-
-        MasterSettings settings = MasterSettings.getInstance();
-
-        acc.setMainServer(settings.getMasterFirst().toString());
-        acc.setBackupServer(settings.getMasterSecond().toString());
-
         boolean ans = addAccount(acc);
         System.out.println("AccountDatabase:createAccount(" + username + "," + password + ")=" + ans);
         return ans;
@@ -84,7 +115,7 @@ public class AccountDatabase {
         }
     }
 
-    public boolean addAccount(AccountDBRow acc) {
+    private boolean addAccount(AccountDBRow acc) {
 
         AccountDBRow existing = getAccount(acc.getRowKey());
         if (existing != null) {

@@ -1,19 +1,41 @@
 package cloudsync.master.storage;
 
+import cloudsync.master.MasterSettings;
+import cloudsync.sharedInterface.ServerLocation;
+
 import com.microsoft.azure.storage.table.*;
 
-public class AccountDBRow extends TableServiceEntity{
+public class AccountDBRow extends TableServiceEntity {
     
+    public static final int USING_NONE = 0;
+    public static final int USING_MAIN = 1;
+    public static final int USING_BACKUP = 2;
+
     private String password;
     private long globalCounter;
-    private String mainServer;
-    private String backupServer;
+    private String masterAddrMain;
+    private int masterPortMain;
+    private String masterAddrBackup;
+    private int masterPortBackup;
     
-    public AccountDBRow() {}
-    
+    private int connectionCount;
+
+    private int serverflag;
+
+    public AccountDBRow() {
+    }
+
     public AccountDBRow(String username, String password) {
         super("account", username);
         this.password = password;
+        
+        this.setGlobalCounter(0);
+        this.setServerflag(AccountDBRow.USING_NONE);
+        this.setConnectionCount(0);
+        
+        MasterSettings settings = MasterSettings.getInstance();
+        this.setMasterAddrMain(settings.getMasterAddrMain());
+        this.setMasterAddrBackup(settings.getMasterAddrBackup());
     }
 
     public String getPassword() {
@@ -23,12 +45,11 @@ public class AccountDBRow extends TableServiceEntity{
     public void setPassword(String password) {
         this.password = password;
     }
-    
 
     String getUsername() {
         return rowKey;
     }
-    
+
     void setUsername(String username) {
         this.rowKey = username;
     }
@@ -41,21 +62,60 @@ public class AccountDBRow extends TableServiceEntity{
         this.globalCounter = globalCounter;
     }
 
-    public String getBackupServer() {
-        return backupServer;
+    public String getMasterAddrMain() {
+        return masterAddrMain;
     }
 
-    public void setBackupServer(String backupServer) {
-        this.backupServer = backupServer;
+    public void setMasterAddrMain(String masterAddrMain) {
+        this.masterAddrMain = masterAddrMain;
     }
 
-    public String getMainServer() {
-        return mainServer;
+    public String getMasterAddrBackup() {
+        return masterAddrBackup;
     }
 
-    public void setMainServer(String mainServer) {
-        this.mainServer = mainServer;
+    public void setMasterAddrBackup(String masterAddrBackup) {
+        this.masterAddrBackup = masterAddrBackup;
     }
 
+    public int getServerflag() {
+        return serverflag;
+    }
+
+    public void setServerflag(int serverflag) {
+        this.serverflag = serverflag;
+    }
+
+    public int getMasterPortMain() {
+        return masterPortMain;
+    }
+
+    public void setMasterPortMain(int masterPortMain) {
+        this.masterPortMain = masterPortMain;
+    }
+
+    public int getMasterPortBackup() {
+        return masterPortBackup;
+    }
+
+    public void setMasterPortBackup(int masterPortBackup) {
+        this.masterPortBackup = masterPortBackup;
+    }
+    
+    public ServerLocation getMainServer() {
+        return new ServerLocation(masterAddrMain, masterPortMain);
+    }
+    
+    public ServerLocation getBackupServer() {
+        return new ServerLocation(masterAddrBackup, masterPortBackup);
+    }
+
+    public int getConnectionCount() {
+        return connectionCount;
+    }
+
+    public void setConnectionCount(int connectionCount) {
+        this.connectionCount = connectionCount;
+    }
 
 }

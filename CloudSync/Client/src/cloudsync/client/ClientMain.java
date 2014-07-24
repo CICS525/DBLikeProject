@@ -39,7 +39,8 @@ public class ClientMain {
 		masterLocation = settings.getRecentMaster();
 
 		masterSession = SessionMaster.getInstance();
-		masterSession.setMasterServerLocation(masterLocation);
+		masterSession.setEntryLocation(settings.getEnteryServer());
+		//masterSession.setMasterServerLocation(masterLocation);
 		
 		metadataManager = MetadataManager.getInstance();
 		

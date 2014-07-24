@@ -1,9 +1,7 @@
 package cloudsync.master.storage;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Formatter;
 
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
@@ -41,7 +39,7 @@ public class Metadatabase {
         // get account
         AccountDBRow account = AccountDatabase.getInstance().getAccount(
                 username);
-        Metadatabase db = getServer(username);
+        Metadatabase db = getServer();
 
         // verify
         MetadataDBRow last = db.getLast(incompleteMetadata.filename, username);
@@ -56,7 +54,7 @@ public class Metadatabase {
 
         String strToSHA = incompleteMetadata.filename
                 + incompleteMetadata.timestamp.toString();
-        incompleteMetadata.blobKey = getSha1(strToSHA);
+        incompleteMetadata.blobKey = SHA.getSha1(strToSHA);
 
         MasterSettings settings = MasterSettings.getInstance();
         incompleteMetadata.blobServer = settings.getBlobFirst();
@@ -75,10 +73,11 @@ public class Metadatabase {
         AccountDatabase.getInstance().updateAccount(account);
 
         // update meta data
-        Metadatabase main = new Metadatabase(account.getMainServer(),
+        Metadatabase main = new Metadatabase(settings.getMasterAddrMain(),
                 DefaultSetting.metadatabase_table_name);
-        Metadatabase backup = new Metadatabase(account.getBackupServer(),
+        Metadatabase backup = new Metadatabase(settings.getMasterAddrBackup(),
                 DefaultSetting.metadatabase_table_name);
+
         main.addRecord(metaRow);
         backup.addRecord(metaRow);
 
@@ -94,12 +93,11 @@ public class Metadatabase {
         if (completeMetadata.status == STATUS.LAST) {
             boolean b = sb.uploadFile(fileToUpload, completeMetadata);
             System.out.println("Update " + b);
-        } 
-        /* Do nothing when status is DELETE
-         * else {
-            sb.deleteFile(completeMetadata);
         }
-        */
+        /*
+         * Do nothing when status is DELETE else {
+         * sb.deleteFile(completeMetadata); }
+         */
 
         return completeMetadata;
     }
@@ -107,7 +105,7 @@ public class Metadatabase {
     public static ArrayList<Metadata> getCompleteMetadata(String username,
             long sinceCounter) {
 
-        Metadatabase db = getServer(username);
+        Metadatabase db = getServer();
 
         Iterable<MetadataDBRow> rows = db.retrieveRecordSince(username,
                 sinceCounter);
@@ -125,10 +123,9 @@ public class Metadatabase {
     private Metadatabase() {
     }
 
-    private static Metadatabase getServer(String username) {
-        AccountDBRow account = AccountDatabase.getInstance().getAccount(
-                username);
-        Metadatabase server = new Metadatabase(account.getMainServer(),
+    private static Metadatabase getServer() {
+        Metadatabase server = new Metadatabase(MasterSettings.getInstance()
+                .getMasterFirst().toString(),
                 DefaultSetting.metadatabase_table_name);
         return server;
     }
@@ -222,29 +219,6 @@ public class Metadatabase {
         return null; // not exist
     }
 
-    private static String getSha1(String str) {
-        String sha1 = "";
-        try {
-            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-            crypt.reset();
-            crypt.update(str.getBytes("UTF-8"));
-            sha1 = byteToHex(crypt.digest());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sha1;
-    }
-
-    private static String byteToHex(final byte[] hash) {
-        Formatter formatter = new Formatter();
-        for (byte b : hash) {
-            formatter.format("%02x", b);
-        }
-        String result = formatter.toString();
-        formatter.close();
-        return result;
-    }
-
     static boolean testRecord() {
         Metadatabase db = new Metadatabase();
         db.table = AzureStorageConnection.connectToTable(MasterSettings
@@ -262,7 +236,8 @@ public class Metadatabase {
             meta.globalCounter = 1 + i;
 
             meta.timestamp = new Date();
-            meta.blobKey = getSha1(meta.filename + meta.timestamp.toString());
+            meta.blobKey = SHA.getSha1(meta.filename
+                    + meta.timestamp.toString());
             MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
 
             db.addRecord(metadb);

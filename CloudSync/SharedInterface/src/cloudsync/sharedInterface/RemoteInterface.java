@@ -11,6 +11,8 @@ public interface RemoteInterface extends Remote{
 
 	public boolean RmiCheckUsernamePassword(String username, String password) throws RemoteException;
 	
+	public ServerLocation RmiGetMasterServerAddress(String username) throws RemoteException;
+	
 	public long RmiGetMasterServerGlobalCounter(String username) throws RemoteException;
 
 	public ArrayList<Metadata> RmiGetCompleteMetadata(String username, long sinceCounter) throws RemoteException;

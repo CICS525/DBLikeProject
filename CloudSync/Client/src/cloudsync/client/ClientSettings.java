@@ -29,6 +29,8 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 	private String RootDir = null;					//the root (base) directory to sync
 	private ServerLocation RecentMaster = null;		//backup the recent Master Server location
 	
+	private ServerLocation enteryServer = null;
+	
 	public String getUsername() {
 		return Username;
 	}
@@ -59,6 +61,12 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 	public void setRecentMaster(ServerLocation recentMaster) {
 		RecentMaster = recentMaster;
 	}
+    public ServerLocation getEnteryServer() {
+        return enteryServer;
+    }
+    public void setEnteryServer(ServerLocation enteryServer) {
+        this.enteryServer = enteryServer;
+    }
 
 	
 	private ClientSettings(){
@@ -84,6 +92,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		setDeviceName(getSystemHostname());
 		setRootDir(folder);
 		setRecentMaster(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));
+		setEnteryServer(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));
 	}
 	
 	public static ClientSettings getInstance(){
@@ -160,4 +169,5 @@ public class ClientSettings implements Serializable {	// Serialization initializ
         }
 		return hostname;
 	}
+
 }

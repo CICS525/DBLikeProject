@@ -28,6 +28,10 @@ public class MasterSettings implements Serializable { // serialization
     private AzureConnection BlobSecond = null;
     private AzureConnection entryServer = null;
 
+    // addr that store in account db, used when create account
+    private String MasterAddrMain = null;
+    private String MasterAddrBackup = null;
+
     private final String fSettingsFileName = ".MasterSettings.settings";
 
     public int getLocalMessagePort() {
@@ -39,22 +43,22 @@ public class MasterSettings implements Serializable { // serialization
     }
 
     public int getLocalRmiPort() {
-		return LocalRmiPort;
-	}
+        return LocalRmiPort;
+    }
 
-	public void setLocalRmiPort(int locaLRmiPort) {
-		LocalRmiPort = locaLRmiPort;
-	}
+    public void setLocalRmiPort(int locaLRmiPort) {
+        LocalRmiPort = locaLRmiPort;
+    }
 
-	public int getLocalUploadPort() {
-		return LocalUploadPort;
-	}
+    public int getLocalUploadPort() {
+        return LocalUploadPort;
+    }
 
-	public void setLocalUploadPort(int localUploadPort) {
-		LocalUploadPort = localUploadPort;
-	}
+    public void setLocalUploadPort(int localUploadPort) {
+        LocalUploadPort = localUploadPort;
+    }
 
-	public AzureConnection getBlobFirst() {
+    public AzureConnection getBlobFirst() {
         return BlobFirst;
     }
 
@@ -94,16 +98,40 @@ public class MasterSettings implements Serializable { // serialization
         this.entryServer = entryServer;
     }
 
+    public String getMasterAddrMain() {
+        return MasterAddrMain;
+    }
+
+    public void setMasterAddrMain(String masterAddrMain) {
+        MasterAddrMain = masterAddrMain;
+    }
+
+    public String getMasterAddrBackup() {
+        return MasterAddrBackup;
+    }
+
+    public void setMasterAddrBackup(String masterAddrBackup) {
+        MasterAddrBackup = masterAddrBackup;
+    }
+
     private MasterSettings() {
-    	//set default value
-    	setLocalMessagePort( DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT );
-    	setLocalRmiPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
-    	setLocalUploadPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
-        setBlobFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
-        setBlobSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
-        setMasterFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
-        setMasterSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
-        setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        // set default value
+        setLocalMessagePort(DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
+        setLocalRmiPort(DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+        setLocalUploadPort(DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+        setBlobFirst(new AzureConnection(
+                DefaultSetting.chris_storageConnectionString));
+        setBlobSecond(new AzureConnection(
+                DefaultSetting.sky_storageConnectionString));
+        setMasterFirst(new AzureConnection(
+                DefaultSetting.chris_storageConnectionString));
+        setMasterSecond(new AzureConnection(
+                DefaultSetting.sky_storageConnectionString));
+        setEntryServer(new AzureConnection(
+                DefaultSetting.chris_storageConnectionString));
+
+        setMasterAddrMain(DefaultSetting.ELI_AZURE_SERVER_PUBLIC_IP);
+        setMasterAddrBackup(DefaultSetting.ELI_AZURE_SERVER_PUBLIC_IP);
     }
 
     public static MasterSettings getInstance() {
@@ -122,13 +150,16 @@ public class MasterSettings implements Serializable { // serialization
 
             MasterSettings temp = (MasterSettings) is.readObject();
             setLocalMessagePort(temp.getLocalMessagePort());
-        	setLocalRmiPort( temp.getLocalRmiPort() );
-        	setLocalUploadPort( temp.getLocalUploadPort() );
+            setLocalRmiPort(temp.getLocalRmiPort());
+            setLocalUploadPort(temp.getLocalUploadPort());
             setMasterFirst(temp.getMasterFirst());
             setMasterSecond(temp.getMasterSecond());
             setBlobFirst(temp.getBlobFirst());
             setBlobSecond(temp.getBlobSecond());
             setEntryServer(temp.getEntryServer());
+
+            setMasterAddrMain(temp.getMasterAddrMain());
+            setMasterAddrBackup(temp.getMasterAddrBackup());
 
             ans = true;
         } catch (Exception e) {
