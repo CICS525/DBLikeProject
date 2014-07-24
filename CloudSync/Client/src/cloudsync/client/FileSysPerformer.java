@@ -87,20 +87,20 @@ public class FileSysPerformer {
 	private boolean FilePerform(Metadata metadata){
 		// Add this file to the ignore list of all FileSysMonitors
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-			aMonitor.startIgnoreFile(metadata.filename);
+			aMonitor.startIgnoreFile(metadata.basename);
 		}
 		
 		if(metadata.status==STATUS.DELETE){
-			deleteFile(metadata.filename);
+			deleteFile(metadata.basename);
 		}else{
-			prepareFolder(metadata.filename);
+			prepareFolder(metadata.basename);
 			SessionBlobClient blobSession = new SessionBlobClient();
 			blobSession.downloadFile(metadata);
 		}
 		
 		// Remove this file from the ignore list all FileSysMonitors 
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-			aMonitor.stopIgnoreFile(metadata.filename);
+			aMonitor.stopIgnoreFile(metadata.basename);
 		}
 		return false;
 	}
@@ -137,7 +137,7 @@ public class FileSysPerformer {
 						synchronized (metaList) {
 							FileSysCallback callback = aMetaEx.callback;
 							if(callback!=null){
-								callback.onFinish(suc, aMeta.filename);
+								callback.onFinish(suc, aMeta.basename);
 							}
 							metaList.remove(aMetaEx);
 						}
@@ -155,7 +155,7 @@ public class FileSysPerformer {
 	}
 	
 	public String getAbsoluteFilename(Metadata metadata){
-		return getAbsoluteFilename(metadata.filename);
+		return getAbsoluteFilename(metadata.basename);
 	}
 	
 	public String getBaseFilename(String absoluteFilename){
