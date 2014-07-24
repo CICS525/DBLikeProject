@@ -92,7 +92,7 @@ public class Application_Main {
 				String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
 				SessionBlob sessionBlob = new SessionBlob();
 				Metadata metadata = new Metadata();
-				metadata.filename = filename;
+				metadata.basename = filename;
 				metadata.blobKey = filename;
 				metadata.blobServer = new AzureConnection(DefaultSetting.eli_storageConnectionString);
 				metadata.blobBackup = new AzureConnection(DefaultSetting.chris_storageConnectionString);

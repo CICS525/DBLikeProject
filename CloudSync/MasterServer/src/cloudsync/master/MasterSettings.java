@@ -115,21 +115,16 @@ public class MasterSettings implements Serializable { // serialization
     }
 
     private MasterSettings() {
-        // set default value
-        setLocalMessagePort(DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
-        setLocalRmiPort(DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-        setLocalUploadPort(DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-        setBlobFirst(new AzureConnection(
-                DefaultSetting.chris_storageConnectionString));
-        setBlobSecond(new AzureConnection(
-                DefaultSetting.sky_storageConnectionString));
-        setMasterFirst(new AzureConnection(
-                DefaultSetting.chris_storageConnectionString));
-        setMasterSecond(new AzureConnection(
-                DefaultSetting.sky_storageConnectionString));
-        setEntryServer(new AzureConnection(
-                DefaultSetting.chris_storageConnectionString));
-
+    	//set default value
+    	setLocalMessagePort( DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT );
+    	setLocalRmiPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
+    	setLocalUploadPort( DefaultSetting.DEFAULT_MASTER_UPLOAD_PORT );
+        setBlobFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        setBlobSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
+        setMasterFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        setMasterSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
+        setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
+        
         setMasterAddrMain(DefaultSetting.ELI_AZURE_SERVER_PUBLIC_IP);
         setMasterAddrBackup(DefaultSetting.ELI_AZURE_SERVER_PUBLIC_IP);
     }

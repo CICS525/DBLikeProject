@@ -27,7 +27,7 @@ public class MetadataDBRow extends TableServiceEntity {
         this.rowKey = String.valueOf(meta.globalCounter);
         this.globalCounter = meta.globalCounter;
 
-        this.filename = meta.filename;
+        this.filename = meta.basename;
         this.setParent(meta.parent);
         this.status = meta.status.toString();
         this.setTime(meta.timestamp);
@@ -114,7 +114,7 @@ public class MetadataDBRow extends TableServiceEntity {
     public Metadata toMetadata() {
         // get correspond metadata
         Metadata meta = new Metadata();
-        meta.filename = this.getFilename();
+        meta.basename = this.getFilename();
         meta.globalCounter = this.getGlobalCounter();
         meta.parent = this.getParent();
         meta.status = Metadata.STATUS.valueOf(this.getStatus());

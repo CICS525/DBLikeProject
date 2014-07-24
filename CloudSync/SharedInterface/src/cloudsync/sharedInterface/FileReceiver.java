@@ -11,7 +11,6 @@ import java.util.Date;
 public class FileReceiver {
 	//File Receiver should be singleton design pattern
 	
-	private final int FILE_RECEVER_PORT = 234;
 	private ServerSocket serverSocket = null;
 	private static FileReceiver that = null;
 	private BackgroundThread thread = null;
@@ -19,15 +18,28 @@ public class FileReceiver {
 	
 	private FileReceiver(){
 		//private constructor to secure singleton
-		ServerSocket serverSocket = null;
+		serverSocket = null;
 		thread = new BackgroundThread();
 		thread.start();
 	}
 	
-	public static FileReceiver getInstance(){
+	public static boolean initialize(int port){
 		if(that==null){
+			ServerSocket tempServerSocket = null;
+			try {
+				tempServerSocket = new ServerSocket(port);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
 			that = new FileReceiver();
+			that.serverSocket = tempServerSocket;
+			return true;
+		}else{
+			return false;
 		}
+	}
+	public static FileReceiver getInstance(){
 		return that; 
 	}
 	
@@ -40,12 +52,6 @@ public class FileReceiver {
 
 		@Override
 		public void run() {
-			try {
-				serverSocket = new ServerSocket(FILE_RECEVER_PORT);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				return;
-			}
 			
 			boolean loop = true;
 			while(loop)

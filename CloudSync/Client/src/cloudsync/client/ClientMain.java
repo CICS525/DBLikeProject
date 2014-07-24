@@ -87,7 +87,7 @@ public class ClientMain {
 		SessionMaster masterSession = SessionMaster.getInstance();
 		
 		//--- [should not change, unless conflict] ---
-		incomplete.filename = FileSysPerformer.getInstance().getBaseFilename(absoluteFilename);
+		incomplete.basename = FileSysPerformer.getInstance().getBaseFilename(absoluteFilename);
 		incomplete.parent = metadataManager.findByBasename(FileSysPerformer.getInstance().getBaseFilename(absoluteFilename)).globalCounter;
 		//--- [to be over written by Master Server] ---
 		incomplete.globalCounter = metadataManager.getGlobalWriteCounter();

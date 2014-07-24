@@ -42,7 +42,7 @@ public class Metadatabase {
         Metadatabase db = getServer();
 
         // verify
-        MetadataDBRow last = db.getLast(incompleteMetadata.filename, username);
+        MetadataDBRow last = db.getLast(incompleteMetadata.basename, username);
         if (db.hasConflict(last, incompleteMetadata)) {
             incompleteMetadata.status = STATUS.CONFLICT;
             return incompleteMetadata;
@@ -52,7 +52,7 @@ public class Metadatabase {
         incompleteMetadata.globalCounter = account.getGlobalCounter() + 1;
         incompleteMetadata.timestamp = new Date();
 
-        String strToSHA = incompleteMetadata.filename
+        String strToSHA = incompleteMetadata.basename
                 + incompleteMetadata.timestamp.toString();
         incompleteMetadata.blobKey = SHA.getSha1(strToSHA);
 
@@ -232,12 +232,12 @@ public class Metadatabase {
         meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
 
         for (int i = 0; i < 5; i++) {
-            meta.filename = "testfile" + String.valueOf(i);
+            meta.basename = "testfile" + String.valueOf(i);
             meta.globalCounter = 1 + i;
 
             meta.timestamp = new Date();
-            meta.blobKey = SHA.getSha1(meta.filename
-                    + meta.timestamp.toString());
+
+            meta.blobKey = SHA.getSha1(meta.basename + meta.timestamp.toString());
             MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
 
             db.addRecord(metadb);

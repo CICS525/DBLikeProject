@@ -13,7 +13,7 @@ public class Metadata implements Serializable{
 
 	public enum STATUS {INIT, /*NEW,*/ LAST, HISTORY, DELETE, CONFLICT, ERROR};
 	
-	public String filename = null;
+	public String basename = null;
 	public long globalCounter = 0;
 	public long parent = 0;
 	
@@ -30,7 +30,7 @@ public class Metadata implements Serializable{
 	}	
 	public Metadata(String baseFilname){
 		this();
-		filename = baseFilname;
+		basename = baseFilname;
 	}	
 	
 	public static String mixRootAndFilename(String rootDir, String filename){
@@ -44,7 +44,7 @@ public class Metadata implements Serializable{
 	}
 	
 	public String getAbsoluteFilename(String rootDir){
-		return mixRootAndFilename(rootDir, filename);
+		return mixRootAndFilename(rootDir, basename);
 	}
 
 	/**
@@ -61,10 +61,10 @@ public class Metadata implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Metadata other = (Metadata) obj;
-		if (filename == null) {
-			if (other.filename != null)
+		if (basename == null) {
+			if (other.basename != null)
 				return false;
-		} else if (!filename.equals(other.filename))
+		} else if (!basename.equals(other.basename))
 			return false;
 		return true;
 	}
