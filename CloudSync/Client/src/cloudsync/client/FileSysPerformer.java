@@ -171,7 +171,8 @@ public class FileSysPerformer {
 		}
 		
 		if(absoluteFilename.startsWith(rootDir)){
-			return absoluteFilename.substring(rootDir.length());
+			String ret = absoluteFilename.substring(rootDir.length());
+			return ret;
 		}else{
 			return null;	//the file is NOT in root directory
 		}

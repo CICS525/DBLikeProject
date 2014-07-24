@@ -11,10 +11,10 @@ import java.net.UnknownHostException;
 
 
 public class FileSender {
-	private int portNum = 234;
-	private String hostname = "localhost";
+	private int portNum = 0;
+	private String hostname = null;
 	private FileSenderThread thread = null;
-	private String filePath = "C:\\Users\\Tianlai Dong\\Desktop\\test.docx";
+	private String filePath = null;
 	private File file = null;
 	private FileInputStream fis = null;
 	private ObjectOutputStream dos = null;
@@ -67,7 +67,7 @@ public class FileSender {
 
 		@Override
 		public void run() {
-			boolean suc = false;
+			String fileOnServer = null;
 			//stop = false;
 			try {
 				System.out.println("FileSender: Connect to " + hostname + "@" + portNum);
@@ -79,7 +79,7 @@ public class FileSender {
 				dos.writeObject((Long)file.length());
 				dos.flush();
 				buff = new byte[BUFF_SIZE];
-				suc = sendFile();
+				fileOnServer = sendFile();
 			} catch (UnknownHostException e) {
 				System.err.println("FileSender: UnknownHostException #" + hostname);
 			} catch (IOException e) {
@@ -87,7 +87,7 @@ public class FileSender {
 			} 
 			//super.run();
 			if(callback!=null){
-				callback.onFinish(suc, filePath);
+				callback.onFinish(fileOnServer!=null, fileOnServer);
 			}
 		}	
 	}
@@ -110,8 +110,8 @@ public class FileSender {
 		}
 	}*/
 	
-	private boolean sendFile(){
-		boolean ans = false;
+	private String sendFile(){
+		String fileOnServer = null;
 		finished = false;
 		while (true){
 			if(thread.isInterrupted()){
@@ -138,9 +138,8 @@ public class FileSender {
 			if(finished){
 				System.out.println("FileSender: File Send Completed...");
 				try {
-					String filename = (String) dis.readObject();
-					System.out.println("Filename from Server: "+ filename);
-					ans = true;
+					fileOnServer = (String) dis.readObject();
+					System.out.println("Filename from Server: "+ fileOnServer);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -158,6 +157,6 @@ public class FileSender {
 				e.printStackTrace();
 			}
 		}
-		return ans;
+		return fileOnServer;
 	}
 }
