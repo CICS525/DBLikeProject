@@ -94,9 +94,12 @@ public class Metadatabase {
         if (completeMetadata.status == STATUS.LAST) {
             boolean b = sb.uploadFile(fileToUpload, completeMetadata);
             System.out.println("Update " + b);
-        } else {
+        } 
+        /* Do nothing when status is DELETE
+         * else {
             sb.deleteFile(completeMetadata);
         }
+        */
 
         return completeMetadata;
     }
