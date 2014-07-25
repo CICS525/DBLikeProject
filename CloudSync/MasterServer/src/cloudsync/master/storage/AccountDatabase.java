@@ -61,9 +61,12 @@ public class AccountDatabase {
         if (flag == AccountDBRow.USING_NONE) {
             flag = selectServer();
             acc.setServerflag(flag);
+            acc.setConnectionCount(1);
+        } else {
             acc.setConnectionCount(acc.getConnectionCount() + 1);
-            updateAccount(acc);
         }
+        
+        updateAccount(acc);
         
         if (flag == AccountDBRow.USING_MAIN) {
             return acc.getMainServer();

@@ -73,10 +73,10 @@ public class Metadatabase {
         AccountDatabase.getInstance().updateAccount(account);
 
         // update meta data
-        Metadatabase main = new Metadatabase(settings.getMasterAddrMain(),
-                DefaultSetting.metadatabase_table_name);
-        Metadatabase backup = new Metadatabase(settings.getMasterAddrBackup(),
-                DefaultSetting.metadatabase_table_name);
+        Metadatabase main = new Metadatabase(settings.getMasterFirst()
+                .toString(), DefaultSetting.metadatabase_table_name);
+        Metadatabase backup = new Metadatabase(settings.getMasterSecond()
+                .toString(), DefaultSetting.metadatabase_table_name);
 
         main.addRecord(metaRow);
         backup.addRecord(metaRow);
@@ -217,70 +217,6 @@ public class Metadatabase {
         }
 
         return null; // not exist
-    }
-
-    static boolean testRecord() {
-        Metadatabase db = new Metadatabase();
-        db.table = AzureStorageConnection.connectToTable(MasterSettings
-                .getInstance().getMasterFirst().toString(), "testmeta");
-
-        Metadata meta = new Metadata();
-
-        meta.parent = 0;
-        meta.status = STATUS.HISTORY;
-        meta.blobServer = MasterSettings.getInstance().getBlobFirst();
-        meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
-
-        for (int i = 0; i < 5; i++) {
-            meta.basename = "testfile" + String.valueOf(i);
-            meta.globalCounter = 1 + i;
-
-            meta.timestamp = new Date();
-
-            meta.blobKey = SHA.getSha1(meta.basename + meta.timestamp.toString());
-            MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
-
-            db.addRecord(metadb);
-        }
-
-        meta.parent = 5;
-        meta.globalCounter = 6;
-        meta.status = STATUS.LAST;
-        meta.blobServer = MasterSettings.getInstance().getBlobFirst();
-        meta.blobBackup = MasterSettings.getInstance().getBlobSecond();
-
-        MetadataDBRow metadb = new MetadataDBRow("testuser", meta);
-
-        db.addRecord(metadb);
-
-        MetadataDBRow last = db.getLast("testfile4", "testuser");
-
-        if (last == null) {
-            try {
-                db.table.delete();
-            } catch (StorageException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-
-        meta.parent = 5;
-        meta.globalCounter = 7;
-
-        last.setStatus(STATUS.HISTORY.toString());
-        db.updateRecord(last);
-
-        Iterable<MetadataDBRow> ma = db.retrieveRecordSince("testuser", 1);
-        for (MetadataDBRow row : ma) {
-            System.out.println(row.getFilename() + row.getRowKey());
-        }
-
-        try {
-            db.table.delete();
-        } catch (StorageException e) {
-            e.printStackTrace();
-        }
-        return true;
     }
 
 }

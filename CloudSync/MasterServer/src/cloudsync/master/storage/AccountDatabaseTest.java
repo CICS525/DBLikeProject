@@ -6,6 +6,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import cloudsync.master.MasterSettings;
+import cloudsync.sharedInterface.ServerLocation;
+
 public class AccountDatabaseTest {
     private static String storageConnectionString = "DefaultEndpointsProtocol=http;"
             + "AccountName=portalvhds96n2s1jyj5b5k;"
@@ -59,6 +62,34 @@ public class AccountDatabaseTest {
         
         row.setGlobalCounter(0);
         db.updateAccount(row);
+    }
+    
+    @Test
+    public void testGetServerAndLogOut() {
+        ServerLocation server = db.getServerLocation(username);
+        assertEquals(server.url, MasterSettings.getInstance().getMasterAddrMain());
+        
+        AccountDBRow row = db.getAccount(username);
+        assertEquals(row.getConnectionCount(), 1);
+        assertEquals(row.getServerflag(), AccountDBRow.USING_MAIN);
+        
+        db.getServerLocation(username);
+        row = db.getAccount(username);
+        assertEquals(row.getConnectionCount(), 2);
+        assertEquals(row.getServerflag(), AccountDBRow.USING_MAIN);
+        
+        db.logout(username);
+        row = db.getAccount(username);
+        assertEquals(row.getConnectionCount(), 1);
+        assertEquals(row.getServerflag(), AccountDBRow.USING_MAIN);
+        
+        db.logout(username);
+        row = db.getAccount(username);
+        assertEquals(row.getConnectionCount(), 0);
+        assertEquals(row.getServerflag(), AccountDBRow.USING_NONE);
+        
+        System.out.println("test finished");
+        
     }
 
 }
