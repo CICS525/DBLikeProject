@@ -141,7 +141,7 @@ public class FileSysMonitor {
 					{
 						WatchKey temp = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, 
 							StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
-						System.out.println("Registered folder!");
+						System.out.println("FileSystemMonitor: Registered folder#" + dir);
 						keys.put(temp, dir);
 						pathNames.add(dir.toString());
 					}

@@ -80,9 +80,7 @@ public class Application_Main {
 		settings.loadSettings();
 
 		masterSession = SessionMaster.getInstance();
-		
-		masterSession.setEntryLocation(settings.getEnteryServer());
-		//masterSession.setMasterServerLocation(settings.getRecentMaster());
+		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		
 		fileMonitor = new FileSysMonitor(settings.getRootDir());
 		fileMonitor.StartListen(new FileSysMonitorCallback(){

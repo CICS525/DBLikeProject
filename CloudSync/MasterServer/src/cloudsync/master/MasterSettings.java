@@ -125,8 +125,8 @@ public class MasterSettings implements Serializable { // serialization
         setMasterSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
         setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
         
-        setMasterAddrMain(DefaultSetting.ELI_AZURE_SERVER_PUBLIC_IP);
-        setMasterAddrBackup(DefaultSetting.ELI_AZURE_SERVER_PUBLIC_IP);
+        setMasterAddrMain(DefaultSetting.DEFAULT_MASTER_SERVER_URL);
+        setMasterAddrBackup(DefaultSetting.DEFAULT_MASTER_SERVER_URL);
     }
 
     public static MasterSettings getInstance() {
@@ -157,8 +157,10 @@ public class MasterSettings implements Serializable { // serialization
             setMasterAddrBackup(temp.getMasterAddrBackup());
 
             ans = true;
+        } catch (FileNotFoundException e) {
+        	System.out.println("MasterSettings: Setting file not found! " + fSettingsFileName);
         } catch (Exception e) {
-            System.out.println("ERROR" + e);
+            System.err.println("ERROR:" + e);
         } finally {
             try {
                 if (is != null)

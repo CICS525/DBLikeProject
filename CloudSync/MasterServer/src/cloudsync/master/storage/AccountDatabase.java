@@ -49,8 +49,11 @@ public class AccountDatabase {
         }
         
         boolean result = acc.getPassword().equals(password);
-
-        System.out.println("AccountDatabase:login(" + username + "," + password + ")=" + result);
+        if(result)
+        	System.out.println("AccountDatabase:login(" + username + "," + password + ")=" + result);
+        else
+        	System.out.println("AccountDatabase:login(" + username + "," + acc.getPassword() + ")=" + result + " input password:" + password);
+        
         return result;
     }
     

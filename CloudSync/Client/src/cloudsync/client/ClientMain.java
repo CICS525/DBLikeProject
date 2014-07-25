@@ -4,14 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
-import cloudsync.sharedInterface.AzureConnection;
-import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.FileSender;
 import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 import cloudsync.sharedInterface.ServerLocation;
-import cloudsync.sharedInterface.SessionBlob;
 
 public class ClientMain {
 
@@ -36,11 +33,16 @@ public class ClientMain {
 		// This is in order to handle the file could be modified when the client is not running.
 		// Here should scan all local file time stamps to compare with the one in local metadata.
 		
-		masterLocation = settings.getRecentMaster();
+		//masterLocation = settings.getRecentMaster();
+		SessionEntry entry = SessionEntry.getInstance();
+		masterLocation = entry.getMasterServerLocation(settings.getUsername(), settings.getPassword());
+		if(masterLocation==null){
+			System.out.println("Can not locate Master Server");
+			return false;
+		}
 
 		masterSession = SessionMaster.getInstance();
-		masterSession.setEntryLocation(settings.getEnteryServer());
-		//masterSession.setMasterServerLocation(masterLocation);
+		masterSession.setMasterServerLocation(masterLocation);
 		
 		metadataManager = MetadataManager.getInstance();
 		

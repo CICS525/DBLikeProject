@@ -4,6 +4,7 @@ package cloudsync.client;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,8 +29,6 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 	private String DeviceName = null;				//a account many have several devices, each device should have a unique name
 	private String RootDir = null;					//the root (base) directory to sync
 	private ServerLocation RecentMaster = null;		//backup the recent Master Server location
-	
-	private ServerLocation enteryServer = null;
 	
 	public String getUsername() {
 		return Username;
@@ -61,12 +60,6 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 	public void setRecentMaster(ServerLocation recentMaster) {
 		RecentMaster = recentMaster;
 	}
-    public ServerLocation getEnteryServer() {
-        return enteryServer;
-    }
-    public void setEnteryServer(ServerLocation enteryServer) {
-        this.enteryServer = enteryServer;
-    }
 
 	
 	private ClientSettings(){
@@ -92,7 +85,6 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		setDeviceName(getSystemHostname());
 		setRootDir(folder);
 		setRecentMaster(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));
-		setEnteryServer(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));
 	}
 	
 	public static ClientSettings getInstance(){
@@ -119,6 +111,8 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 			setRecentMaster(temp.getRecentMaster());
 			
 			ans = true;
+        } catch (FileNotFoundException e) {
+        	System.out.println("ClientSettings: Setting file not found! " + fSettingsFileName);
 		} catch (Exception e) {
             System.out.println("ERROR"+e);
 		}
@@ -169,5 +163,4 @@ public class ClientSettings implements Serializable {	// Serialization initializ
         }
 		return hostname;
 	}
-
 }

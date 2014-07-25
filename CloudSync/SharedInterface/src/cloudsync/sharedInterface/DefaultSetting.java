@@ -3,6 +3,7 @@ package cloudsync.sharedInterface;
 public class DefaultSetting {
 	//TCP: IMAP:143	/ LDAP:389 / POP3:110
 	
+	public final static String	DEFAULT_ENTRY_SERVER_URL  = "127.0.0.1";
 	public final static String	DEFAULT_MASTER_SERVER_URL = "127.0.0.1";
 	
 	public final static int		DEFAULT_MASTER_MESSAGE_PORT = 2001;
