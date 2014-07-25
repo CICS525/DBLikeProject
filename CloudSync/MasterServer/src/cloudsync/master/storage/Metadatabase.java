@@ -73,10 +73,11 @@ public class Metadatabase {
         AccountDatabase.getInstance().updateAccount(account);
 
         // update meta data
+        // TODO retrieve master servers by querying table
         Metadatabase main = new Metadatabase(settings.getMasterFirst()
-                .toString(), DefaultSetting.metadatabase_table_name);
+                .toString(), DefaultSetting.METADATA_TABLE_NAME);
         Metadatabase backup = new Metadatabase(settings.getMasterSecond()
-                .toString(), DefaultSetting.metadatabase_table_name);
+                .toString(), DefaultSetting.METADATA_TABLE_NAME);
 
         main.addRecord(metaRow);
         backup.addRecord(metaRow);
@@ -126,7 +127,7 @@ public class Metadatabase {
     private static Metadatabase getServer() {
         Metadatabase server = new Metadatabase(MasterSettings.getInstance()
                 .getMasterFirst().toString(),
-                DefaultSetting.metadatabase_table_name);
+                DefaultSetting.METADATA_TABLE_NAME);
         return server;
     }
 

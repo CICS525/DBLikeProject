@@ -24,9 +24,11 @@ public class DefaultSetting {
             + "AccountName=portalvhds0c37fqp3tw964;"
             + "AccountKey=n8uEGZrIUoMcD4J7WgbcZyk6gMZ0hV9mtn83jXtMpWwLjFAWlPSZizDdZiWmeLjJMetOvrMko1dwoQnaUQTSLQ==";
 	
-	public final static String metadatabase_table_name = "meta";
+	public final static String METADATA_TABLE_NAME = "meta";
 	
-	public final static String account_table_name = "account";
+	public final static String ACCOUNT_TABLE_NAME = "account";
+	
+	public final static String MASTER_BLOB_TABLE_NAME = "masterblob";
 	
 	public final static String DEFAULT_SYNC_DIR_NAME = "CloudSync";
 }

@@ -16,7 +16,7 @@ public class AccountDatabase {
     private AccountDatabase() {
         String conn = MasterSettings.getInstance().getEntryServer().toString();
         table = AzureStorageConnection.connectToTable(conn,
-                DefaultSetting.account_table_name);
+                DefaultSetting.ACCOUNT_TABLE_NAME);
     }
 
     AccountDatabase(String connStr, String tableName) {
