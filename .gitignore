@@ -128,3 +128,4 @@ packages/
 #Application Settings
 *.settings
 *.tmp
+*.dat

@@ -30,17 +30,58 @@ import cloudsync.client.FileSysMonitorCallback.Action;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 
 public class FileSysMonitor {
+	
+	private class MFile{
+		private File f;
+		public MFile(String filename) {
+			f = new File(filename);
+			if(f.exists())
+				return;
+			
+			//if(filename.startsWith(rootFolder.toString())){
+			if(filename.toLowerCase().startsWith(rootFolder.toString().toLowerCase())){
+				f = new File(filename);
+			} else {
+				FileSysPerformer fPer = FileSysPerformer.getInstance();
+				f = new File(fPer.getAbsoluteFilename(filename));
+			}
+		}
+		
+		@Override
+		public boolean equals(Object paramObject) {
+			//return super.equals(paramObject);
+			boolean ans = false;
+			if(paramObject instanceof MFile ) {
+				ans = f.equals(((MFile) paramObject).f);
+			} else if(paramObject instanceof File) {
+				ans = f.equals(paramObject);
+			} else if(paramObject instanceof String) {
+				ans = f.equals(new File((String) paramObject));
+			}
+			return ans;
+		}
 
+		@Override
+		public String toString() {
+			//return super.toString();
+			return "File:[" + f.getAbsolutePath() + "]";
+		}
+	}
+	
 	private static boolean isListening = true;
-	public ArrayList<String> ignoreList = new ArrayList<String>();
+	private ArrayList<MFile> ignoreList = new ArrayList<MFile>();
 	private ArrayList<String> pathNames = new ArrayList<String>();
 	private Thread watcherThread;
 	private WatchService watcher;
 	private Path rootFolder;
 	private final HashMap<WatchKey, Path> keys = new HashMap<WatchKey, Path>();
 	
+	private final static WatchEvent.Kind[] WATCHEVENTS = new WatchEvent.Kind[]{
+		//StandardWatchEventKinds.ENTRY_CREATE,
+		StandardWatchEventKinds.ENTRY_DELETE,
+		StandardWatchEventKinds.ENTRY_MODIFY };
+	
 	private Object watcherLock = new Object();
-	private Object ignoreLock = new Object();
 	
 	public FileSysMonitor(String directory) {
 		rootFolder = Paths.get(directory);
@@ -53,15 +94,10 @@ public class FileSysMonitor {
 	 * @param directory name of the directory to watch.
 	 * @param callback the callback object
 	 */
-	public boolean StartListen(final FileSysMonitorCallback callback) {
+	public boolean startListen(final FileSysMonitorCallback callback) {
 		try {
 			synchronized (watcherLock)  { watcher = FileSystems.getDefault().newWatchService(); } //lock the watcher
-			WatchKey temp = rootFolder.register(watcher, 
-					new WatchEvent.Kind[]{
-						StandardWatchEventKinds.ENTRY_CREATE,
-						StandardWatchEventKinds.ENTRY_DELETE,
-						StandardWatchEventKinds.ENTRY_MODIFY },
-					SensitivityWatchEventModifier.HIGH);
+			WatchKey temp = rootFolder.register(watcher, WATCHEVENTS, SensitivityWatchEventModifier.HIGH);
 			
 			keys.put(temp, rootFolder); //put into map for monitoring
 			registerSubfolders(rootFolder);
@@ -81,18 +117,22 @@ public class FileSysMonitor {
 								Kind<?> type = event.kind();
 								Path child = dir.resolve((Path) event.context());
 								File currFile = child.toFile();
-								newTimeStamp = currFile.lastModified();
+								newTimeStamp = currFile.lastModified();	//0L if the file does not exist or if an I/O error occurs
+								if(newTimeStamp==0 && type!=StandardWatchEventKinds.ENTRY_DELETE)
+									continue;
+								
 								String filename = child.toAbsolutePath().toString();
-								System.out.println("FileSysMonitor: WatchEvent # " + filename + "@" + newTimeStamp);
+								System.out.println("FileSysMonitor: WatchEvent " + type + " # " + filename + "@" + newTimeStamp);
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
 								}
-								synchronized(ignoreLock)
+								synchronized(ignoreList)
 								{
-									if (!ignoreList.contains(filename))
+									MFile temp = new MFile(filename);
+									if ( !ignoreList.contains(temp) )
 									{
-										System.out.println("FileSysMonitor: not in ignore list #" + filename);
+										System.out.println("FileSysMonitor: NOT IN ignore_list # " + filename);
 									
 										Action action = FileSysMonitorCallback.Action.ERROR;
 									
@@ -107,13 +147,14 @@ public class FileSysMonitor {
 										}
 										callback.Callback(child.toAbsolutePath().toString(), action);
 									}else{
-										System.out.println("FileSysMonitor: in ignore list #" + filename);
+										System.out.println("FileSysMonitor: IN ignore_list # " + filename);
+										ignoreList.remove( temp );
 									}
 								}
 								
-								for(String ign: ignoreList){
-									System.out.println("FileSysMonitor: ignore list~" + ign);
-								}
+								//for(MFile ignore: ignoreList){
+								//	System.out.println( "FileSysMonitor: ignore list~" + ignore.toString() );
+								//}
 								
 								oldTimeStamp = newTimeStamp;
 							}
@@ -152,12 +193,7 @@ public class FileSysMonitor {
 				{
 					if (!pathNames.contains(dir.toString()))
 					{
-						WatchKey temp = dir.register(watcher, 
-								new WatchEvent.Kind[]{
-									StandardWatchEventKinds.ENTRY_CREATE, 
-									StandardWatchEventKinds.ENTRY_MODIFY, 
-									StandardWatchEventKinds.ENTRY_DELETE}, 
-								SensitivityWatchEventModifier.HIGH);
+						WatchKey temp = dir.register(watcher, WATCHEVENTS, SensitivityWatchEventModifier.HIGH);
 						System.out.println("FileSystemMonitor: Registered folder#" + dir);
 						keys.put(temp, dir);
 						pathNames.add(dir.toString());
@@ -173,7 +209,7 @@ public class FileSysMonitor {
 	 * Synchronized to prevent multiple access to the the isListening variable.
 	 * @return true if isListening has been stopped, false otherwise.
 	 */
-	public boolean StopListen(){
+	public boolean stopListen(){
 		synchronized (this)
 		{
 			isListening = false;
@@ -190,12 +226,12 @@ public class FileSysMonitor {
 	public boolean startIgnoreFile(String filename){
 		//FileSysPerformer.java may need to update files. These action should be ignored
 		boolean contains = false;
-		synchronized (ignoreLock)
+		synchronized (ignoreList)
 		{
-			String name = convertToAbsolute(filename);
-			System.out.println("FileSysMonitor: startIgnoreFile # " + name);
-			ignoreList.add(name);
-			contains = ignoreList.contains(name);
+			System.out.println("FileSysMonitor: startIgnoreFile # " + filename);
+			MFile temp = new MFile(filename);
+			ignoreList.add(temp);
+			contains = ignoreList.contains(temp);
 		}
 		return contains;
 	}
@@ -203,34 +239,16 @@ public class FileSysMonitor {
 	/**
 	 * Allows a file to be uploaded to the cloud service.
 	 * @param filenames can be absolute, relative or relative with a slash in front.
-	 * @return true if the file is REMOVED from the ignorelist, false otherwise
+	 * @return true if the file is REMOVED from the ignore list, false otherwise
 	 */
-	public boolean stopIgnoreFile(String filename){
+	public boolean stopIgnoreFile_error(String filename){
 		boolean removed = false;
-		synchronized (ignoreLock)
+		synchronized (ignoreList)
 		{
-			String name = convertToAbsolute(filename);
 			System.out.println("FileSysMonitor: stopIgnoreFile #" + filename);
-			ignoreList.remove(name);
+			ignoreList.remove( new MFile(filename) );
 		}
 		return removed; 
 	}
-	
-	/**
-	 * Converts a filename to absolute (if it isn't already)
-	 * @param filename
-	 * @return
-	 */
-	public String convertToAbsolute(String filename) {
-		String file = filename;
-		if (filename.charAt(0) == '\\')
-		{	
-			file = filename.substring(1);
-		}
-		Path filePath = Paths.get(file);
-		if (filePath.isAbsolute()) {
-			return file;
-		}
-		return rootFolder.toString() + "\\" + file;
-	}
+
 }

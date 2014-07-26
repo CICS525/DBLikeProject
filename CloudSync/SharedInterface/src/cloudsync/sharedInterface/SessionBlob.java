@@ -98,8 +98,8 @@ public class SessionBlob {
 
 		    // Loop over blobs within the container and output the URI to each of them.
 		    for (ListBlobItem blobItem : container.listBlobs()) {
-		       System.out.println(blobItem.getUri());
-		   }
+		       System.out.println("SessionBlob:" + blobItem.getUri());
+			}
 		}
 		catch (Exception e)
 		{

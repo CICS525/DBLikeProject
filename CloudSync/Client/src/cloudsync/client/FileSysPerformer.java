@@ -61,6 +61,7 @@ public class FileSysPerformer {
 	}
 	
 	private boolean deleteFile(String filename){
+		boolean ans = false;
 		// Convert base filename to absolute file name 
 		String absFilename = getAbsoluteFilename(filename);
 		File file = new File(absFilename);
@@ -76,33 +77,34 @@ public class FileSysPerformer {
 			if(directory.list().length>0){
 				System.out.println("Directory is not empty");
 			} else {
-				directory.delete();
+				ans = directory.delete();
 			}	
 		} else {
 			System.out.println("This is not a folder");
 		}
-		return false;
+		return ans;
 	}
 
 	private boolean FilePerform(Metadata metadata){
+		boolean ans = false;
 		// Add this file to the ignore list of all FileSysMonitors
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
 			aMonitor.startIgnoreFile(metadata.basename);
 		}
 		
 		if(metadata.status==STATUS.DELETE){
-			deleteFile(metadata.basename);
+			ans = deleteFile(metadata.basename);
 		}else{
 			prepareFolder(metadata.basename);
 			SessionBlobClient blobSession = new SessionBlobClient();
-			blobSession.downloadFile(metadata);
+			ans = blobSession.downloadFile(metadata);
 		}
 		
 		// Remove this file from the ignore list all FileSysMonitors 
-		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-			aMonitor.stopIgnoreFile(metadata.basename);
-		}
-		return false;
+		//for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
+		//	aMonitor.stopIgnoreFile(metadata.basename);
+		//}
+		return ans;
 	}
 	
 	public void addUpdateLocalTask(Metadata metadata){
@@ -129,18 +131,26 @@ public class FileSysPerformer {
 		@Override
 		public void run() {
 			while( !metaList.isEmpty() ){
+				ArrayList<MetadataEx> delList = new ArrayList<MetadataEx>();
+				
 				for( MetadataEx aMetaEx : metaList ){
-					Metadata aMeta = aMetaEx.metadata;
-					
-					boolean suc = FilePerform(aMeta);
+					boolean suc = FilePerform(aMetaEx.metadata);
 					if(suc){
-						synchronized (metaList) {
+						delList.add(aMetaEx);
+					}else{
+						System.out.println("PerformThread@FileSysPerformer : FilePerform(" + aMetaEx.metadata.basename + ") -> " + suc);
+					}
+				}
+				
+				if(delList.size()>0){
+					synchronized (metaList) {
+						for( MetadataEx aMetaEx : delList ){
 							FileSysCallback callback = aMetaEx.callback;
 							if(callback!=null){
-								callback.onFinish(suc, aMeta.basename);
+								callback.onFinish(true, aMetaEx.metadata.basename);
 							}
-							metaList.remove(aMetaEx);
 						}
+						metaList.removeAll(delList);
 					}
 				}
 			}

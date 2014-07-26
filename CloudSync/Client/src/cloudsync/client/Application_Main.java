@@ -83,7 +83,7 @@ public class Application_Main {
 		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		
 		fileMonitor = new FileSysMonitor(settings.getRootDir());
-		fileMonitor.StartListen(new FileSysMonitorCallback(){
+		fileMonitor.startListen(new FileSysMonitorCallback(){
 			@Override
 			public void Callback(String filename, Action action) {
 				System.out.println(filename + " " + action);
@@ -97,10 +97,10 @@ public class Application_Main {
 				boolean suc = false;
 				if ( FileSysMonitorCallback.Action.MODIFY == action ) {
 					suc = sessionBlob.uploadFile(absoluteFilename, metadata);
-					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
+					System.out.println("Application_Main@Upload File:" + absoluteFilename + "->" + suc);
 				} else if ( FileSysMonitorCallback.Action.DELETE == action) {
 					suc = sessionBlob.deleteFile(metadata);
-					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
+					System.out.println("Application_Main@Delete File:" + absoluteFilename + "->" + suc);
 				}
 			}
 		});

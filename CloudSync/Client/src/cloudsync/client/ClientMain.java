@@ -48,14 +48,12 @@ public class ClientMain {
 		metadataManager = MetadataManager.getInstance();
 		
 		FileSysMonitor fileMonitor = new FileSysMonitor(settings.getRootDir());
-		boolean bMnt = fileMonitor.StartListen( new FileSysMonitorCallback(){
+		boolean bMnt = fileMonitor.startListen( new FileSysMonitorCallback(){
 			@Override
 			public void Callback(String filename, Action action) {
-				System.out.println(filename + " " + action);
 				final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
-				boolean suc = false;
 				if ( Action.MODIFY == action ) {
-					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename + "->" + suc);
+					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 
 //					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
 //						
@@ -70,7 +68,7 @@ public class ClientMain {
 //					sender.startFileTransfer();
 					
 				} else if ( Action.DELETE == action) {
-					System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename + "->" + suc);
+					System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename);
 				}
 			}
 		});
@@ -79,20 +77,26 @@ public class ClientMain {
 			allFileMonitors.add(fileMonitor);
 		}
 
-//		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
-//		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
-//		return bCnt;
+		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
+		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
+		return bCnt;
 		
-		FileSysMonitor fileSysMonitor = allFileMonitors.get(0);
-		String filename = "c:\\Users\\Elitward\\CloudSync\\abc.txt";
-		fileSysMonitor.startIgnoreFile(filename);
-		File f = new File(filename);
-		try {
-			f.createNewFile();
-		} catch (IOException e) {
-		}
-		//fileSysMonitor.stopIgnoreFile(filename);
-		return false;
+//		FileSysMonitor fileSysMonitor = allFileMonitors.get(0);
+//		String filename = "c:\\Users\\Elitward\\CloudSync\\abc.txt";
+//		fileSysMonitor.startIgnoreFile(filename);
+//		File f = new File(filename);
+//		try {
+//			f.createNewFile();
+//		} catch (IOException e) {
+//		}
+//		//fileSysMonitor.stopIgnoreFile(filename);
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return false;
 	}
 	
 	public static synchronized boolean commitFileUpdate(Action action, String absoluteFilename, String tempFileOnServer){
@@ -150,9 +154,9 @@ public class ClientMain {
 					
 					boolean get = fOld.renameTo(fNew);
 
-					for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-						aMonitor.stopIgnoreFile(absoluteFilename);
-					}
+					//for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
+					//	aMonitor.stopIgnoreFile(absoluteFilename);
+					//}
 					return false;
 				}else if( complete.status==STATUS.ERROR ){
 					return false;
