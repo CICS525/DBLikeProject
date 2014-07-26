@@ -130,6 +130,7 @@ public class FileSysPerformer {
 
 		@Override
 		public void run() {
+			// A list to store all the meta data that is going to be deleted 
 			while( !metaList.isEmpty() ){
 				ArrayList<MetadataEx> delList = new ArrayList<MetadataEx>();
 				
