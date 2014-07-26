@@ -3,6 +3,8 @@ package cloudsync.client;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+
 import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
@@ -128,6 +130,8 @@ public class FileSysPerformer {
 
 		@Override
 		public void run() {
+			// A list to store all the meta data that is going to be deleted 
+			ArrayList delMetaList = new ArrayList<>();
 			while( !metaList.isEmpty() ){
 				for( MetadataEx aMetaEx : metaList ){
 					Metadata aMeta = aMetaEx.metadata;
@@ -139,10 +143,10 @@ public class FileSysPerformer {
 							if(callback!=null){
 								callback.onFinish(suc, aMeta.basename);
 							}
-							metaList.remove(aMetaEx);
+							delMetaList.add(aMetaEx);
 						}
 					}
-				}
+				}metaList.removeAll(delMetaList);
 			}
 			super.run();
 			thread = null;	//quit the thread
