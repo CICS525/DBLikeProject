@@ -40,7 +40,7 @@ public class FileSysMonitor {
 	private final HashMap<WatchKey, Path> keys = new HashMap<WatchKey, Path>();
 	
 	private Object watcherLock = new Object();
-	
+	private Object ignoreLock = new Object();
 	
 	public FileSysMonitor(String directory) {
 		rootFolder = Paths.get(directory);
@@ -88,24 +88,27 @@ public class FileSysMonitor {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
 								}
-								if (!ignoreList.contains(filename))
+								synchronized(ignoreLock)
 								{
-									System.out.println("FileSysMonitor: not in ignore list #" + filename);
+									if (!ignoreList.contains(filename))
+									{
+										System.out.println("FileSysMonitor: not in ignore list #" + filename);
 									
-									Action action = FileSysMonitorCallback.Action.ERROR;
+										Action action = FileSysMonitorCallback.Action.ERROR;
 									
-									if (type == StandardWatchEventKinds.ENTRY_CREATE) {
-										action = FileSysMonitorCallback.Action.MODIFY;
-									} else if ((type == StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp)) {
-										action = FileSysMonitorCallback.Action.MODIFY;
-									} else if (type == StandardWatchEventKinds.ENTRY_MODIFY && (newTimeStamp <= oldTimeStamp)) {
-										continue;
-									} else if (type == StandardWatchEventKinds.ENTRY_DELETE) {
-										action = FileSysMonitorCallback.Action.DELETE;
+										if (type == StandardWatchEventKinds.ENTRY_CREATE) {
+											action = FileSysMonitorCallback.Action.MODIFY;
+										} else if ((type == StandardWatchEventKinds.ENTRY_MODIFY) && (newTimeStamp > oldTimeStamp)) {
+											action = FileSysMonitorCallback.Action.MODIFY;
+										} else if (type == StandardWatchEventKinds.ENTRY_MODIFY && (newTimeStamp <= oldTimeStamp)) {
+											continue;
+										} else if (type == StandardWatchEventKinds.ENTRY_DELETE) {
+											action = FileSysMonitorCallback.Action.DELETE;
+										}
+										callback.Callback(child.toAbsolutePath().toString(), action);
+									}else{
+										System.out.println("FileSysMonitor: in ignore list #" + filename);
 									}
-									callback.Callback(child.toAbsolutePath().toString(), action);
-								}else{
-									System.out.println("FileSysMonitor: in ignore list #" + filename);
 								}
 								
 								for(String ign: ignoreList){
@@ -184,12 +187,17 @@ public class FileSysMonitor {
 	 * @param filenames can be absolute, relative or relative with slash in front.
 	 * @return
 	 */
-	public synchronized boolean startIgnoreFile(String filename){
+	public boolean startIgnoreFile(String filename){
 		//FileSysPerformer.java may need to update files. These action should be ignored
-		String name = convertToAbsolute(filename);
-		System.out.println("FileSysMonitor: startIgnoreFile #" + filename);
-		ignoreList.add(name);
-		return ignoreList.contains(name);
+		boolean contains = false;
+		synchronized (ignoreLock)
+		{
+			String name = convertToAbsolute(filename);
+			System.out.println("FileSysMonitor: startIgnoreFile # " + name);
+			ignoreList.add(name);
+			contains = ignoreList.contains(name);
+		}
+		return contains;
 	}
 	
 	/**
@@ -197,11 +205,15 @@ public class FileSysMonitor {
 	 * @param filenames can be absolute, relative or relative with a slash in front.
 	 * @return true if the file is REMOVED from the ignorelist, false otherwise
 	 */
-	public synchronized boolean stopIgnoreFile(String filename){
-		String name = convertToAbsolute(filename);
-		System.out.println("FileSysMonitor: stopIgnoreFile #" + filename);
-		ignoreList.remove(name);
-		return !ignoreList.contains(name); 
+	public boolean stopIgnoreFile(String filename){
+		boolean removed = false;
+		synchronized (ignoreLock)
+		{
+			String name = convertToAbsolute(filename);
+			System.out.println("FileSysMonitor: stopIgnoreFile #" + filename);
+			ignoreList.remove(name);
+		}
+		return removed; 
 	}
 	
 	/**
