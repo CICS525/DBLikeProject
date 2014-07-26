@@ -83,7 +83,7 @@ public class FileSysMonitor {
 								File currFile = child.toFile();
 								newTimeStamp = currFile.lastModified();
 								String filename = child.toAbsolutePath().toString();
-								System.out.println(filename + "@" + newTimeStamp);
+								System.out.println("FileSysMonitor: WatchEvent # " + filename + "@" + newTimeStamp);
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.

@@ -1,6 +1,7 @@
 package cloudsync.client;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
@@ -54,7 +55,7 @@ public class ClientMain {
 				final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
 				boolean suc = false;
 				if ( Action.MODIFY == action ) {
-					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
+					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename + "->" + suc);
 
 //					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
 //						
@@ -69,7 +70,7 @@ public class ClientMain {
 //					sender.startFileTransfer();
 					
 				} else if ( Action.DELETE == action) {
-					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
+					System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename + "->" + suc);
 				}
 			}
 		});
@@ -78,9 +79,20 @@ public class ClientMain {
 			allFileMonitors.add(fileMonitor);
 		}
 
-		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
-		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
-		return bCnt;
+//		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
+//		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
+//		return bCnt;
+		
+		FileSysMonitor fileSysMonitor = allFileMonitors.get(0);
+		String filename = "c:\\Users\\Elitward\\CloudSync\\abc.txt";
+		fileSysMonitor.startIgnoreFile(filename);
+		File f = new File(filename);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+		}
+		//fileSysMonitor.stopIgnoreFile(filename);
+		return false;
 	}
 	
 	public static synchronized boolean commitFileUpdate(Action action, String absoluteFilename, String tempFileOnServer){
