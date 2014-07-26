@@ -46,15 +46,21 @@ public class SessionManager {
 	public int clearDeactiveAccount() {
 		int counter = 0;
 		synchronized(accountPool){
+			ArrayList<SessionAccount> delList = null;
 			for(SessionAccount account: accountPool){
 				if( account.isSocketStreamEmpty() ){
+					counter++;
 				    
 				    // change entry server flag
 				    AccountDatabase.getInstance().logout(account.getUsername());
 				    
-					accountPool.remove(account);
-					counter++;
+					if(delList==null)
+						delList = new ArrayList<SessionAccount>();
+					delList.add(account);
 				}
+			}
+			if(counter>0){
+				accountPool.removeAll(delList);
 			}
 		}
 		return counter;

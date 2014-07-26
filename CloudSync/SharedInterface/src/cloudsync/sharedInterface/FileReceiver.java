@@ -89,7 +89,7 @@ public class FileReceiver {
 		public void run() {
 			boolean finish = false;
 			Long length = (Long) streams.readObject();
-			System.out.println("Server: "+ length);
+			System.out.println("FileReceiver: length to receive = " + length);
 			int len = 0;
 			if(length!=null){
 				try {
@@ -107,7 +107,7 @@ public class FileReceiver {
 						try {
 							byte[] buff = new byte[1024];
 							int readCount = streams.getStreamIn().read(buff);
-							System.out.println(readCount);
+							//System.out.println(readCount);
 							if(readCount != -1){
 								len += readCount;
 								os.write(buff, 0, readCount);

@@ -56,17 +56,17 @@ public class ClientMain {
 				if ( Action.MODIFY == action ) {
 					System.out.println("Upload File:" + absoluteFilename + "->" + suc);
 
-					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
-						
-						@Override
-						public void onFinish(boolean success, String tempFileOnServer) {
-							if(success){
-								commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
-							}
-						}
-						
-					});
-					sender.startFileTransfer();
+//					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
+//						
+//						@Override
+//						public void onFinish(boolean success, String tempFileOnServer) {
+//							if(success){
+//								commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
+//							}
+//						}
+//						
+//					});
+//					sender.startFileTransfer();
 					
 				} else if ( Action.DELETE == action) {
 					System.out.println("Delete File:" + absoluteFilename + "->" + suc);
@@ -90,7 +90,11 @@ public class ClientMain {
 		
 		//--- [should not change, unless conflict] ---
 		incomplete.basename = FileSysPerformer.getInstance().getBaseFilename(absoluteFilename);
-		incomplete.parent = metadataManager.findByBasename(FileSysPerformer.getInstance().getBaseFilename(absoluteFilename)).globalCounter;
+		Metadata parentMeta = metadataManager.findByBasename(incomplete.basename);
+		if(parentMeta==null)
+			incomplete.parent = 0;
+		else
+			incomplete.parent = parentMeta.globalCounter;
 		//--- [to be over written by Master Server] ---
 		incomplete.globalCounter = metadataManager.getGlobalWriteCounter();
 		incomplete.status = Action.MODIFY==action ? STATUS.LAST : STATUS.DELETE ;
@@ -105,8 +109,9 @@ public class ClientMain {
 			Metadata complete = masterSession.rmiCommitFileUpdate(incomplete, tempFileOnServer);
 						
 			if(complete!=null){
-				if( complete.status!=STATUS.CONFLICT ){
+				if( complete.status==STATUS.CONFLICT ){
 					//should rename & try again in next FileSysMonitor callback
+					System.out.println("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
 
 					int pointIdx = absoluteFilename.lastIndexOf(".");
 					if(pointIdx<0)
@@ -137,11 +142,12 @@ public class ClientMain {
 						aMonitor.stopIgnoreFile(absoluteFilename);
 					}
 					return false;
-				}else if( complete.status!=STATUS.ERROR ){
+				}else if( complete.status==STATUS.ERROR ){
 					return false;
+				}else{
+					boolean suc = metadataManager.updateLocalMetadata(complete);
+					return suc;
 				}
-				boolean suc = metadataManager.updateLocalMetadata(complete);
-				return suc;
 			}
 		}
 	}

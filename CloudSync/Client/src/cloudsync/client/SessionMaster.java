@@ -82,15 +82,20 @@ public class SessionMaster {
 			
 			if(suc){	//fetch metadata from Master Server
 				long serverCounter = rmi.RmiGetMasterServerGlobalCounter(username);
-				if(serverCounter>metadataManager.getGlobalWriteCounter()){
+				long localCounter = metadataManager.getGlobalWriteCounter();
+				System.out.println("SessionMaster:GlobalCounter-Server:" + serverCounter);
+				System.out.println("SessionMaster:GlobalCounter-Local :" + localCounter);
+				
+				if(serverCounter>localCounter){
 					ArrayList<Metadata> metadataArray = rmi.RmiGetCompleteMetadata(username, metadataManager.getGlobalWriteCounter());
 					for(final Metadata one : metadataArray){
-						metadataArray.add(one);		//save the single metadata item into local Metadata database and save 
+						System.out.println("SessionMaster: new metadata #" + " basename=" + one.basename + " globalCounter=" + one.globalCounter);
 						FileSysPerformer performer = FileSysPerformer.getInstance();
 						performer.addUpdateLocalTask(one, new FileSysCallback(){
 
 							@Override
 							public void onFinish(boolean success, String filename) {
+								//save the single metadata item into local Metadata database and save
 								MetadataManager metaDB = MetadataManager.getInstance();
 								metaDB.updateLocalMetadata(one);
 							}
