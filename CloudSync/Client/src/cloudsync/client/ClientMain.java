@@ -46,6 +46,7 @@ public class ClientMain {
 		masterSession.setMasterServerLocation(masterLocation);
 		
 		metadataManager = MetadataManager.getInstance();
+		metadataManager.readLocalMetadata();
 		
 		FileSysMonitor fileMonitor = new FileSysMonitor(settings.getRootDir());
 		boolean bMnt = fileMonitor.startListen( new FileSysMonitorCallback(){
@@ -55,17 +56,17 @@ public class ClientMain {
 				if ( Action.MODIFY == action ) {
 					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 
-//					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
-//						
-//						@Override
-//						public void onFinish(boolean success, String tempFileOnServer) {
-//							if(success){
-//								commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
-//							}
-//						}
-//						
-//					});
-//					sender.startFileTransfer();
+					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback(){
+						
+						@Override
+						public void onFinish(boolean success, String tempFileOnServer) {
+							if(success){
+								commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
+							}
+						}
+						
+					});
+					sender.startFileTransfer();
 					
 				} else if ( Action.DELETE == action) {
 					System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename);

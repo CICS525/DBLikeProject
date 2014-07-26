@@ -100,10 +100,6 @@ public class FileSysPerformer {
 			ans = blobSession.downloadFile(metadata);
 		}
 		
-		// Remove this file from the ignore list all FileSysMonitors 
-		//for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-		//	aMonitor.stopIgnoreFile(metadata.basename);
-		//}
 		return ans;
 	}
 	
@@ -149,6 +145,10 @@ public class FileSysPerformer {
 							FileSysCallback callback = aMetaEx.callback;
 							if(callback!=null){
 								callback.onFinish(true, aMetaEx.metadata.basename);
+								// Remove this file from the ignore list all FileSysMonitors 
+								//for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
+								//	aMonitor.stopIgnoreFile(aMetaEx.metadata.basename);
+								//}
 							}
 						}
 						metaList.removeAll(delList);

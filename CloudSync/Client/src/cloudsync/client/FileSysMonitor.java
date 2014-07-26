@@ -9,7 +9,13 @@ package cloudsync.client;
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -76,7 +82,7 @@ public class FileSysMonitor {
 	private Path rootFolder;
 	private final HashMap<WatchKey, Path> keys = new HashMap<WatchKey, Path>();
 	
-	private final static WatchEvent.Kind[] WATCHEVENTS = new WatchEvent.Kind[]{
+	private final static Kind[] WATCHEVENTS = new Kind[]{
 		//StandardWatchEventKinds.ENTRY_CREATE,
 		StandardWatchEventKinds.ENTRY_DELETE,
 		StandardWatchEventKinds.ENTRY_MODIFY };
@@ -118,11 +124,14 @@ public class FileSysMonitor {
 								Path child = dir.resolve((Path) event.context());
 								File currFile = child.toFile();
 								newTimeStamp = currFile.lastModified();	//0L if the file does not exist or if an I/O error occurs
-								if(newTimeStamp==0 && type!=StandardWatchEventKinds.ENTRY_DELETE)
+								
+								if(type!=StandardWatchEventKinds.ENTRY_DELETE && newTimeStamp==0)
+									continue;
+								if(type==StandardWatchEventKinds.ENTRY_MODIFY && currFile.length()==0)
 									continue;
 								
 								String filename = child.toAbsolutePath().toString();
-								System.out.println("FileSysMonitor: WatchEvent " + type + " # " + filename + "@" + newTimeStamp);
+								System.out.println("FileSysMonitor: WatchEvent " + type + " # " + filename + " Len:" + currFile.length() + " @ " + newTimeStamp);
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
@@ -251,4 +260,39 @@ public class FileSysMonitor {
 		return removed; 
 	}
 
+	private boolean isLocked(String filename){
+		boolean isLocked = true;
+		
+		try {
+			FileInputStream is = new FileInputStream(filename);
+			byte[] buff = new byte[1024];
+			int len = is.read(buff);
+			is.close();
+			System.out.println("File len:" + len + " bin:" + buff);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		FileChannel fileChannel = null;
+		try {
+			fileChannel = new RandomAccessFile(filename, "rw").getChannel();
+		} catch (FileNotFoundException e) {
+			//e.printStackTrace();
+			return false;
+		}
+		try {
+			FileLock lock = fileChannel.tryLock();
+			if (lock != null) {
+				lock.close(); // file isn't locked. we close because tryLock will actually return a lock.
+				isLocked = false;
+			}
+			fileChannel.close();
+		} catch (OverlappingFileLockException | IOException e) {
+			isLocked = true;
+		}
+		return isLocked;
+	}
 }
