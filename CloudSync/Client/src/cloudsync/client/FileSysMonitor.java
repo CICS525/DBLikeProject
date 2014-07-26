@@ -32,7 +32,7 @@ import com.sun.nio.file.SensitivityWatchEventModifier;
 public class FileSysMonitor {
 
 	private static boolean isListening = true;
-	private ArrayList<String> ignoreList = new ArrayList<String>();
+	public ArrayList<String> ignoreList = new ArrayList<String>();
 	private ArrayList<String> pathNames = new ArrayList<String>();
 	private Thread watcherThread;
 	private WatchService watcher;
