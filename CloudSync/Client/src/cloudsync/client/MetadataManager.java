@@ -111,6 +111,10 @@ public class MetadataManager {
 			LocalMetadata.remove(aMetadata); //remove the old version
 		}
 		LocalMetadata.add(aMetadata); // add the new version
+		
+		if(aMetadata.globalCounter>GlobalWriteCounter)	//update GlobalWriteCounter
+			GlobalWriteCounter = aMetadata.globalCounter;
+		
 		return saveLocalMetadata(); //maybe save at once
 	}
 	
@@ -125,7 +129,12 @@ public class MetadataManager {
 		return false;
 	}
 	
-	public Metadata findByBasename(String filename){
+	public Metadata findByBasename(String basename){
+		for( Metadata meta : LocalMetadata ){
+			if( meta.basename.compareTo(basename)==0 ){
+				return meta;
+			}
+		}
 		return null;
 	}
 }
