@@ -105,13 +105,13 @@ public class MasterSettings implements Serializable { // serialization
         setLocalMessagePort(DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
         setLocalRmiPort(DefaultSetting.DEFAULT_MASTER_RMI_PORT);
         setLocalUploadPort(DefaultSetting.DEFAULT_MASTER_UPLOAD_PORT);
+        setEntryServer(new AzureConnection(
+                DefaultSetting.eli_storageConnectionString));
+
         setStorageFirst(new AzureConnection(
                 DefaultSetting.chris_storageConnectionString));
         setStorageSecond(new AzureConnection(
                 DefaultSetting.sky_storageConnectionString));
-        setEntryServer(new AzureConnection(
-                DefaultSetting.eli_storageConnectionString));
-
         setMasterAddrMain(DefaultSetting.DEFAULT_MASTER_SERVER_URL);
         setMasterAddrBackup(DefaultSetting.DEFAULT_MASTER_SERVER_URL);
     }
