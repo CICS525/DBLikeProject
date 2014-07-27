@@ -1,5 +1,6 @@
 package cloudsync.master.storage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -87,7 +88,13 @@ public class Metadatabase {
 		SessionBlob sb = new SessionBlob();
 		if (completeMetadata.status == STATUS.LAST) {
 			boolean b = sb.uploadFile(fileToUpload, completeMetadata);
-			System.out.println("Update " + b);
+			System.out.println("acceptFileUpdate@Metadatabase: Update #" + fileToUpload + "->" + b);
+			
+			if(b){	//delete the file after successful upload
+				File f = new File(fileToUpload);
+				boolean d = f.delete();
+				System.out.println("acceptFileUpdate@Metadatabase: Delete #" + fileToUpload + "->" + d);
+			}
 		}
 		/*
 		 * Do nothing when status is DELETE else {
@@ -139,7 +146,7 @@ public class Metadatabase {
 		TableOperation update = TableOperation.insertOrReplace(meta);
 		try {
 			table.execute(update);
-			System.out.println("update complete");
+			System.out.println("updateRecord@Metadatabase: update complete");
 			return true;
 		} catch (StorageException e) {
 			e.printStackTrace();
@@ -164,7 +171,7 @@ public class Metadatabase {
 
 		TableQuery<MetadataDBRow> rangeQuery = TableQuery.from(MetadataDBRow.class).where(combinedFilter);
 
-		System.out.println(combinedFilter);
+		System.out.println("retrieveRecordSince@Metadatabase: combinedFilter=" +combinedFilter);
 
 		Iterable<MetadataDBRow> result = table.execute(rangeQuery);
 		return result;
@@ -188,7 +195,7 @@ public class Metadatabase {
 
 		String combinedFilter = TableQuery.combineFilters(partitionFilter, Operators.AND, fileFilter);
 		combinedFilter = TableQuery.combineFilters(combinedFilter, Operators.AND, statusFilterString);
-		System.out.println(combinedFilter);
+		System.out.println("getLast@Metadatabase: combinedFilter=" + combinedFilter);
 
 		TableQuery<MetadataDBRow> rangeQuery = TableQuery.from(MetadataDBRow.class).where(combinedFilter);
 

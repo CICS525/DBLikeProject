@@ -91,7 +91,7 @@ public class SessionMaster {
 				if (serverCounter > localCounter) {
 					ArrayList<Metadata> metadataArray = rmi.RmiGetCompleteMetadata(username, metadataManager.getGlobalWriteCounter());
 					for (final Metadata one : metadataArray) {
-						System.out.println("SessionMaster: new metadata #" + " basename=" + one.basename + " globalCounter=" + one.globalCounter);
+						System.out.println("SessionMaster: new metadata #" + " basename=" + one.basename + " status=" + one.status + " globalCounter=" + one.globalCounter);
 						FileSysPerformer performer = FileSysPerformer.getInstance();
 						performer.addUpdateLocalTask(one, new FileSysCallback() {
 
