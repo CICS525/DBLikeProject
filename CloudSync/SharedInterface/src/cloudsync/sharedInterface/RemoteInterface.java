@@ -18,4 +18,6 @@ public interface RemoteInterface extends Remote{
 	public ArrayList<Metadata> RmiGetCompleteMetadata(String username, long sinceCounter) throws RemoteException;
 	
 	public Metadata RmiCommitFileUpdate(String username, Metadata incompleteMetadata, String fileInfo) throws RemoteException;
+	
+	public int RmiBroadcastMessage(String username, SocketMessage message) throws RemoteException;
 }

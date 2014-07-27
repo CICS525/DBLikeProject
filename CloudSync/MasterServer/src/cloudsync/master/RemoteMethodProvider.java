@@ -9,6 +9,7 @@ import cloudsync.master.storage.Metadatabase;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketMessage;
 
 public class RemoteMethodProvider extends UnicastRemoteObject implements RemoteInterface {
 
@@ -37,7 +38,6 @@ public class RemoteMethodProvider extends UnicastRemoteObject implements RemoteI
 	public ArrayList<Metadata> RmiGetCompleteMetadata(String username, long sinceCounter) throws RemoteException {
 		System.out.println("RmiGetCompleteMetadata@RemoteMethodProvider[" + username + "]: since=" + sinceCounter);
 		ArrayList<Metadata> result = Metadatabase.getCompleteMetadata(username, sinceCounter);
-
 		return result;
 	}
 
@@ -60,6 +60,13 @@ public class RemoteMethodProvider extends UnicastRemoteObject implements RemoteI
 		ServerLocation loc = AccountDatabase.getInstance().getServerLocation(username);
 		System.out.println("RmiGetMasterServerAddress@RemoteMethodProvider[" + username + "]:" + loc.url);
 		return loc;
+	}
+
+	@Override
+	public int RmiBroadcastMessage(String username, SocketMessage message) throws RemoteException {
+		System.out.println("RmiBroadcastMessage@RemoteMethodProvider[" + username + "]:" + message.command);
+		int ret = SessionManager.getInstance().broadcastSocketMessage(username, message);
+		return ret;
 	}
 
 }

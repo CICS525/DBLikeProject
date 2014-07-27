@@ -10,6 +10,8 @@ import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketMessage;
+import cloudsync.sharedInterface.SocketMessage.COMMAND;
 
 public class ClientMain {
 
@@ -138,6 +140,8 @@ public class ClientMain {
 					}
 
 					boolean get = fOld.renameTo(fNew);
+					if(get)
+						System.out.println("commitFileUpdate@ClientMain: CONFLICT~RENAME:" + absoluteFilename + " -> " + temp);
 
 //					for (FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()) {
 //						aMonitor.stopIgnoreFile(absoluteFilename);
@@ -147,8 +151,18 @@ public class ClientMain {
 					return false;
 				} else {
 					boolean suc = metadataManager.updateLocalMetadata(complete);
+					System.out.println("commitFileUpdate@ClientMain: updateLocalMetadata(" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status + ") => " + suc);
+					if(suc){
+						SocketMessage message = new SocketMessage(COMMAND.UPDATE);
+						message.infoLong = MetadataManager.getInstance().getGlobalWriteCounter();
+						int num = masterSession.rmiBroadcastMessage(message);
+						System.out.println("commitFileUpdate@ClientMain: rmiBroadcastMessage=" + num);
+					}
 					return suc;
 				}
+			}else{
+				System.out.println("commitFileUpdate@ClientMain-ERROR-NULL:" + "basename=" + incomplete.basename + " parent=" + incomplete.parent + " globalCounter=" + incomplete.globalCounter + " status=" + incomplete.status);
+				return false;
 			}
 		}
 	}

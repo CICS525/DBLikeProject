@@ -203,6 +203,18 @@ public class SessionMaster {
 		return ans;
 	}
 
+	public int rmiBroadcastMessage(SocketMessage message) {
+		int ans = -1;
+		if (rmi != null) {
+			try {
+				ans = rmi.RmiBroadcastMessage(username, message);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		return ans;
+	}
+
 	public String uploadFile(String filename) {
 		// Update a file to Master Server, the file should be temporarily saved
 		// in file system on master server
@@ -234,15 +246,19 @@ public class SessionMaster {
 				} else if (message.command == SocketMessage.COMMAND.UPDATE) {
 					// global write counter increased
 					MetadataManager metadataManage = MetadataManager.getInstance();
-					long globalCounter = metadataManage.getGlobalWriteCounter();
-					System.out.println("SocketThread@SessionMaster: globalCounter=" + globalCounter);
-					ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(globalCounter);
-					for (Metadata aMeta : newMetaList) {
-						// update local metadata database
-						metadataManage.updateLocalMetadata(aMeta);
+					long localGlobalCounter = metadataManage.getGlobalWriteCounter();
+					long serverGlobalCounter = message.infoLong;
+					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localGlobalCounter + ", serverGlobalCounter=" + serverGlobalCounter);
 
-						FileSysPerformer performer = FileSysPerformer.getInstance();
-						performer.addUpdateLocalTask(aMeta);
+					if (localGlobalCounter < serverGlobalCounter) {
+						ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(localGlobalCounter);
+						for (Metadata aMeta : newMetaList) {
+							// update local metadata database
+							metadataManage.updateLocalMetadata(aMeta);
+
+							FileSysPerformer performer = FileSysPerformer.getInstance();
+							performer.addUpdateLocalTask(aMeta);
+						}
 					}
 				} else if (message.command == SocketMessage.COMMAND.DISCONNECT) {
 					break; // do disconnect
