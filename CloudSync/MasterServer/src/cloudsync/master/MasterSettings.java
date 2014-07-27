@@ -22,10 +22,12 @@ public class MasterSettings implements Serializable { // serialization
     private int LocalMessagePort = 0;
     private int LocalRmiPort = 0;
     private int LocalUploadPort = 0;
-    private AzureConnection MasterFirst = null;
-    private AzureConnection MasterSecond = null;
-    private AzureConnection BlobFirst = null;
-    private AzureConnection BlobSecond = null;
+
+    //
+    private AzureConnection StorageFirst = null;
+    private AzureConnection StorageSecond = null;
+
+    //
     private AzureConnection entryServer = null;
 
     // addr that store in account db, used when create account
@@ -58,36 +60,20 @@ public class MasterSettings implements Serializable { // serialization
         LocalUploadPort = localUploadPort;
     }
 
-    public AzureConnection getBlobFirst() {
-        return BlobFirst;
+    public AzureConnection getStorageFirst() {
+        return StorageFirst;
     }
 
-    public AzureConnection getMasterFirst() {
-        return MasterFirst;
+    public void setStorageFirst(AzureConnection storageFirst) {
+        StorageFirst = storageFirst;
     }
 
-    public void setMasterFirst(AzureConnection masterFirst) {
-        MasterFirst = masterFirst;
+    public AzureConnection getStorageSecond() {
+        return StorageSecond;
     }
 
-    public AzureConnection getMasterSecond() {
-        return MasterSecond;
-    }
-
-    public void setMasterSecond(AzureConnection masterSecond) {
-        MasterSecond = masterSecond;
-    }
-
-    public void setBlobFirst(AzureConnection blobFirst) {
-        BlobFirst = blobFirst;
-    }
-
-    public AzureConnection getBlobSecond() {
-        return BlobSecond;
-    }
-
-    public void setBlobSecond(AzureConnection blobSecond) {
-        BlobSecond = blobSecond;
+    public void setStorageSecond(AzureConnection storageSecond) {
+        StorageSecond = storageSecond;
     }
 
     public AzureConnection getEntryServer() {
@@ -115,16 +101,17 @@ public class MasterSettings implements Serializable { // serialization
     }
 
     private MasterSettings() {
-    	//set default value
-    	setLocalMessagePort( DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT );
-    	setLocalRmiPort( DefaultSetting.DEFAULT_MASTER_RMI_PORT );
-    	setLocalUploadPort( DefaultSetting.DEFAULT_MASTER_UPLOAD_PORT );
-        setBlobFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
-        setBlobSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
-        setMasterFirst( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
-        setMasterSecond( new AzureConnection(DefaultSetting.sky_storageConnectionString) );
-        setEntryServer( new AzureConnection(DefaultSetting.chris_storageConnectionString) );
-        
+        // set default value
+        setLocalMessagePort(DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
+        setLocalRmiPort(DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+        setLocalUploadPort(DefaultSetting.DEFAULT_MASTER_UPLOAD_PORT);
+        setStorageFirst(new AzureConnection(
+                DefaultSetting.chris_storageConnectionString));
+        setStorageSecond(new AzureConnection(
+                DefaultSetting.sky_storageConnectionString));
+        setEntryServer(new AzureConnection(
+                DefaultSetting.eli_storageConnectionString));
+
         setMasterAddrMain(DefaultSetting.DEFAULT_MASTER_SERVER_URL);
         setMasterAddrBackup(DefaultSetting.DEFAULT_MASTER_SERVER_URL);
     }
@@ -147,10 +134,8 @@ public class MasterSettings implements Serializable { // serialization
             setLocalMessagePort(temp.getLocalMessagePort());
             setLocalRmiPort(temp.getLocalRmiPort());
             setLocalUploadPort(temp.getLocalUploadPort());
-            setMasterFirst(temp.getMasterFirst());
-            setMasterSecond(temp.getMasterSecond());
-            setBlobFirst(temp.getBlobFirst());
-            setBlobSecond(temp.getBlobSecond());
+            setStorageFirst(temp.getStorageFirst());
+            setStorageSecond(temp.getStorageSecond());
             setEntryServer(temp.getEntryServer());
 
             setMasterAddrMain(temp.getMasterAddrMain());
@@ -158,7 +143,8 @@ public class MasterSettings implements Serializable { // serialization
 
             ans = true;
         } catch (FileNotFoundException e) {
-        	System.out.println("MasterSettings: Setting file not found! " + fSettingsFileName);
+            System.out.println("MasterSettings: Setting file not found! "
+                    + fSettingsFileName);
         } catch (Exception e) {
             System.err.println("ERROR:" + e);
         } finally {

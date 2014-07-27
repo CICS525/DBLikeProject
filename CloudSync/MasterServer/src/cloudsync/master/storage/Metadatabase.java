@@ -56,8 +56,8 @@ public class Metadatabase {
 		incompleteMetadata.blobKey = SHA.getSha1(strToSHA);
 
 		MasterSettings settings = MasterSettings.getInstance();
-		incompleteMetadata.blobServer = settings.getBlobFirst();
-		incompleteMetadata.blobBackup = settings.getBlobSecond();
+		incompleteMetadata.blobServer = settings.getStorageFirst();
+		incompleteMetadata.blobBackup = settings.getStorageSecond();
 		Metadata completeMetadata = incompleteMetadata;
 
 		MetadataDBRow metaRow = new MetadataDBRow(username, completeMetadata);
@@ -73,8 +73,8 @@ public class Metadatabase {
 
 		// update meta data
 		// TODO retrieve master servers by querying table
-		Metadatabase main = new Metadatabase(settings.getMasterFirst().toString(), DefaultSetting.METADATA_TABLE_NAME);
-		Metadatabase backup = new Metadatabase(settings.getMasterSecond().toString(), DefaultSetting.METADATA_TABLE_NAME);
+		Metadatabase main = new Metadatabase(settings.getStorageFirst().toString(), DefaultSetting.METADATA_TABLE_NAME);
+		Metadatabase backup = new Metadatabase(settings.getStorageSecond().toString(), DefaultSetting.METADATA_TABLE_NAME);
 
 		main.addRecord(metaRow);
 		backup.addRecord(metaRow);
@@ -120,7 +120,6 @@ public class Metadatabase {
 		}
 		
 		// make the result in descending order
-		// TODO make sure the order is necessery or not
 		Collections.reverse(result);
 		return result;
 	}
@@ -133,7 +132,7 @@ public class Metadatabase {
 	}
 
 	private static Metadatabase getServer() {
-		Metadatabase server = new Metadatabase(MasterSettings.getInstance().getMasterFirst().toString(), DefaultSetting.METADATA_TABLE_NAME);
+		Metadatabase server = new Metadatabase(MasterSettings.getInstance().getStorageFirst().toString(), DefaultSetting.METADATA_TABLE_NAME);
 		return server;
 	}
 
