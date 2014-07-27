@@ -65,6 +65,8 @@ public class FileSysPerformer {
 		// Convert base filename to absolute file name 
 		String absFilename = getAbsoluteFilename(filename);
 		File file = new File(absFilename);
+		if(!file.exists())
+			return true;	//the target already gone
 		if (file.delete()){
 			System.out.println(file.getName() + " is deleted.");
 		} else {
@@ -132,10 +134,11 @@ public class FileSysPerformer {
 				
 				for( MetadataEx aMetaEx : metaList ){
 					boolean suc = FilePerform(aMetaEx.metadata);
+					System.out.println("PerformThread@FileSysPerformer : FilePerform(" + aMetaEx.metadata.basename + " # " + aMetaEx.metadata.status + ") -> " + suc);
+
 					if(suc){
 						delList.add(aMetaEx);
 					}else{
-						System.out.println("PerformThread@FileSysPerformer : FilePerform(" + aMetaEx.metadata.basename + ") -> " + suc);
 					}
 				}
 				

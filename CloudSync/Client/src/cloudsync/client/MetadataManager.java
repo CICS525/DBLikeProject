@@ -112,8 +112,10 @@ public class MetadataManager {
 		}
 		LocalMetadata.add(aMetadata); // add the new version
 		
-		if(aMetadata.globalCounter>GlobalWriteCounter)	//update GlobalWriteCounter
+		if(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
 			GlobalWriteCounter = aMetadata.globalCounter;
+			System.out.println("updateLocalMetadata@MetadataManager: GlobalWriteCounter=" + GlobalWriteCounter);
+		}
 		
 		return saveLocalMetadata(); //maybe save at once
 	}
