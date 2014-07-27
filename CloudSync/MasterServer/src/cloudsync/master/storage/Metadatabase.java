@@ -2,7 +2,9 @@ package cloudsync.master.storage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Collections;
 
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
@@ -108,14 +110,18 @@ public class Metadatabase {
 
 		Metadatabase db = getServer();
 
-		Iterable<MetadataDBRow> rows = db.retrieveRecordSince(username, sinceCounter);
+		ArrayList<MetadataDBRow> rows = db.retrieveRecordSince(username, sinceCounter);
 		ArrayList<Metadata> result = new ArrayList<Metadata>();
 		for (MetadataDBRow row : rows) {
 			Metadata m = row.toMetadata();
-			if(result.contains(m))
-				result.remove(m);	//remove old metadata
-			result.add(m);			//only keep the last metadata for a file
+			// rows is in descending order
+			if(!result.contains(m))
+			    result.add(m);		//only add record for a not recorded file
 		}
+		
+		// make the result in descending order
+		// TODO make sure the order is necessery or not
+		Collections.reverse(result);
 		return result;
 	}
 
@@ -162,7 +168,7 @@ public class Metadatabase {
 	 * (StorageException e) { e.printStackTrace(); return null; } }
 	 */
 
-	private Iterable<MetadataDBRow> retrieveRecordSince(String username, long counter) {
+	private ArrayList<MetadataDBRow> retrieveRecordSince(String username, long counter) {
 		String partitionFilter = TableQuery.generateFilterCondition("PartitionKey", QueryComparisons.EQUAL, username);
 
 		String rowFilter = TableQuery.generateFilterCondition("GlobalCounter", QueryComparisons.GREATER_THAN_OR_EQUAL, counter);
@@ -174,7 +180,22 @@ public class Metadatabase {
 		System.out.println("retrieveRecordSince@Metadatabase: combinedFilter=" +combinedFilter);
 
 		Iterable<MetadataDBRow> result = table.execute(rangeQuery);
-		return result;
+		
+		ArrayList<MetadataDBRow> sortedResult = new ArrayList<>();
+		
+		for (MetadataDBRow row : result) {
+		    sortedResult.add(row);
+		}
+		
+		Collections.sort(sortedResult, new Comparator<MetadataDBRow>() {
+            @Override
+            public int compare(MetadataDBRow o1, MetadataDBRow o2) {
+                // sort in descending order
+                return (int) (o2.getGlobalCounter() - o1.getGlobalCounter());
+            }
+		});
+		
+		return sortedResult;
 	}
 
 	private boolean hasConflict(MetadataDBRow last, Metadata meta) {
@@ -208,5 +229,4 @@ public class Metadatabase {
 
 		return null; // not exist
 	}
-
 }
