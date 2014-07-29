@@ -70,49 +70,8 @@ public class Application_Main {
 		}
 	}
 
-	public static void launchSwingUI() throws InterruptedException {
-		FXThread = new Thread(new UISwingFrame());
-		FXThread.start();
-	}
-
 	public static void initializeApplication() throws InterruptedException {
-		settings = ClientSettings.getInstance();
-		settings.loadSettings();
-
-		masterSession = SessionMaster.getInstance();
-		masterSession.setMasterServerLocation(settings.getRecentMaster());
 		
-		fileMonitor = new FileSysMonitor(settings.getRootDir());
-		fileMonitor.startListen(new FileSysMonitorCallback(){
-			@Override
-			public void Callback(String filename, Action action) {
-				System.out.println(filename + " " + action);
-				String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
-				SessionBlob sessionBlob = new SessionBlob();
-				Metadata metadata = new Metadata();
-				metadata.basename = filename;
-				metadata.blobKey = filename;
-				metadata.blobServer = new AzureConnection(DefaultSetting.eli_storageConnectionString);
-				metadata.blobBackup = new AzureConnection(DefaultSetting.chris_storageConnectionString);
-				boolean suc = false;
-				if ( FileSysMonitorCallback.Action.MODIFY == action ) {
-					suc = sessionBlob.uploadFile(absoluteFilename, metadata);
-					System.out.println("Application_Main@Upload File:" + absoluteFilename + "->" + suc);
-				} else if ( FileSysMonitorCallback.Action.DELETE == action) {
-					suc = sessionBlob.deleteFile(metadata);
-					System.out.println("Application_Main@Delete File:" + absoluteFilename + "->" + suc);
-				}
-			}
-		});
-
-		System.out.println("Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
-		if (masterSession.connect(settings.getUsername(), settings.getPassword())) {
-			System.out.println("ApplicationMain: masterSession connect success! create SystemTray icon.");
-			System.out.println("Launching System Tray");
-			createSystemTrayThread();
-		} else {
-			System.out.println("Launching UI");
-			launchUIThread();
-		}
+		createSystemTrayThread();
 	}
 }

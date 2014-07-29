@@ -26,10 +26,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- * FXML Controller class
- *
- * @author Vyas
- */
+* FXML Controller class
+*
+* @author Vyas
+*/
 public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField UsernameTF;
@@ -70,12 +70,17 @@ public class FXMLDocumentController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     	initializeComponents();
         InitializeUI();
-       
 	}    
 
     @SuppressWarnings("deprecation")
 	@FXML
     private void OpenSessionButtonAction(ActionEvent event) throws InterruptedException {
+    	ClientMain.getSettings().setUsername(UsernameTF.getText());
+    	ClientMain.getSettings().setPassword(PasswordTF.getText());
+    	ClientMain.getSettings().setRootDir(DirectoryTF.getText());
+    	ClientMain.getSettings().setDeviceName(DeviceNameTF.getText());
+    	ClientMain.getSettings().saveSettings();
+    	
     	Application_Main.createSystemTrayThread();
     	OpenSession.setDisable(true);
     	StopSession.setDisable(false);
@@ -107,7 +112,6 @@ public class FXMLDocumentController implements Initializable {
     {
     	UIThread.closeStage();
         Application_Main.createSystemTrayThread();
-        //thisStage.getOwner().hide();
     }
     
     @FXML
@@ -117,7 +121,7 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
-    public void StopSessionButtonAction(ActionEvent event)
+    public void StopSessionButtonAction(ActionEvent event) throws InterruptedException
     {
     	System.out.println("Stopping the SystemTray Thread");
         SystemTrayImplementor.tray.remove(SystemTrayImplementor.trayIcon);
@@ -130,9 +134,9 @@ public class FXMLDocumentController implements Initializable {
     
     public void InitializeUI()
     {
-    	UsernameTF.setText(Application_Main.settings.getUsername());
-    	PasswordTF.setText(Application_Main.settings.getPassword());
-    	DirectoryTF.setText(Application_Main.settings.getRootDir());
+    	UsernameTF.setText(ClientMain.getSettings().getUsername());
+    	PasswordTF.setText(ClientMain.getSettings().getPassword());
+    	DirectoryTF.setText(ClientMain.getSettings().getRootDir());
     	if(SystemTrayImplementor.added)
     	{
     		OpenSession.setDisable(true);
@@ -169,7 +173,5 @@ public class FXMLDocumentController implements Initializable {
         } catch (UnknownHostException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-       
     }
 }

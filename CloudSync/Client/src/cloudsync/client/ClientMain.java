@@ -25,6 +25,22 @@ public class ClientMain {
 		return allFileMonitors;
 	}
 
+	public static ClientSettings getSettings() {
+		return settings;
+	}
+
+	public static void setSettings(ClientSettings settings) {
+		ClientMain.settings = settings;
+	}
+
+	public static SessionMaster getMasterSession() {
+		return masterSession;
+	}
+
+	public static void setMasterSession(SessionMaster masterSession) {
+		ClientMain.masterSession = masterSession;
+	}
+
 	public static boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 
@@ -167,8 +183,8 @@ public class ClientMain {
 		}
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		boolean suc = initClientMain();
 		System.out.println("main@ClientMain=>" + suc);
-	}
+	}*/
 }

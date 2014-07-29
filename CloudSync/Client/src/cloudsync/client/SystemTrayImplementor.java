@@ -38,13 +38,13 @@ public class SystemTrayImplementor implements Runnable {
 							"/images/icon.png");
 					ActionListener UIListener = new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
-							if(UIThread.added)
+							/*if(UIThread.added)
 							{
 								UIThread.openStage();
 							}else
 							{
 								Application_Main.launchUIThread();
-							}
+							}*/
 						}
 					};
 
@@ -93,6 +93,20 @@ public class SystemTrayImplementor implements Runnable {
 					tray.add(trayIcon);
 					added = true;
 
+					if(ClientMain.initClientMain())
+					{
+						trayIcon.displayMessage("Dropbox Started Successfully....",
+								"Your Root Directory will be Syncing from Cloud",
+								MessageType.INFO);
+					}else
+					{
+						trayIcon.displayMessage("Dropbox Initializion Failed....",
+								"Please re-enter your username and password",
+								MessageType.INFO);
+						Application_Main.launchUIThread();
+
+						
+					}
 				} else {
 					System.out.println("system tray not supported");
 				}
