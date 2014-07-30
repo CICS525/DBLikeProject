@@ -27,7 +27,7 @@ public class Metadatabase {
 		// if NO conflict, save the Metadata in local database & save Blobdata
 		// in Blob Server, then update FileMetadata and return
 		// if conflict, reject this update and return error reason in
-		// FileMetadata. Then let client to rename the file and upate again
+		// FileMetadata. Then let client to rename the file and update again
 		// Future Plan: Maybe the Blobdata can be saved to avoid upload again,
 		// but need a mechanism to collect garbage if client does not update
 		// again.
@@ -43,6 +43,10 @@ public class Metadatabase {
 
 		// verify
 		MetadataDBRow last = db.getLast(incompleteMetadata.basename, username);
+		if (db.hasError(last, incompleteMetadata)) {
+			incompleteMetadata.status = STATUS.ERROR;
+			return incompleteMetadata;
+		}
 		if (db.hasConflict(last, incompleteMetadata)) {
 			incompleteMetadata.status = STATUS.CONFLICT;
 			return incompleteMetadata;
@@ -197,6 +201,12 @@ public class Metadatabase {
 		return sortedResult;
 	}
 
+	private boolean hasError(MetadataDBRow last, Metadata meta) {
+		if(last==null && meta.parent!=0){	//add by Eli
+			return true;	//this is an error! meta data says there is a parent, but can not find the parent in database
+		}
+		return false;	//no error
+	}
 	private boolean hasConflict(MetadataDBRow last, Metadata meta) {
 		if (meta.parent == 0) { // new file
 			if (last != null) { // conflict existing file
