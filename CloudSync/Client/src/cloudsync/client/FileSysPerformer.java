@@ -8,6 +8,7 @@ import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
 
 public class FileSysPerformer {
+	private static final long INTERVAL_BETWEEN_RETRY = 1000;	//milliseconds
 	
 	private class MetadataEx extends Metadata{
 
@@ -129,10 +130,15 @@ public class FileSysPerformer {
 		@Override
 		public void run() {
 			// A list to store all the meta data that is going to be deleted 
-			while( !metaList.isEmpty() ){
+			while( true ){
 				ArrayList<MetadataEx> delList = new ArrayList<MetadataEx>();
+				ArrayList<MetadataEx> cloneList = null;
 				
-				for( MetadataEx aMetaEx : metaList ){
+				synchronized (metaList) {
+					cloneList = (ArrayList<MetadataEx>) metaList.clone();
+				}
+				
+				for( MetadataEx aMetaEx : cloneList ){
 					boolean suc = FilePerform(aMetaEx.metadata);
 					System.out.println("PerformThread@FileSysPerformer : FilePerform(" + aMetaEx.metadata.basename + " # " + aMetaEx.metadata.status + ") -> " + suc);
 
@@ -156,6 +162,17 @@ public class FileSysPerformer {
 						}
 						metaList.removeAll(delList);
 					}
+				}
+				
+				synchronized (metaList) {
+					if( metaList.isEmpty() )
+						break;  //nothing to do, break the current thread
+					else
+						try {
+							Thread.sleep(INTERVAL_BETWEEN_RETRY);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 				}
 			}
 			super.run();
