@@ -1,6 +1,7 @@
 package cloudsync.master.storage;
 
 import cloudsync.master.MasterSettings;
+import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
 import com.microsoft.azure.storage.table.*;
@@ -33,9 +34,8 @@ public class AccountDBRow extends TableServiceEntity {
         this.setServerflag(AccountDBRow.USING_NONE);
         this.setConnectionCount(0);
         
-        MasterSettings settings = MasterSettings.getInstance();
-        this.setMasterAddrMain(settings.getMasterAddrMain());
-        this.setMasterAddrBackup(settings.getMasterAddrBackup());
+        this.setMasterAddrMain  (getPrimaryMasterServerAddressByUsername(username));
+        this.setMasterAddrBackup(getBackupMasterServerAddressByUsername (username));
     }
 
     public String getPassword() {
@@ -118,4 +118,15 @@ public class AccountDBRow extends TableServiceEntity {
         this.connectionCount = connectionCount;
     }
 
+    private String getPrimaryMasterServerAddressByUsername(String username){
+        //MasterSettings settings = MasterSettings.getInstance();
+    	//String address = settings.getMasterAddrMain();
+    	return DefaultSetting.VM_ADDR_CHRIS;
+    }
+
+    private String getBackupMasterServerAddressByUsername(String username){
+        //MasterSettings settings = MasterSettings.getInstance();
+    	//String address = settings.getMasterAddrBackup();
+    	return DefaultSetting.VM_ADDR_SKY;
+    }
 }
