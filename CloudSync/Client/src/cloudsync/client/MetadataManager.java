@@ -13,8 +13,10 @@ import java.util.Scanner;
 
 
 
+
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.Metadata.STATUS;
 
 /**
  * Class that manages the all the metadata for
@@ -110,7 +112,10 @@ public class MetadataManager {
 		if (LocalMetadata.contains(aMetadata)) {
 			LocalMetadata.remove(aMetadata); //remove the old version
 		}
-		LocalMetadata.add(aMetadata); // add the new version
+
+		if(aMetadata.status!=STATUS.DELETE){
+			LocalMetadata.add(aMetadata); // add the new version
+		}
 		
 		if(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
 			GlobalWriteCounter = aMetadata.globalCounter;
