@@ -62,6 +62,7 @@ public class SessionMaster {
 
 		// initialize the RMI interface.
 		try {
+			//System.setProperty("java.rmi.server.hostname", "cloudsync");
 			System.out.println("Connecting to MasterServer - RIM: " + masterLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
 			Registry registry = LocateRegistry.getRegistry(masterLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
 			rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);

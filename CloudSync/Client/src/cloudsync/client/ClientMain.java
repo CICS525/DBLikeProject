@@ -183,8 +183,10 @@ public class ClientMain {
 		}
 	}
 
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
+		System.out.println("java.rmi.server.hostname=" + System.getProperty("java.rmi.server.hostname"));
+		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 		boolean suc = initClientMain();
 		System.out.println("main@ClientMain=>" + suc);
-	}*/
+	}
 }
