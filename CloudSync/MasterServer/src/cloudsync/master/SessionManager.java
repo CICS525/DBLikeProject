@@ -25,11 +25,14 @@ public class SessionManager {
 	
 	public boolean acceptClient(String username, SocketStream socketStream ){	//parameter may need be modified
 		//the coming client should be dispatched into a new / existing AccountSession to handle.
+		System.out.println("acceptClient@SessionManager: username = " + username);
 		
 		synchronized(accountPool){
 			for(SessionAccount account: accountPool){
+				System.out.println("acceptClient@SessionManager: item from accountPool = " + account.getUsername());
 				if(account.getUsername().compareTo(username)==0 ){
 					//match an existing account session, and it's thread is active
+					System.out.println("acceptClient@SessionManager: add to existing SessionAccount");
 					return account.addSocketStream(socketStream);
 				}
 			}
@@ -38,6 +41,7 @@ public class SessionManager {
 			SessionAccount account = new SessionAccount(username);
 			account.addSocketStream(socketStream);
 			accountPool.add(account);
+			System.out.println("acceptClient@SessionManager: add to new SessionAccount. Len=" + accountPool.size());
 		}
 
 		return false;

@@ -29,9 +29,11 @@ public class SessionAccount {
 		
 		SocketStreamThread thread = new SocketStreamThread(socketStream);
 		thread.start();
-		boolean suc;
+		boolean suc = false;
 		synchronized(socketList){
+			int orilen = socketList.size();
 			suc = socketList.add(socketStream);
+			System.out.println("addSocketStream@SessionAccount: socketList.size=" + orilen + "=>" + socketList.size());
 		}
 		return suc;
 	}
@@ -53,6 +55,7 @@ public class SessionAccount {
 	public int broadcastSocketMessage(SocketMessage message){
 		int counter = 0;
 		synchronized(socketList){
+			System.out.println("broadcastSocketMessage@SessionAccount: socketList.size=" + socketList.size());
 			for(SocketStream socket: socketList){
 				boolean suc = socket.writeObject(message);
 				if(suc)
