@@ -111,7 +111,7 @@ public class ClientMain {
 		// --- [should not change, unless conflict] ---
 		incomplete.basename = FileSysPerformer.getInstance().getBaseFilename(absoluteFilename);
 		Metadata parentMeta = metadataManager.findByBasename(incomplete.basename);
-		if (parentMeta == null)
+		if (parentMeta == null || parentMeta.status!=STATUS.LAST)
 			incomplete.parent = 0;
 		else
 			incomplete.parent = parentMeta.globalCounter;
@@ -128,9 +128,10 @@ public class ClientMain {
 			Metadata complete = masterSession.rmiCommitFileUpdate(incomplete, tempFileOnServer);
 
 			if (complete != null) {
+				System.out.println("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
+
 				if (complete.status == STATUS.CONFLICT) {
 					// should rename & try again in next FileSysMonitor callback
-					System.out.println("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
 
 					int pointIdx = absoluteFilename.lastIndexOf(".");
 					if (pointIdx < 0)
