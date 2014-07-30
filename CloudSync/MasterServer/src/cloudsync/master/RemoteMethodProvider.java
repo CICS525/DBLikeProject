@@ -11,7 +11,8 @@ import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
 import cloudsync.sharedInterface.SocketMessage;
 
-public class RemoteMethodProvider extends UnicastRemoteObject implements RemoteInterface {
+//public class RemoteMethodProvider extends UnicastRemoteObject implements RemoteInterface {
+public class RemoteMethodProvider implements RemoteInterface {
 
 	private static final long	serialVersionUID	= -3466483622817116103L;
 

@@ -7,18 +7,24 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.AccountInfo;
-import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.FileReceiver;
 import cloudsync.sharedInterface.RemoteInterface;
+import cloudsync.sharedInterface.ServerLocation;
 import cloudsync.sharedInterface.SocketStream;
 
 public class MasterMain {
 
 	public static void main(String[] args) {
 		System.out.println("MasterMain starts ...");
+		
+		//if(System.getSecurityManager()==null){
+		//    System.setProperty("java.security.policy", "C:\\Users\\cloudsync\\Documents\\server.policy");
+		//    System.setSecurityManager(new RMISecurityManager());
+		//}
 		
 		MasterSettings settings = MasterSettings.getInstance();
 		settings.loadSettings();
@@ -27,8 +33,11 @@ public class MasterMain {
 		
 		//---RMI---
 		try {
+			System.setProperty("java.rmi.server.hostname", ServerLocation.getExternalIp());
+			System.out.println("java.rmi.server.hostname=" + System.getProperty("java.rmi.server.hostname"));
 			int rmiPort = settings.getLocalRmiPort();
 			RemoteMethodProvider remoteMethodProvider = new RemoteMethodProvider();
+			RemoteInterface stub = (RemoteInterface) UnicastRemoteObject.exportObject(remoteMethodProvider, rmiPort);
 			Registry registry = LocateRegistry.createRegistry(rmiPort);
 			registry.bind(RemoteInterface.RMI_ID, remoteMethodProvider);
 			System.out.println("MasterMain Server: RIM wating ...@" + rmiPort);
