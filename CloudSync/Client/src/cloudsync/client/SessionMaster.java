@@ -253,12 +253,18 @@ public class SessionMaster {
 
 					if (localGlobalCounter < serverGlobalCounter) {
 						ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(localGlobalCounter);
-						for (Metadata aMeta : newMetaList) {
-							// update local metadata database
-							metadataManage.updateLocalMetadata(aMeta);
+						for (final Metadata aMeta : newMetaList) {
 
 							FileSysPerformer performer = FileSysPerformer.getInstance();
-							performer.addUpdateLocalTask(aMeta);
+							performer.addUpdateLocalTask(aMeta, new FileSysCallback(){
+
+								@Override
+								public void onFinish(boolean success, String filename) {
+									// update local metadata database
+									MetadataManager.getInstance().updateLocalMetadata(aMeta);
+								}
+								
+							});
 						}
 					}
 				} else if (message.command == SocketMessage.COMMAND.DISCONNECT) {
