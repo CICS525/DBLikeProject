@@ -1,10 +1,10 @@
 package cloudsync.client;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
+import cloudsync.client.FileSysMonitorCallback.Operation;
 import cloudsync.sharedInterface.FileSender;
 import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
@@ -15,11 +15,77 @@ import cloudsync.sharedInterface.SocketMessage.COMMAND;
 
 public class ClientMain {
 
+	private static final int 					RETRY_INTERVAL	= (5*1000);			
 	private static ClientSettings				settings		= null;
 	private static ServerLocation				masterLocation	= null;
 	private static SessionMaster				masterSession	= null;
 	private static ArrayList<FileSysMonitor>	allFileMonitors	= new ArrayList<FileSysMonitor>();
 	private static MetadataManager				metadataManager	= null;
+	private static ArrayList<Operation>			delayOperations = new ArrayList<Operation>();
+	private static RetryThread					commitRetry		= null;
+	
+	private static FileSysMonitorCallback		fileSysAnswer = new FileSysMonitorCallback() {
+		@Override
+		public void Callback(final Operation operation) {
+			final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(operation.filename);
+			if (Action.MODIFY == operation.action) {
+				System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
+
+				FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback() {
+
+					@Override
+					public void onFinish(boolean success, String tempFileOnServer) {
+						boolean done = false;
+						if (success) {
+							done = commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
+						}
+						if(!done){
+							synchronized (delayOperations){
+								delayOperations.add(operation);	//save for next try
+							}
+						}
+					}
+
+				});
+				sender.startFileTransfer();
+
+			} else if (Action.DELETE == operation.action) {
+				System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename);
+				boolean done = false;
+				done = commitFileUpdate(Action.DELETE, absoluteFilename, null);
+				if(!done){
+					synchronized (delayOperations){
+						delayOperations.add(operation);	//save for next try
+					}
+				}
+			}
+		}
+	};
+	
+	private static class RetryThread extends Thread {
+
+		@Override
+		public void run() {
+			while(delayOperations!=null){
+				try {
+					Thread.sleep(RETRY_INTERVAL);
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+				}
+				
+				synchronized(delayOperations){
+					
+					while(delayOperations.size()>0){
+						Operation op = delayOperations.remove(0);
+						System.out.println("RetryThread:" + op.filename + "#" + op.action);
+						fileSysAnswer.Callback(op);
+					}
+				}
+			}
+			super.run();
+		}
+		
+	}
 
 	public static ArrayList<FileSysMonitor> getAllFileMonitors() {
 		return allFileMonitors;
@@ -68,31 +134,7 @@ public class ClientMain {
 		metadataManager.readLocalMetadata();
 
 		FileSysMonitor fileMonitor = new FileSysMonitor(settings.getRootDir());
-		boolean bMnt = fileMonitor.startListen(new FileSysMonitorCallback() {
-			@Override
-			public void Callback(String filename, Action action) {
-				final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(filename);
-				if (Action.MODIFY == action) {
-					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
-
-					FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback() {
-
-						@Override
-						public void onFinish(boolean success, String tempFileOnServer) {
-							if (success) {
-								commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
-							}
-						}
-
-					});
-					sender.startFileTransfer();
-
-				} else if (Action.DELETE == action) {
-					System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename);
-					commitFileUpdate(Action.DELETE, absoluteFilename, null);
-				}
-			}
-		});
+		boolean bMnt = fileMonitor.startListen(fileSysAnswer);
 		if (bMnt) {
 			System.out.println("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
 			allFileMonitors.add(fileMonitor);
@@ -100,6 +142,12 @@ public class ClientMain {
 
 		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
 		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
+		
+		if(commitRetry==null){	//start retry thread
+			commitRetry = new RetryThread();
+			commitRetry.start();
+		}
+
 		return bCnt;
 	}
 
@@ -187,7 +235,9 @@ public class ClientMain {
 	public static void main(String[] args) {
 		System.out.println("java.rmi.server.hostname=" + System.getProperty("java.rmi.server.hostname"));
 		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+		
 		boolean suc = initClientMain();
+		
 		System.out.println("main@ClientMain=>" + suc);
 	}
 }

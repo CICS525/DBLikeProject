@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
+import cloudsync.client.FileSysMonitorCallback.Operation;
 
 import com.sun.nio.file.SensitivityWatchEventModifier;
 
@@ -154,7 +155,9 @@ public class FileSysMonitor {
 										} else if (type == StandardWatchEventKinds.ENTRY_DELETE) {
 											action = FileSysMonitorCallback.Action.DELETE;
 										}
-										callback.Callback(child.toAbsolutePath().toString(), action);
+										
+										//callback.Callback(child.toAbsolutePath().toString(), action);
+										callback.Callback( new Operation(child.toAbsolutePath().toString(), action) );
 									}else{
 										System.out.println("FileSysMonitor: IN ignore_list # " + filename);
 										ignoreList.remove( temp );

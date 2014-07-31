@@ -24,8 +24,9 @@ public class FileSysMonitorTest {
 		monitor.startListen(new FileSysMonitorCallback(){
 
 			@Override
-			public void Callback(String filename, Action action) {
-				System.out.println("onCallback:" + filename + action);
+			//public void Callback(String filename, Action action) {
+			public void Callback(Operation o) {
+				System.out.println("onCallback:" + o.filename + o.action);
 			}
 			
 		});
