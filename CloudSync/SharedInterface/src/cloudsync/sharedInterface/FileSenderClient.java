@@ -127,6 +127,11 @@ public class FileSenderClient {
 					System.exit(1);
 				}
 			}
+			try {
+				fis.close();
+			} catch (IOException e) {
+				System.out.println("FileSenderClient: Can't close FileInputStream");
+			}
 			System.out.println("FileSenderClient: File Send Completed...");
 			streams.deinitStream();
 		}	
