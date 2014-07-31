@@ -6,14 +6,14 @@ http://azure.microsoft.com/en-us/documentation/articles/python-how-to-install/
 from azure.storage import TableService
 from azure.storage import BlobService
 
-ELI_STORAGE_ACCOUNT = "portalvhdsql3h2lbtq12d7"
-ELI_STORAGE_KEY = "uC6oYc8BafbOaFme6dZp5MKgZUQrDk+wAz0vCf7ISC1JHDolgwIYxlHuKgAXWseRxMNlHpqjNRgtw90qE7wvzA=="
+ELI_STORAGE_ACCOUNT = "cloudsync"
+ELI_STORAGE_KEY = "JAOg0vyETxNJDgadihZCLDJzjqgJ79eGWbgbX6pIkAnXTIVqc1oxd+cH6caU9kB5lLhwrXKRaaAD/ak+raq4tg=="
 
-CHRIS_STORAGE_ACCOUNT = "portalvhds96n2s1jyj5b5k"
-CHRIS_STORAGE_KEY = "vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA=="
+CHRIS_STORAGE_ACCOUNT = "portalvhds049kfr2ss7hpd"
+CHRIS_STORAGE_KEY = "w9StAFFrwJ7kFkOmiWLB/nH/rR1HUIVJhan4N5H6YZEgl9BnBtF8BRK5xMo6KLZ+UavOoAza7bzkfjSziSQcWw=="
 
-SKY_STORAGE_ACCOUNT = "portalvhds0c37fqp3tw964"
-SKY_STORAGE_KEY = "n8uEGZrIUoMcD4J7WgbcZyk6gMZ0hV9mtn83jXtMpWwLjFAWlPSZizDdZiWmeLjJMetOvrMko1dwoQnaUQTSLQ=="
+SKY_STORAGE_ACCOUNT = "portalvhds98y1bsjj9fbb7"
+SKY_STORAGE_KEY = "qfs8hait+aDHDFyNG/I4GzWeVjsmYp7aI2H1G4yCE67YY2XFSp6F1P/OO/qq7IIqBnHRgwbOSjre/xPbTmzT9Q=="
 
 
 ACCOUNT = [ELI_STORAGE_ACCOUNT, CHRIS_STORAGE_ACCOUNT, SKY_STORAGE_ACCOUNT]
@@ -21,7 +21,7 @@ KEY = [ELI_STORAGE_KEY, CHRIS_STORAGE_KEY, SKY_STORAGE_KEY]
 
 BLOB_CONTAINERS = ["bolbpool"]
 
-TABLES = ["account", "meta"]
+TABLES = ["account", "meta", "masterblob"]
 
 def delete_blobs():
     print "deleting blobs: " + ", ".join(BLOB_CONTAINERS)

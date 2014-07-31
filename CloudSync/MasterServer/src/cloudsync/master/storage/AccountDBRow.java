@@ -34,8 +34,11 @@ public class AccountDBRow extends TableServiceEntity {
         this.setServerflag(AccountDBRow.USING_NONE);
         this.setConnectionCount(0);
         
+        this.setMasterServers();
+        /*
         this.setMasterAddrMain  (getPrimaryMasterServerAddressByUsername(username));
         this.setMasterAddrBackup(getBackupMasterServerAddressByUsername (username));
+        */
     }
 
     public String getPassword() {
@@ -116,6 +119,11 @@ public class AccountDBRow extends TableServiceEntity {
 
     public void setConnectionCount(int connectionCount) {
         this.connectionCount = connectionCount;
+    }
+    
+    private void setMasterServers() {
+        this.masterAddrMain = DefaultSetting.VM_ADDR_CHRIS;
+        this.masterAddrBackup = DefaultSetting.VM_ADDR_SKY;
     }
 
     private String getPrimaryMasterServerAddressByUsername(String username){
