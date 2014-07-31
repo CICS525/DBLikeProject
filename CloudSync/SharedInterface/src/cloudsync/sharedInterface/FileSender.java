@@ -27,6 +27,13 @@ public class FileSender {
 	private FileSysCallback callback = null;
 	//private static boolean stop = false;
 	
+	private static Integer activeCounter = 0;
+	
+	public int GetActiveGounter(){
+		synchronized (activeCounter){
+			return activeCounter;
+		}
+	}
 	
 	public FileSender(int portNum, String hostname, String filePath){
 		this.portNum = portNum;
@@ -48,6 +55,9 @@ public class FileSender {
 	public synchronized void startFileTransfer(){
 		if(thread == null || thread.isInterrupted()){
 			thread = new FileSenderThread();
+			synchronized (activeCounter){
+				activeCounter++;
+			}
 			thread.start();
 		}
 	}
@@ -55,6 +65,9 @@ public class FileSender {
 	public synchronized void stopFileTransfer(String filePath){
 		if(this.filePath.equals(filePath)){
 			thread.interrupt();
+			synchronized (activeCounter){
+				activeCounter--;
+			}
 			//stop = true;
 		}
 		/*
