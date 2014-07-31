@@ -247,10 +247,11 @@ public class SessionMaster {
 				
 				SocketMessage message = new SocketMessage(SocketMessage.COMMAND.EMPTY);
 				boolean suc = SessionMaster.this.socketStream.writeObject(message);
-				if(suc)
-					System.out.println("ActiveThread@SessionMaster: message EMPTY");
-				else
+				if( suc ) {
+					//System.out.println("ActiveThread@SessionMaster: message EMPTY");
+				} else {
 					break;
+				}
 			}
 			super.run();
 		}
