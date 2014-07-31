@@ -26,7 +26,7 @@ import cloudsync.sharedInterface.Metadata.STATUS;
  */
 public class MetadataManager {
 
-	private static long GlobalWriteCounter = 0;
+	private static Long GlobalWriteCounter = (long) 0;
 	private ArrayList<Metadata> LocalMetadata = new ArrayList<Metadata>();
 	private static MetadataManager that = null;
 	private static String META_FILENAME = "metadata.dat";
@@ -43,7 +43,9 @@ public class MetadataManager {
 	}
 	
 	public long getGlobalWriteCounter() {
-		return GlobalWriteCounter;
+		synchronized (GlobalWriteCounter){
+			return GlobalWriteCounter;
+		}
 	}
 	
 	public ArrayList<Metadata> getLocalMetadata() {
@@ -60,7 +62,9 @@ public class MetadataManager {
 		try {
 			FileInputStream fs = new FileInputStream(META_FILENAME);
 			ObjectInputStream objInput = new ObjectInputStream(fs);
-			GlobalWriteCounter = objInput.readLong();
+			synchronized(GlobalWriteCounter){
+				GlobalWriteCounter = objInput.readLong();
+			}
 			LocalMetadata = (ArrayList<Metadata>) objInput.readObject();
 			objInput.close();
 			return true;
@@ -88,7 +92,9 @@ public class MetadataManager {
 		try {
 			FileOutputStream fo = new FileOutputStream(META_FILENAME);
 			ObjectOutputStream objStream = new ObjectOutputStream(fo);
-			objStream.writeLong(GlobalWriteCounter);
+			synchronized (GlobalWriteCounter){
+				objStream.writeLong(GlobalWriteCounter);
+			}
 			objStream.writeObject(LocalMetadata);
 			objStream.close();
 			return true;
@@ -113,12 +119,17 @@ public class MetadataManager {
 			LocalMetadata.remove(aMetadata); //remove the old version
 		}
 
-		if(aMetadata.status!=STATUS.DELETE){
-			LocalMetadata.add(aMetadata); // add the new version
-		}
+		//if(aMetadata.status!=STATUS.DELETE){
+		//}
+		LocalMetadata.add(aMetadata); // add the new version
 		
-		if(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
-			GlobalWriteCounter = aMetadata.globalCounter;
+		synchronized (GlobalWriteCounter){
+			while(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
+				//GlobalWriteCounter = aMetadata.globalCounter;
+				if( findByGlobalCounter(GlobalWriteCounter+1) !=null ){
+					GlobalWriteCounter++;
+				}
+			}
 			System.out.println("updateLocalMetadata@MetadataManager: GlobalWriteCounter=" + GlobalWriteCounter);
 		}
 		
@@ -139,6 +150,15 @@ public class MetadataManager {
 	public Metadata findByBasename(String basename){
 		for( Metadata meta : LocalMetadata ){
 			if( meta.basename.compareTo(basename)==0 ){
+				return meta;
+			}
+		}
+		return null;
+	}
+	
+	public Metadata findByGlobalCounter(long globalCounter){
+		for( Metadata meta : LocalMetadata ){
+			if( meta.globalCounter==globalCounter ){
 				return meta;
 			}
 		}
