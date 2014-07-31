@@ -81,14 +81,16 @@ public class AccountDatabase {
     public synchronized void logout(String username) {
         // logout, if it is the last user, set flag to NONE
         AccountDBRow acc = getAccount(username);
-        int count = acc.getConnectionCount() - 1;
-        acc.setConnectionCount(count);
-        
-        if (count == 0) {
-            acc.setServerflag(AccountDBRow.USING_NONE);
+        if( acc!=null ){
+            int count = acc.getConnectionCount() - 1;
+            acc.setConnectionCount(count);
+            
+            if (count == 0) {
+                acc.setServerflag(AccountDBRow.USING_NONE);
+            }
+            
+            updateAccount(acc);
         }
-        
-        updateAccount(acc);
     }
     
     private int selectServer() {
