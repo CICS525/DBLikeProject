@@ -29,7 +29,7 @@ public class SessionMaster {
 	private RemoteInterface			rmi				= null;
 	private String					username		= null;
 	
-	private static final long		ACTIVE_MESSAGE_INTERVAL = (5*1000);
+	private static final long		ACTIVE_MESSAGE_INTERVAL = (100*1000);
 
 	private SessionMaster() {
 		// private constructor to secure singleton
@@ -246,8 +246,11 @@ public class SessionMaster {
 				}
 				
 				SocketMessage message = new SocketMessage(SocketMessage.COMMAND.EMPTY);
-				SessionMaster.this.socketStream.writeObject(message);
-				System.out.println("ActiveThread@SessionMaster: message EMPTY");
+				boolean suc = SessionMaster.this.socketStream.writeObject(message);
+				if(suc)
+					System.out.println("ActiveThread@SessionMaster: message EMPTY");
+				else
+					break;
 			}
 			super.run();
 		}
@@ -304,7 +307,7 @@ public class SessionMaster {
 			System.out.println("SocketThread@SessionMaster: thread finished.");
 			
 			if(SessionMaster.this.threadA!=null){
-				SessionMaster.this.threadA.stop();
+				//SessionMaster.this.threadA.stop();
 				SessionMaster.this.threadA = null;
 			}
 			super.run();
