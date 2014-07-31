@@ -36,7 +36,7 @@ public class MetadataManagerTest {
 	public void loadFileTest_Counter() {
 		MetadataManager man = MetadataManager.getInstance();
 		man.readLocalMetadata();
-		assertEquals(1, man.getGlobalWriteCounter());
+		assertEquals(1, man.getSyncedGlobalWriteCounter());
 	}
 
 }

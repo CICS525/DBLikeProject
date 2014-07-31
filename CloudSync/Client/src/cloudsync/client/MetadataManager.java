@@ -7,16 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Scanner;
-
-
-
-
-
 
 import cloudsync.sharedInterface.Metadata;
-import cloudsync.sharedInterface.ServerLocation;
-import cloudsync.sharedInterface.Metadata.STATUS;
 
 /**
  * Class that manages the all the metadata for
@@ -42,15 +34,26 @@ public class MetadataManager {
 		return that;
 	}
 	
-	public long getGlobalWriteCounter() {
+	public long getSyncedGlobalWriteCounter() {
 		synchronized (GlobalWriteCounter){
 			return GlobalWriteCounter;
 		}
 	}
-	
-	public ArrayList<Metadata> getLocalMetadata() {
-		return LocalMetadata;
+
+	public long getSyncingGlobalWriteCounter() {
+		long ans = 0;
+		synchronized(LocalMetadata){
+			for( Metadata meta : LocalMetadata ){
+				if(meta.globalCounter>ans)
+					ans = meta.globalCounter;
+			}
+		}
+		return ans;
 	}
+
+	//public ArrayList<Metadata> getLocalMetadata() {
+	//	return LocalMetadata;
+	//}
 
 	/**
 	 * Reads the local metadata information from the file
@@ -65,19 +68,18 @@ public class MetadataManager {
 			synchronized(GlobalWriteCounter){
 				GlobalWriteCounter = objInput.readLong();
 			}
-			LocalMetadata = (ArrayList<Metadata>) objInput.readObject();
+			synchronized(LocalMetadata){
+				LocalMetadata = (ArrayList<Metadata>) objInput.readObject();
+			}
 			objInput.close();
 			return true;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -88,14 +90,16 @@ public class MetadataManager {
 	 * Also saves the GlobalWriteCounter.
 	 * @return
 	 */
-	public boolean saveLocalMetadata() {
+	private boolean saveLocalMetadata() {
 		try {
 			FileOutputStream fo = new FileOutputStream(META_FILENAME);
 			ObjectOutputStream objStream = new ObjectOutputStream(fo);
 			synchronized (GlobalWriteCounter){
 				objStream.writeLong(GlobalWriteCounter);
 			}
-			objStream.writeObject(LocalMetadata);
+			synchronized(LocalMetadata){
+				objStream.writeObject(LocalMetadata);
+			}
 			objStream.close();
 			return true;
 		} catch (FileNotFoundException e) {
@@ -109,25 +113,36 @@ public class MetadataManager {
 
 	/**
 	 * Update a metadata object.
-	 * TODO: Currently fails as there is no way to tell if
-	 * two metadata objects are equal or not.
 	 * @param aMetadata
 	 * @return
 	 */
 	public boolean updateLocalMetadata(Metadata aMetadata){
-		if (LocalMetadata.contains(aMetadata)) {
-			LocalMetadata.remove(aMetadata); //remove the old version
-		}
+		//if (LocalMetadata.contains(aMetadata)) {
+		//	LocalMetadata.remove(aMetadata); //remove the old version
+		//}
 
 		//if(aMetadata.status!=STATUS.DELETE){
 		//}
-		LocalMetadata.add(aMetadata); // add the new version
+		synchronized(LocalMetadata){
+			LocalMetadata.add(aMetadata); // add the new version
+		}
 		
 		synchronized (GlobalWriteCounter){
 			while(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
 				//GlobalWriteCounter = aMetadata.globalCounter;
 				if( findByGlobalCounter(GlobalWriteCounter+1) !=null ){
 					GlobalWriteCounter++;
+
+					synchronized (LocalMetadata) {	//clear previous metadata for the same basename
+						for(long i=GlobalWriteCounter-1; i>=0; i--){
+							Metadata p = LocalMetadata.get((int) i);
+							if( p.basename.compareTo(aMetadata.basename)== 0 ){
+								LocalMetadata.remove(i);
+							}
+						}
+					}
+				}else{
+					break;
 				}
 			}
 			System.out.println("updateLocalMetadata@MetadataManager: GlobalWriteCounter=" + GlobalWriteCounter);
@@ -142,26 +157,51 @@ public class MetadataManager {
 	 * @return
 	 */
 	public boolean deleteLocalMetadata(Metadata aMetadata){
-		LocalMetadata.remove(aMetadata);
+		boolean ans = false;
+		synchronized(LocalMetadata){
+			while(true){	//delete all metadata with same base name
+				boolean get = LocalMetadata.remove(aMetadata);
+				if(get==true)
+					ans = true;
+				else
+					break;
+			}
+		}
 		saveLocalMetadata();	//maybe save at once
-		return false;
+		return ans;
 	}
 	
 	public Metadata findByBasename(String basename){
-		for( Metadata meta : LocalMetadata ){
-			if( meta.basename.compareTo(basename)==0 ){
-				return meta;
+		Metadata lastMatch = null;
+		synchronized(LocalMetadata){
+			for( Metadata meta : LocalMetadata ){
+				if( meta.basename.compareTo(basename)==0 ){
+					//return meta;
+					if(lastMatch==null){
+						lastMatch = meta;
+					}else{
+						if(meta.globalCounter > lastMatch.globalCounter)
+							lastMatch = meta;
+					}
+				}
+			}
+		}
+		return lastMatch;
+	}
+	
+	public Metadata findByGlobalCounter(long globalCounter){
+		synchronized(LocalMetadata){
+			for( Metadata meta : LocalMetadata ){
+				if( meta.globalCounter==globalCounter ){
+					return meta;
+				}
 			}
 		}
 		return null;
 	}
 	
-	public Metadata findByGlobalCounter(long globalCounter){
-		for( Metadata meta : LocalMetadata ){
-			if( meta.globalCounter==globalCounter ){
-				return meta;
-			}
+	private void clearMetadata(){
+		synchronized(LocalMetadata){
 		}
-		return null;
 	}
 }

@@ -33,7 +33,7 @@ public class FileSysMonitorTest {
 		FileSysPerformer fPerf = FileSysPerformer.getInstance();
 		MetadataManager mm = MetadataManager.getInstance();
 		mm.readLocalMetadata();
-		ArrayList<Metadata> ml = mm.getLocalMetadata();
+		ArrayList<Metadata> ml = null;	//mm.getLocalMetadata();
 		Metadata meta = ml.get(0);
 		fPerf.addUpdateLocalTask(meta, new FileSysCallback(){
 

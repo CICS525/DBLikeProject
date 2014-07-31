@@ -88,12 +88,12 @@ public class SessionMaster {
 
 			if (suc) { // fetch metadata from Master Server
 				long serverCounter = rmi.RmiGetMasterServerGlobalCounter(username);
-				long localCounter = metadataManager.getGlobalWriteCounter();
+				long localCounter = metadataManager.getSyncedGlobalWriteCounter();
 				System.out.println("SessionMaster:GlobalCounter-Server:" + serverCounter);
 				System.out.println("SessionMaster:GlobalCounter-Local :" + localCounter);
 
 				if (serverCounter > localCounter) {
-					ArrayList<Metadata> metadataArray = rmi.RmiGetCompleteMetadata(username, metadataManager.getGlobalWriteCounter());
+					ArrayList<Metadata> metadataArray = rmi.RmiGetCompleteMetadata(username, metadataManager.getSyncedGlobalWriteCounter());
 					for (final Metadata one : metadataArray) {
 						System.out.println("SessionMaster: new metadata #" + " basename=" + one.basename + " status=" + one.status + " globalCounter=" + one.globalCounter);
 						FileSysPerformer performer = FileSysPerformer.getInstance();
@@ -281,7 +281,7 @@ public class SessionMaster {
 				} else if (message.command == SocketMessage.COMMAND.UPDATE) {
 					// global write counter increased
 					MetadataManager metadataManage = MetadataManager.getInstance();
-					long localGlobalCounter = metadataManage.getGlobalWriteCounter();
+					long localGlobalCounter = metadataManage.getSyncedGlobalWriteCounter();
 					long serverGlobalCounter = message.infoLong;
 					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localGlobalCounter + ", serverGlobalCounter=" + serverGlobalCounter);
 

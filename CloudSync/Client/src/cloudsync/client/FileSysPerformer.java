@@ -208,4 +208,13 @@ public class FileSysPerformer {
 			return null;	//the file is NOT in root directory
 		}
 	}
+	
+	public boolean addDelayPerformFile(String basename){
+		return false;
+	}
+
+	public boolean removeDelayPerformFile(String basename){
+		return false;
+	}
+
 }

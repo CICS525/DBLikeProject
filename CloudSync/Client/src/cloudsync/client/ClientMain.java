@@ -116,7 +116,7 @@ public class ClientMain {
 		else
 			incomplete.parent = parentMeta.globalCounter;
 		// --- [to be over written by Master Server] ---
-		incomplete.globalCounter = metadataManager.getGlobalWriteCounter();
+		incomplete.globalCounter = 0;	//metadataManager.getSyncedGlobalWriteCounter();
 		incomplete.status = Action.MODIFY == action ? STATUS.LAST : STATUS.DELETE;
 		// incomplete.timestamp = new Date();
 		// --- [to be set by Master Server] ---
@@ -160,9 +160,9 @@ public class ClientMain {
 					if(get)
 						System.out.println("commitFileUpdate@ClientMain: CONFLICT~RENAME:" + absoluteFilename + " -> " + temp);
 
-//					for (FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()) {
-//						aMonitor.stopIgnoreFile(absoluteFilename);
-//					}
+					//for (FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()) {
+					//	aMonitor.stopIgnoreFile(absoluteFilename);
+					//}
 					return false;
 				} else if (complete.status == STATUS.ERROR) {
 					return false;
@@ -171,7 +171,7 @@ public class ClientMain {
 					System.out.println("commitFileUpdate@ClientMain: updateLocalMetadata(" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status + ") => " + suc);
 					if(suc){
 						SocketMessage message = new SocketMessage(COMMAND.UPDATE);
-						message.infoLong = MetadataManager.getInstance().getGlobalWriteCounter();
+						message.infoLong = complete.globalCounter;
 						int num = masterSession.rmiBroadcastMessage(message);
 						System.out.println("commitFileUpdate@ClientMain: rmiBroadcastMessage=" + num);
 					}
