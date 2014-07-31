@@ -24,9 +24,12 @@ public class SessionMaster {
 
 	private ServerLocation			masterLocation	= null;
 	private SocketStream			socketStream	= null;
-	private SocketThread			thread			= null;
+	private SocketThread			threadS			= null;
+	private ActiveThread			threadA			= null;
 	private RemoteInterface			rmi				= null;
 	private String					username		= null;
+	
+	private static final long		ACTIVE_MESSAGE_INTERVAL = (5*1000);
 
 	private SessionMaster() {
 		// private constructor to secure singleton
@@ -138,8 +141,11 @@ public class SessionMaster {
 		socketStream.writeObject(account);
 
 		// Then, create a new thread to wait in-coming message for master server
-		thread = new SocketThread();
-		thread.start();
+		threadS = new SocketThread();
+		threadS.start();
+		
+		threadA = new ActiveThread();
+		threadA.start();
 
 		return true;
 	}
@@ -223,6 +229,30 @@ public class SessionMaster {
 		// system
 		return null;
 	}
+	
+	private class ActiveThread extends Thread {
+
+		@Override
+		public void run() {
+			while( SessionMaster.this.socketStream != null ){
+				Socket socket = SessionMaster.this.socketStream.getSocket();
+				if( socket == null)
+					break;
+				
+				try {
+					Thread.sleep(ACTIVE_MESSAGE_INTERVAL);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				SocketMessage message = new SocketMessage(SocketMessage.COMMAND.EMPTY);
+				SessionMaster.this.socketStream.writeObject(message);
+				System.out.println("ActiveThread@SessionMaster: message EMPTY");
+			}
+			super.run();
+		}
+		
+	}
 
 	private class SocketThread extends Thread {
 
@@ -272,6 +302,11 @@ public class SessionMaster {
 				}
 			}
 			System.out.println("SocketThread@SessionMaster: thread finished.");
+			
+			if(SessionMaster.this.threadA!=null){
+				SessionMaster.this.threadA.stop();
+				SessionMaster.this.threadA = null;
+			}
 			super.run();
 		}
 
