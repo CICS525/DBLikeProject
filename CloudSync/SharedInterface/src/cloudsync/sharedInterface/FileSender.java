@@ -83,7 +83,7 @@ public class FileSender {
 			String fileOnServer = null;
 			//stop = false;
 			try {
-				System.out.println("FileSender: Connect to " + hostname + "@" + portNum);
+				System.out.println("FileSender: Connect to " + hostname + "@" + portNum + " " + getFilePath());
 				clientSocket = new Socket(hostname, portNum);
 				fis = new FileInputStream(getFilePath());
 				dos = new ObjectOutputStream(clientSocket.getOutputStream());

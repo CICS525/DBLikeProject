@@ -131,16 +131,18 @@ public class MetadataManager {
 			while(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
 				//GlobalWriteCounter = aMetadata.globalCounter;
 				if( findByGlobalCounter(GlobalWriteCounter+1) !=null ){
-					GlobalWriteCounter++;
 
 					synchronized (LocalMetadata) {	//clear previous metadata for the same basename
-						for(long i=GlobalWriteCounter-1; i>=0; i--){
-							Metadata p = LocalMetadata.get((int) i);
+						int i = LocalMetadata.size()-2;
+						for(; i>=0; i--){
+							Metadata p = LocalMetadata.get(i);
 							if( p.basename.compareTo(aMetadata.basename)== 0 ){
 								LocalMetadata.remove(i);
 							}
 						}
 					}
+					GlobalWriteCounter++;
+
 				}else{
 					break;
 				}
