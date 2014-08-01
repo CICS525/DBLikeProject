@@ -50,6 +50,8 @@ public class SocketStream {
 		return streamOut;
 	}
 	public Object readObject(){
+		if(streamIn==null)
+			return null;
 		Object object = null;
 		try {
 			object = streamIn.readObject();
@@ -62,6 +64,8 @@ public class SocketStream {
 		return object;
 	}
 	public boolean writeObject(Object object){
+		if(streamOut==null)
+			return false;
 		try {
 			streamOut.writeObject(object);
 		} catch (IOException e) {
