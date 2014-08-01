@@ -291,9 +291,15 @@ public class SessionMaster {
 	private void getMetadataAndBlob(long since){
 		
 		final ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(since);
+		final MetadataManager mm = MetadataManager.getInstance();
 		
 		for (final Metadata aMeta : newMetaList) {
-			System.out.println("getMetadataAndBlob@SessionMaster: new metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+			if(mm.includeNewerMetadata(aMeta)) {
+				System.out.println("getMetadataAndBlob@SessionMaster: OLD metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+				continue;	//skip
+			} else {
+				System.out.println("getMetadataAndBlob@SessionMaster: NEW metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+			}
 
 			FileSysPerformer performer = FileSysPerformer.getInstance();
 			performer.addUpdateLocalTask(aMeta, new FileSysCallback(){
@@ -302,7 +308,6 @@ public class SessionMaster {
 				public void onFinish(boolean success, String filename) {
 					if(success){
 						// update local metadata database
-						MetadataManager mm = MetadataManager.getInstance();
 						boolean u = mm.updateLocalMetadata(aMeta);
 						System.out.println("getMetadataAndBlob@SessionMaster: updateLocalMetadata:" + filename + "->" + u);
 						
