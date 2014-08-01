@@ -23,7 +23,7 @@ public class Metadatabase {
 
 	private CloudTable	table;
 
-	public static Metadata acceptFileUpdate(String username, Metadata incompleteMetadata, String fileToUpload) {
+	public static synchronized Metadata acceptFileUpdate(String username, Metadata incompleteMetadata, String fileToUpload) {
 		// if NO conflict, save the Metadata in local database & save Blobdata
 		// in Blob Server, then update FileMetadata and return
 		// if conflict, reject this update and return error reason in
