@@ -69,6 +69,7 @@ public class SocketStream {
 			return false;
 		try {
 			streamOut.writeObject(object);
+			streamOut.flush();
 		} catch (IOException e) {
 			//e.printStackTrace();
 			System.out.println("SocketStream:writeObject->IOException");
