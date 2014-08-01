@@ -47,18 +47,16 @@ public class FileSysPerformer {
 		File directory = new File(folder);
 		if(!directory.exists()){
 			System.out.println("Creating a directory " + folder);
-			boolean isCreated = false;
 			try {
 				directory.mkdir();
-				isCreated = true;
+				return true;
 			} catch (SecurityException se) {
 				System.out.println(se.getMessage());
-			}
-			if (isCreated) {
-				System.out.println("Directory " + folder + " is created");
+				return false;
 			}
 		}
-		return false;
+		else
+			return false;
 	}
 	
 	private boolean deleteFile(String filename){
