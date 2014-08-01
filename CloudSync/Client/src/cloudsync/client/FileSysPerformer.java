@@ -85,10 +85,16 @@ public class FileSysPerformer {
 			if(directory.list().length>0){
 				System.out.println("Directory is not empty");
 			} else {
-				ans = directory.delete();
+				if(directory.delete())
+					return true;
+				else {
+					System.out.println("Delete Empty folder fails");
+					return false;
+				}
 			}	
 		} else {
 			System.out.println("This is not a folder");
+			ans = false;
 		}
 		return ans;
 	}
