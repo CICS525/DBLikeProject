@@ -73,8 +73,10 @@ public class ClientMain {
 					//e.printStackTrace();
 				}
 				
+				if( !SessionMaster.getInstance().checkSocketStreamMessageActive() )
+					initClientMain();
+				
 				synchronized(delayOperations){
-					
 					while(delayOperations.size()>0){
 						Operation op = delayOperations.remove(0);
 						System.out.println("RetryThread:" + op.filename + "#" + op.action);
@@ -107,7 +109,7 @@ public class ClientMain {
 		ClientMain.masterSession = masterSession;
 	}
 
-	public static boolean initClientMain() {
+	public static synchronized boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 
 		settings = ClientSettings.getInstance();
@@ -147,7 +149,7 @@ public class ClientMain {
 		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
 		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
 		
-		if(commitRetry==null){	//start retry thread
+		if(bCnt && commitRetry==null){	//start retry thread
 			commitRetry = new RetryThread();
 			commitRetry.start();
 		}

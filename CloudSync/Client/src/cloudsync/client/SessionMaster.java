@@ -47,13 +47,16 @@ public class SessionMaster {
 	}
 
 	public boolean setMasterServerLocation(ServerLocation masterServerLocation) {
-		if (socketStream == null) { // master server location can only be set
-									// when there is socket is not active
+		if (socketStream == null) { // master server location can only be set when there is socket is not active
 			masterLocation = masterServerLocation;
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean checkSocketStreamMessageActive(){
+		return (socketStream!=null);
 	}
 
 	public boolean connect(String username, String password) {
@@ -246,14 +249,18 @@ public class SessionMaster {
 					e.printStackTrace();
 				}
 				
-				SocketMessage message = new SocketMessage(SocketMessage.COMMAND.EMPTY);
-				boolean suc = SessionMaster.this.socketStream.writeObject(message);
-				if( suc ) {
-					//System.out.println("ActiveThread@SessionMaster: message EMPTY");
-				} else {
-					break;
+				if(SessionMaster.this.socketStream!=null){
+					SocketMessage message = new SocketMessage(SocketMessage.COMMAND.EMPTY);
+					boolean suc = SessionMaster.this.socketStream.writeObject(message);
+					if( suc ) {
+						//System.out.println("ActiveThread@SessionMaster: message EMPTY");
+					} else {
+						break;
+					}
 				}
 			}
+			
+			SessionMaster.this.threadA = null;
 			super.run();
 		}
 		
@@ -303,6 +310,9 @@ public class SessionMaster {
 				//SessionMaster.this.threadA.stop();
 				SessionMaster.this.threadA = null;
 			}
+			
+			SessionMaster.this.socketStream = null;
+			
 			super.run();
 		}
 
