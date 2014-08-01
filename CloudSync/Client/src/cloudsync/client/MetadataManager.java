@@ -45,6 +45,7 @@ public class MetadataManager {
 				return false;
 			} else {
 				GlobalWriteCounter = counter;
+				saveLocalMetadata();
 				return true;
 			}
 		}

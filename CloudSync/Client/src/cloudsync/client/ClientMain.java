@@ -218,6 +218,9 @@ public class ClientMain {
 					boolean suc = metadataManager.updateLocalMetadata(complete);
 					System.out.println("commitFileUpdate@ClientMain: updateLocalMetadata(" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status + ") => " + suc);
 					if(suc){
+						if(complete.globalCounter == 1+metadataManager.getSyncedGlobalWriteCounter())
+							metadataManager.setSyncedGlobalWriteCounter(complete.globalCounter);
+						
 						SocketMessage message = new SocketMessage(COMMAND.UPDATE);
 						message.infoLong = complete.globalCounter;
 						int num = masterSession.rmiBroadcastMessage(message);

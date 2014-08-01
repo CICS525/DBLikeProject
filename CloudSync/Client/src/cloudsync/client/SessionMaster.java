@@ -93,7 +93,10 @@ public class SessionMaster {
 				System.out.println("SessionMaster:GlobalCounter-Local :" + localCounter);
 
 				if (serverCounter > localCounter) {
-					getMetadataAndBlob(localCounter);
+					int toGet = getMetadataAndBlob(localCounter);
+					if(toGet==0){	//nothing to retrieve, local is updated
+						metadataManager.setSyncedGlobalWriteCounter(serverCounter);
+					}
 				}
 			}
 		} catch (RemoteException e) {
@@ -265,13 +268,17 @@ public class SessionMaster {
 					// do nothing
 				} else if (message.command == SocketMessage.COMMAND.UPDATE) {
 					// global write counter increased
-					MetadataManager metadataManage = MetadataManager.getInstance();
-					long localGlobalCounter = metadataManage.getSyncedGlobalWriteCounter();
-					long serverGlobalCounter = message.infoLong;
-					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localGlobalCounter + ", serverGlobalCounter=" + serverGlobalCounter);
+					MetadataManager metadataManager = MetadataManager.getInstance();
+					long localCounter = metadataManager.getSyncedGlobalWriteCounter();
+					long serverCounter = message.infoLong;
+					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localCounter + ", serverGlobalCounter=" + serverCounter);
 
-					if (localGlobalCounter < serverGlobalCounter) {
-						getMetadataAndBlob(localGlobalCounter);
+					if (localCounter < serverCounter) {
+						int toGet = getMetadataAndBlob(localCounter);
+						if(toGet==0){	//nothing to retrieve, local is updated
+							metadataManager.setSyncedGlobalWriteCounter(serverCounter);
+						}
+
 					}
 				} else if (message.command == SocketMessage.COMMAND.DISCONNECT) {
 					break; // do disconnect
@@ -288,7 +295,23 @@ public class SessionMaster {
 
 	}
 	
-	private void getMetadataAndBlob(long since){
+	private void increaseCounter(final ArrayList<Metadata> metaList, final Metadata aMeta ){
+		final MetadataManager mm = MetadataManager.getInstance();
+		for(Metadata one : metaList){
+			long currentCnt = mm.getSyncedGlobalWriteCounter();
+			
+			if(one.globalCounter<=currentCnt)
+				continue;	//nothing to do with increase global counter
+			
+			if(mm.includeNewerMetadata(aMeta)){
+				boolean b = mm.setSyncedGlobalWriteCounter(aMeta.globalCounter);
+				if(b)
+					System.out.println("getMetadataAndBlob@SessionMaster: localGlobalCounter=" + mm.getSyncedGlobalWriteCounter());
+			}
+		}
+	}
+	
+	private int getMetadataAndBlob(long since){
 		
 		final ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(since);
 		final MetadataManager mm = MetadataManager.getInstance();
@@ -296,6 +319,7 @@ public class SessionMaster {
 		for (final Metadata aMeta : newMetaList) {
 			if(mm.includeNewerMetadata(aMeta)) {
 				System.out.println("getMetadataAndBlob@SessionMaster: OLD metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+				increaseCounter(newMetaList, aMeta);
 				continue;	//skip
 			} else {
 				System.out.println("getMetadataAndBlob@SessionMaster: NEW metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
@@ -311,22 +335,25 @@ public class SessionMaster {
 						boolean u = mm.updateLocalMetadata(aMeta);
 						System.out.println("getMetadataAndBlob@SessionMaster: updateLocalMetadata:" + filename + "->" + u);
 						
-						for(Metadata bMeta : newMetaList){
-							long currentCnt = mm.getSyncedGlobalWriteCounter();
-							
-							if(bMeta.globalCounter<=currentCnt)
-								continue;	//nothing to do with increase global counter
-							
-							if(mm.includeNewerMetadata(aMeta)){
-								boolean b = mm.setSyncedGlobalWriteCounter(aMeta.globalCounter);
-								if(b)
-									System.out.println("getMetadataAndBlob@SessionMaster: localGlobalCounter=" + mm.getSyncedGlobalWriteCounter());
-							}
-						}
+						//for(Metadata bMeta : newMetaList){
+						//	long currentCnt = mm.getSyncedGlobalWriteCounter();
+						//	
+						//	if(bMeta.globalCounter<=currentCnt)
+						//		continue;	//nothing to do with increase global counter
+						//	
+						//	if(mm.includeNewerMetadata(aMeta)){
+						//		boolean b = mm.setSyncedGlobalWriteCounter(aMeta.globalCounter);
+						//		if(b)
+						//			System.out.println("getMetadataAndBlob@SessionMaster: localGlobalCounter=" + mm.getSyncedGlobalWriteCounter());
+						//	}
+						//}
+						increaseCounter(newMetaList, aMeta);
 					}
 				}
 				
 			});
 		}
+		
+		return newMetaList.size();
 	}
 }
