@@ -80,6 +80,12 @@ public class FileSysPerformer {
 		}
 		// delete empty folder when it is empty
 		String folder = absFilename.substring(0,absFilename.lastIndexOf(File.separator));
+		
+		// Stop the action when the folder is the rootDir
+		if (folder.equals(ClientSettings.getInstance().getRootDir())){
+			System.out.println("This is the root directory");
+			return true;
+		}
 		File directory = new File(folder);
 		if (directory.isDirectory()){
 			if(directory.list().length>0){
