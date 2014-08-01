@@ -21,7 +21,9 @@ KEY = [ELI_STORAGE_KEY, CHRIS_STORAGE_KEY, SKY_STORAGE_KEY]
 
 BLOB_CONTAINERS = ["bolbpool"]
 
-TABLES = ["account", "meta", "masterblob"]
+#TABLES = ["account", "meta", "masterblob"]
+TABLES = ["account", "meta"]
+
 
 def delete_blobs():
     print "deleting blobs: " + ", ".join(BLOB_CONTAINERS)
