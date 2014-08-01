@@ -217,7 +217,7 @@ public class ClientMain {
 					//for (FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()) {
 					//	aMonitor.stopIgnoreFile(absoluteFilename);
 					//}
-					return false;
+					return true;
 				} else if (complete.status == STATUS.ERROR) {
 					return false;
 				} else {
@@ -241,10 +241,12 @@ public class ClientMain {
 		}
 	}
 
+	/*
 	public static void main(String[] args) {
 		
 		boolean suc = initClientMain();
 		
 		System.out.println("main@ClientMain=>" + suc);
 	}
+	*/
 }
