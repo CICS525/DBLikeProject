@@ -13,7 +13,8 @@ public class SocketStream {
 	public boolean initStream(Socket socket) {
 		this.socket = socket;
 		try {
-			streamOut = new ObjectOutputStream(socket.getOutputStream());;
+			streamOut = new ObjectOutputStream(socket.getOutputStream());
+			streamOut.flush();
 			streamIn = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
