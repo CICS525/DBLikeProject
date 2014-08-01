@@ -133,11 +133,15 @@ public class ClientMain {
 		metadataManager = MetadataManager.getInstance();
 		metadataManager.readLocalMetadata();
 
-		FileSysMonitor fileMonitor = new FileSysMonitor(settings.getRootDir());
-		boolean bMnt = fileMonitor.startListen(fileSysAnswer);
-		if (bMnt) {
-			System.out.println("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
-			allFileMonitors.add(fileMonitor);
+		if( allFileMonitors.size()==0 ){	//no monitor set yet
+			FileSysMonitor fileMonitor = new FileSysMonitor(settings.getRootDir());
+			if( fileMonitor!=null ){
+				boolean bMnt = fileMonitor.startListen(fileSysAnswer);
+				if (bMnt) {
+					System.out.println("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
+					allFileMonitors.add(fileMonitor);
+				}
+			}
 		}
 
 		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
@@ -236,8 +240,6 @@ public class ClientMain {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("java.rmi.server.hostname=" + System.getProperty("java.rmi.server.hostname"));
-		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 		
 		boolean suc = initClientMain();
 		

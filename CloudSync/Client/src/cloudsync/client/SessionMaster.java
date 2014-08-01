@@ -29,7 +29,7 @@ public class SessionMaster {
 	private RemoteInterface			rmi				= null;
 	private String					username		= null;
 	
-	private static final long		ACTIVE_MESSAGE_INTERVAL = (100*1000);
+	private static final long		ACTIVE_MESSAGE_INTERVAL = (60*1000);
 
 	private SessionMaster() {
 		// private constructor to secure singleton
@@ -104,7 +104,7 @@ public class SessionMaster {
 			return false;
 		}
 
-		// initialize the stock long link for message pushing.
+		// initialize the socket long link for message pushing.
 		Socket socket = null;
 		try {
 			System.out.println("Connecting to MasterServer - Command Message: " + masterLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
@@ -118,22 +118,35 @@ public class SessionMaster {
 			return false;
 		}
 
-		AccountInfo account = new AccountInfo(username, password);
-		// Write account into socket. If server respond, means login OK.
+		if(socketStream==null){
+			socketStream = new SocketStream();
+			socketStream.initStream(socket);
 
-		socketStream = new SocketStream();
-		socketStream.initStream(socket);
+			System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + ";" + socketStream.getStreamOut());
 
-		System.out.println("Connected to MasterServer: Stream ready. " + socketStream.getStreamIn() + ";" + socketStream.getStreamOut());
+			// Write account into socket. If server respond, means login OK.
+			AccountInfo account = new AccountInfo(username, password);
+			socketStream.writeObject(account);
+		}else{
+			// the socket is useless, for these is already a socket long link for message pushing.
+			try {
+				socket.close();
+			} catch (IOException e) {
+				//e.printStackTrace();
+			}
+		}
 
-		socketStream.writeObject(account);
 
 		// Then, create a new thread to wait in-coming message for master server
-		threadS = new SocketThread();
-		threadS.start();
+		if(threadS==null){
+			threadS = new SocketThread();
+			threadS.start();
+		}
 		
-		threadA = new ActiveThread();
-		threadA.start();
+		if(threadA==null){
+			threadA = new ActiveThread();
+			threadA.start();
+		}
 
 		return true;
 	}
