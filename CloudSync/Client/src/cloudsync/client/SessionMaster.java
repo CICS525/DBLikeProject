@@ -93,22 +93,7 @@ public class SessionMaster {
 				System.out.println("SessionMaster:GlobalCounter-Local :" + localCounter);
 
 				if (serverCounter > localCounter) {
-					ArrayList<Metadata> metadataArray = rmi.RmiGetCompleteMetadata(username, metadataManager.getSyncedGlobalWriteCounter());
-					for (final Metadata one : metadataArray) {
-						System.out.println("SessionMaster: new metadata #" + " basename=" + one.basename + " status=" + one.status + " globalCounter=" + one.globalCounter);
-						FileSysPerformer performer = FileSysPerformer.getInstance();
-						performer.addUpdateLocalTask(one, new FileSysCallback() {
-
-							@Override
-							public void onFinish(boolean success, String filename) {
-								// save the single metadata item into local
-								// Metadata database and save
-								MetadataManager metaDB = MetadataManager.getInstance();
-								metaDB.updateLocalMetadata(one);
-							}
-
-						});
-					}
+					getMetadataAndBlob(localCounter);
 				}
 			}
 		} catch (RemoteException e) {
@@ -286,20 +271,7 @@ public class SessionMaster {
 					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localGlobalCounter + ", serverGlobalCounter=" + serverGlobalCounter);
 
 					if (localGlobalCounter < serverGlobalCounter) {
-						ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(localGlobalCounter);
-						for (final Metadata aMeta : newMetaList) {
-
-							FileSysPerformer performer = FileSysPerformer.getInstance();
-							performer.addUpdateLocalTask(aMeta, new FileSysCallback(){
-
-								@Override
-								public void onFinish(boolean success, String filename) {
-									// update local metadata database
-									MetadataManager.getInstance().updateLocalMetadata(aMeta);
-								}
-								
-							});
-						}
+						getMetadataAndBlob(localGlobalCounter);
 					}
 				} else if (message.command == SocketMessage.COMMAND.DISCONNECT) {
 					break; // do disconnect
@@ -314,5 +286,42 @@ public class SessionMaster {
 			super.run();
 		}
 
+	}
+	
+	private void getMetadataAndBlob(long since){
+		
+		final ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(since);
+		
+		for (final Metadata aMeta : newMetaList) {
+			System.out.println("getMetadataAndBlob@SessionMaster: new metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+
+			FileSysPerformer performer = FileSysPerformer.getInstance();
+			performer.addUpdateLocalTask(aMeta, new FileSysCallback(){
+
+				@Override
+				public void onFinish(boolean success, String filename) {
+					if(success){
+						// update local metadata database
+						MetadataManager mm = MetadataManager.getInstance();
+						boolean u = mm.updateLocalMetadata(aMeta);
+						System.out.println("getMetadataAndBlob@SessionMaster: updateLocalMetadata:" + filename + "->" + u);
+						
+						for(Metadata bMeta : newMetaList){
+							long currentCnt = mm.getSyncedGlobalWriteCounter();
+							
+							if(bMeta.globalCounter<=currentCnt)
+								continue;	//nothing to do with increase global counter
+							
+							if(mm.includeNewerMetadata(aMeta)){
+								boolean b = mm.setSyncedGlobalWriteCounter(aMeta.globalCounter);
+								if(b)
+									System.out.println("getMetadataAndBlob@SessionMaster: localGlobalCounter=" + mm.getSyncedGlobalWriteCounter());
+							}
+						}
+					}
+				}
+				
+			});
+		}
 	}
 }

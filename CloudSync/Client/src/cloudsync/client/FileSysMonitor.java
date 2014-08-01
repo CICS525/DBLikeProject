@@ -132,7 +132,7 @@ public class FileSysMonitor {
 									continue;
 								
 								String filename = child.toAbsolutePath().toString();
-								System.out.println("FileSysMonitor: WatchEvent " + type + " # " + filename + " Len:" + currFile.length() + " @ " + newTimeStamp);
+								//System.out.println("FileSysMonitor: WatchEvent " + type + " # " + filename + " Len:" + currFile.length() + " @ " + newTimeStamp);
 								if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
 									registerSubfolders(child);
 									break; // ignore because it is a folder.
@@ -142,7 +142,7 @@ public class FileSysMonitor {
 									MFile temp = new MFile(filename);
 									if ( !ignoreList.contains(temp) )
 									{
-										System.out.println("FileSysMonitor: NOT IN ignore_list # " + filename);
+										System.out.println("FileSysMonitor: NOT IN ignore_list # " + type + " # " + filename + " Len:" + currFile.length() + " @ " + oldTimeStamp + "~" + newTimeStamp);
 									
 										Action action = FileSysMonitorCallback.Action.ERROR;
 									
@@ -159,7 +159,7 @@ public class FileSysMonitor {
 										//callback.Callback(child.toAbsolutePath().toString(), action);
 										callback.Callback( new Operation(child.toAbsolutePath().toString(), action) );
 									}else{
-										System.out.println("FileSysMonitor: IN ignore_list # " + filename);
+										System.out.println("FileSysMonitor: IN ignore_list # " + type + " # " + filename + " Len:" + currFile.length() + " @ " + oldTimeStamp + "~" + newTimeStamp);
 										ignoreList.remove( temp );
 									}
 								}
@@ -253,7 +253,7 @@ public class FileSysMonitor {
 	 * @param filenames can be absolute, relative or relative with a slash in front.
 	 * @return true if the file is REMOVED from the ignore list, false otherwise
 	 */
-	public boolean stopIgnoreFile_error(String filename){
+	public boolean stopIgnoreFile(String filename){
 		boolean removed = false;
 		synchronized (ignoreList)
 		{

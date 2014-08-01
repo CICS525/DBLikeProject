@@ -39,6 +39,16 @@ public class MetadataManager {
 			return GlobalWriteCounter;
 		}
 	}
+	public boolean setSyncedGlobalWriteCounter(long counter) {
+		synchronized (GlobalWriteCounter){
+			if( GlobalWriteCounter >= counter ){
+				return false;
+			} else {
+				GlobalWriteCounter = counter;
+				return true;
+			}
+		}
+	}
 
 	public long getSyncingGlobalWriteCounter() {
 		long ans = 0;
@@ -117,38 +127,39 @@ public class MetadataManager {
 	 * @return
 	 */
 	public boolean updateLocalMetadata(Metadata aMetadata){
-		//if (LocalMetadata.contains(aMetadata)) {
-		//	LocalMetadata.remove(aMetadata); //remove the old version
-		//}
 
 		//if(aMetadata.status!=STATUS.DELETE){
 		//}
 		synchronized(LocalMetadata){
+			if (LocalMetadata.contains(aMetadata)) {
+				LocalMetadata.remove(aMetadata); //remove the old version
+			}
+
 			LocalMetadata.add(aMetadata); // add the new version
 		}
 		
-		synchronized (GlobalWriteCounter){
-			while(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
-				//GlobalWriteCounter = aMetadata.globalCounter;
-				if( findByGlobalCounter(GlobalWriteCounter+1) !=null ){
-
-					synchronized (LocalMetadata) {	//clear previous metadata for the same basename
-						int i = LocalMetadata.size()-2;
-						for(; i>=0; i--){
-							Metadata p = LocalMetadata.get(i);
-							if( p.basename.compareTo(aMetadata.basename)== 0 ){
-								LocalMetadata.remove(i);
-							}
-						}
-					}
-					GlobalWriteCounter++;
-
-				}else{
-					break;
-				}
-			}
-			System.out.println("updateLocalMetadata@MetadataManager: GlobalWriteCounter=" + GlobalWriteCounter);
-		}
+//		synchronized (GlobalWriteCounter){
+//			while(aMetadata.globalCounter>GlobalWriteCounter) {	//update GlobalWriteCounter
+//				//GlobalWriteCounter = aMetadata.globalCounter;
+//				if( findByGlobalCounter(GlobalWriteCounter+1) !=null ){
+//
+//					synchronized (LocalMetadata) {	//clear previous metadata for the same basename
+//						int i = LocalMetadata.size()-2;
+//						for(; i>=0; i--){
+//							Metadata p = LocalMetadata.get(i);
+//							if( p.basename.compareTo(aMetadata.basename)== 0 ){
+//								LocalMetadata.remove(i);
+//							}
+//						}
+//					}
+//					GlobalWriteCounter++;
+//
+//				}else{
+//					break;
+//				}
+//			}
+//			System.out.println("updateLocalMetadata@MetadataManager: GlobalWriteCounter=" + GlobalWriteCounter);
+//		}
 		
 		return saveLocalMetadata(); //maybe save at once
 	}
@@ -200,6 +211,18 @@ public class MetadataManager {
 			}
 		}
 		return null;
+	}
+	
+	public boolean includeNewerMetadata(Metadata aMetadata){
+		synchronized(LocalMetadata){
+			for( Metadata meta : LocalMetadata ){
+				if( meta.globalCounter>= aMetadata.globalCounter && 
+					meta.equals(aMetadata) ){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	private void clearMetadata(){

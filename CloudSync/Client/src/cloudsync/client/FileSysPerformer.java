@@ -66,12 +66,19 @@ public class FileSysPerformer {
 		// Convert base filename to absolute file name 
 		String absFilename = getAbsoluteFilename(filename);
 		File file = new File(absFilename);
-		if(!file.exists())
-			return true;	//the target already gone
+		if(!file.exists()){
+			//the target already gone, no action to do, stop ignore
+			for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
+				aMonitor.stopIgnoreFile(filename);
+			}
+			return true;
+		}
 		if (file.delete()){
 			System.out.println(file.getName() + " is deleted.");
+			ans = true;
 		} else {
 			System.out.println("Delete operation fails");
+			ans = false;
 		}
 		// delete empty folder when it is empty
 		String folder = absFilename.substring(0,absFilename.lastIndexOf(File.separator));
