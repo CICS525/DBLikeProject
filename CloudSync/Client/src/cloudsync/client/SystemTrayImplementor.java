@@ -38,13 +38,14 @@ public class SystemTrayImplementor implements Runnable {
 							"/images/icon.png");
 					ActionListener UIListener = new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
-							/*if(UIThread.added)
+							System.out.println("Inside action listener");
+							if(UIThread.added)
 							{
 								UIThread.openStage();
 							}else
 							{
 								Application_Main.launchUIThread();
-							}*/
+							}
 						}
 					};
 
@@ -103,9 +104,7 @@ public class SystemTrayImplementor implements Runnable {
 						trayIcon.displayMessage("Dropbox Initializion Failed....",
 								"Please re-enter your username and password",
 								MessageType.INFO);
-						Application_Main.launchUIThread();
-
-						
+						Application_Main.launchUIThread();						
 					}
 				} else {
 					System.out.println("system tray not supported");
@@ -115,7 +114,7 @@ public class SystemTrayImplementor implements Runnable {
 			}
 		}
 
-		for (int i = 0; i < 50; i++) {
+		/*for (int i = 0; i < 50; i++) {
 			try {
 				TimeUnit.SECONDS.sleep(1);
 				System.out.println("Hello" + i);
@@ -123,12 +122,17 @@ public class SystemTrayImplementor implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 
 	protected static Image createImage(String path, String description) {
 		URL imageURL = SystemTrayImplementor.class.getResource(path);
 		System.out.println(imageURL.toString());
 		return (new ImageIcon(imageURL, description)).getImage();
+	}
+	
+	public static void displayMessage(String trayMessage,String trayMessageBody,MessageType messageType)
+	{
+		
 	}
 }

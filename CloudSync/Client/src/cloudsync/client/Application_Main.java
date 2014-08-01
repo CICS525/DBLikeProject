@@ -1,8 +1,4 @@
 package cloudsync.client;
-import cloudsync.sharedInterface.AzureConnection;
-import cloudsync.sharedInterface.DefaultSetting;
-import cloudsync.sharedInterface.Metadata;
-import cloudsync.sharedInterface.SessionBlob;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
@@ -22,7 +18,6 @@ public class Application_Main {
 		SystemTrayImplementor.added = false;
 		BrowserThread.added = false;
 		initializeApplication();
-		
 	}
 
 
