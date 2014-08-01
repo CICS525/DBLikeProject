@@ -71,16 +71,14 @@ public class SessionManager {
 	}
 	
 	public int broadcastSocketMessage(String username, SocketMessage message){
-		int counter = 0;
 		synchronized(accountPool){
 			for(SessionAccount account: accountPool){
 				if(account.getUsername().compareTo(username)==0 ){
-					int get = account.broadcastSocketMessage(message);
-					if(get>0)
-						counter++;
+					int counter = account.broadcastSocketMessage(message);
+					return counter;					
 				}
 			}
 		}
-		return counter;
+		return 0;
 	}
 }
