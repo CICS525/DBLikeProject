@@ -229,6 +229,8 @@ public class ClientMain {
 						
 						SocketMessage message = new SocketMessage(COMMAND.UPDATE);
 						message.infoLong = complete.globalCounter;
+						// Get the local IP address from this machine;
+						message.infoString = null;
 						int num = masterSession.rmiBroadcastMessage(message);
 						System.out.println("commitFileUpdate@ClientMain: rmiBroadcastMessage=" + num);
 					}
@@ -241,12 +243,12 @@ public class ClientMain {
 		}
 	}
 
-	/*
+	
 	public static void main(String[] args) {
 		
 		boolean suc = initClientMain();
 		
 		System.out.println("main@ClientMain=>" + suc);
 	}
-	*/
+	
 }
