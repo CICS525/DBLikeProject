@@ -7,12 +7,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import cloudsync.master.MasterSettings;
+import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
 public class AccountDatabaseTest {
-    private static String storageConnectionString = "DefaultEndpointsProtocol=http;"
-            + "AccountName=portalvhds96n2s1jyj5b5k;"
-            + "AccountKey=vzJ56owCpSgvpfToqBEx2cUy6slkT7eUtWCUATe6OLWDo/GBXkbup3x8kkIHpNRdva7syOruyMq9mJfez1ZvOA==";
+    private static String storageConnectionString = DefaultSetting.chris_storageConnectionString;
 
     private static String tableName = "accountTest";
 
@@ -67,7 +66,8 @@ public class AccountDatabaseTest {
     @Test
     public void testGetServerAndLogOut() {
         ServerLocation server = db.getServerLocation(username);
-        assertEquals(server.url, MasterSettings.getInstance().getMasterAddrMain());
+        System.out.println(server.url);
+        assertEquals(server.url, DefaultSetting.VM_ADDR_CHRIS);
         
         AccountDBRow row = db.getAccount(username);
         assertEquals(row.getConnectionCount(), 1);
