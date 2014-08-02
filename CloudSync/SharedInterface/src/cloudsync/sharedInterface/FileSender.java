@@ -77,6 +77,7 @@ public class FileSender {
 	}
 	
 	private class FileSenderThread extends Thread{
+		SocketStream streams = null;
 
 		@Override
 		public void run() {
@@ -86,8 +87,12 @@ public class FileSender {
 				System.out.println("FileSender: Connect to " + hostname + "@" + portNum + " " + getFilePath());
 				clientSocket = new Socket(hostname, portNum);
 				fis = new FileInputStream(getFilePath());
-				dos = new ObjectOutputStream(clientSocket.getOutputStream());
-				dis = new ObjectInputStream(clientSocket.getInputStream());
+				if(streams.initStream(clientSocket))
+					System.out.println("Socket stream created...");
+				dos = streams.getStreamOut();
+				dis = streams.getStreamIn();
+				//dos = new ObjectOutputStream(clientSocket.getOutputStream());
+				//dis = new ObjectInputStream(clientSocket.getInputStream());
 				file = new File(getFilePath());
 				dos.writeObject((Long)file.length());
 				dos.flush();
