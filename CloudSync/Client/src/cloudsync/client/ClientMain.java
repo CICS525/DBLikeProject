@@ -1,5 +1,6 @@
 package cloudsync.client;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -194,10 +195,11 @@ public class ClientMain {
 
 		while (true) {
 			Metadata complete = masterSession.rmiCommitFileUpdate(incomplete, tempFileOnServer);
+			SystemTrayImplementor.displayMessage("Syncing with Cloud Folder", complete.basename, MessageType.INFO);
 
 			if (complete != null) {
 				System.out.println("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
-
+				
 				if (complete.status == STATUS.CONFLICT) {
 					// should rename & try again in next FileSysMonitor callback
 

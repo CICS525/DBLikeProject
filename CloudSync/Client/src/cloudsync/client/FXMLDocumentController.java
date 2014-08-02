@@ -20,6 +20,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -51,15 +53,17 @@ public class FXMLDocumentController implements Initializable {
     public Button NewUser;
     @FXML
     public Button RunInBackGround;
+    @FXML
+    public Menu Actions;
+
+    public MenuItem browser;
+    public MenuItem history;
     
     
-
-	
-	public String userName;
-	public String passWord;
-	public String RootDir;
-	public String device;
-
+    
+    
+    Thread systemTrayThread;
+    public static boolean SESSION_OK;
     Stage thisStage;
 
 
@@ -68,6 +72,8 @@ public class FXMLDocumentController implements Initializable {
      * Initializes the controller class.
      */
     public void initialize(URL url, ResourceBundle rb) {
+    	DeviceNameTF.setDisable(true);
+    	System.out.println("Calling Initialize in the FXMLDocument Controller");
     	initializeComponents();
         InitializeUI();
 	}    
@@ -81,7 +87,6 @@ public class FXMLDocumentController implements Initializable {
     	ClientMain.getSettings().setDeviceName(DeviceNameTF.getText());
     	ClientMain.getSettings().saveSettings();
     	
-    	Application_Main.createSystemTrayThread();
     	OpenSession.setDisable(true);
     	StopSession.setDisable(false);
     	RunInBackGround.setDisable(false);
@@ -106,46 +111,43 @@ public class FXMLDocumentController implements Initializable {
      	   }
      	});
     }
-   
-    @FXML
-    public void runBackGroundButtonAction(ActionEvent event)
-    {
-    	UIThread.closeStage();
-        Application_Main.createSystemTrayThread();
-    }
     
     @FXML
     public void NewUserButtonAction(ActionEvent event)
     {
+    	SESSION_OK = false;
+    	UsernameTF.setDisable(false);
+    	PasswordTF.setDisable(false);
+    	DirectoryTF.setDisable(false);
+    	OpenSession.setDisable(false);
     	
     }
-    
-    @FXML
-    public void StopSessionButtonAction(ActionEvent event) throws InterruptedException
-    {
-    	System.out.println("Stopping the SystemTray Thread");
-        SystemTrayImplementor.tray.remove(SystemTrayImplementor.trayIcon);
-        SystemTrayImplementor.added = false;
-        Application_Main.systemTrayThread.stop();
-        OpenSession.setDisable(false);
-        RunInBackGround.setDisable(true);
-        StopSession.setDisable(true);
-    }
-    
+     
     public void InitializeUI()
     {
-    	UsernameTF.setText(ClientMain.getSettings().getUsername());
-    	PasswordTF.setText(ClientMain.getSettings().getPassword());
-    	DirectoryTF.setText(ClientMain.getSettings().getRootDir());
-    	if(SystemTrayImplementor.added)
+    	if(ClientMain.initClientMain())
     	{
-    		OpenSession.setDisable(true);
+    	SESSION_OK = true;
+    	OpenSession.setDisable(true);
+    	UsernameTF.setDisable(true);
+    	PasswordTF.setDisable(true);
+    	DirectoryTF.setDisable(true);
+    	
     	}else
     	{
     		OpenSession.setDisable(false);
     		StopSession.setDisable(true);
     		RunInBackGround.setDisable(true);
+    		history.setDisable(true);
+    		browser.setDisable(true);
     	}
+    	UsernameTF.setText(ClientMain.getSettings().getUsername());
+    	PasswordTF.setText(ClientMain.getSettings().getPassword());
+    	DirectoryTF.setText(ClientMain.getSettings().getRootDir());
+    	
+    	systemTrayThread = new Thread(new SystemTrayImplementor());
+    	systemTrayThread.start();
+    	
     }
     
     public void initializeComponents()
@@ -173,5 +175,24 @@ public class FXMLDocumentController implements Initializable {
         } catch (UnknownHostException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        MenuItem browser = new MenuItem("View Browser");
+        browser.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent t) {
+                	System.out.println("Inside the add");
+                }
+            }); 
+            
+       Actions.getItems().add(browser);
+       
+       
+       MenuItem history = new MenuItem("View History");
+       history.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+           	System.out.println("Inside the add");
+           }
+       }); 
+       
+       Actions.getItems().add(history);
     }
 }
