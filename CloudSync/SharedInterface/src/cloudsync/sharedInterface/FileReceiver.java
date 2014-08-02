@@ -45,7 +45,16 @@ public class FileReceiver {
 	
 	private String getTempFilename(){
 		Date now = new Date();
-		return "receive_" + now.getTime() + ".tmp";
+		String filename = "receive_" + now.getTime() + ".tmp";
+		while(true){
+			File f = new File(filename);
+			if(f.exists()){
+				filename+="_";
+			}else{
+				break;
+			}
+		}
+		return filename;
 	}
 	
 	private class BackgroundThread extends Thread{

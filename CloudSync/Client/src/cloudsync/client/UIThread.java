@@ -10,14 +10,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class UIThread extends Application implements Runnable{
+public class UIThread extends Application{
 	public static Stage newStage;
 	public static boolean added;
 
-	public void run() {
-		launch(UIThread.class);
+	public static void launchUI()
+	{
+		launch();
 	}
-	
 
 	@Override
 	public void start(Stage arg0) throws Exception {
@@ -58,7 +58,11 @@ public class UIThread extends Application implements Runnable{
 	
 	public static void closeStage()
 	{
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				newStage.hide();
+			}});
 		System.out.println("Hiding the UI");
-		newStage.hide();
 	}
 }

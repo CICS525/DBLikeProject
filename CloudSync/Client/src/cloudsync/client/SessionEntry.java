@@ -36,7 +36,7 @@ public class SessionEntry {
 	}
 	
 	public boolean initialRmi(){
-		if(rmi!=null){
+		if(rmi==null){
 			Registry registry;
 			try {
 				// initialize RMI interface for entry server

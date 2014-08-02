@@ -1,5 +1,6 @@
 package cloudsync.client;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -27,10 +28,22 @@ public class ClientMain {
 	private static FileSysMonitorCallback		fileSysAnswer = new FileSysMonitorCallback() {
 		@Override
 		public void Callback(final Operation operation) {
-			final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(operation.filename);
+			
+			final FileSysPerformer fp = FileSysPerformer.getInstance();
+			final String absoluteFilename = fp.getAbsoluteFilename(operation.filename);
+			final String basename = fp.getBaseFilename(operation.filename);
 			if (Action.MODIFY == operation.action) {
 				System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 
+				if( masterLocation==null ){
+					synchronized (delayOperations){
+						delayOperations.add(operation);	//save for next try
+					}
+					return;
+				}
+				
+				fp.addDelayPerformFile(basename);
+				
 				FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback() {
 
 					@Override
@@ -44,6 +57,7 @@ public class ClientMain {
 								delayOperations.add(operation);	//save for next try
 							}
 						}
+						fp.removeDelayPerformFile(basename);
 					}
 
 				});
@@ -77,7 +91,8 @@ public class ClientMain {
 					initClientMain();
 				
 				synchronized(delayOperations){
-					while(delayOperations.size()>0){
+					int len = delayOperations.size();
+					for(int i=0; i<len; i++){
 						Operation op = delayOperations.remove(0);
 						System.out.println("RetryThread:" + op.filename + "#" + op.action);
 						fileSysAnswer.Callback(op);
@@ -180,10 +195,11 @@ public class ClientMain {
 
 		while (true) {
 			Metadata complete = masterSession.rmiCommitFileUpdate(incomplete, tempFileOnServer);
+			SystemTrayImplementor.displayMessage("Syncing with Cloud Folder", complete.basename, MessageType.INFO);
 
 			if (complete != null) {
 				System.out.println("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
-
+				
 				if (complete.status == STATUS.CONFLICT) {
 					// should rename & try again in next FileSysMonitor callback
 
@@ -243,12 +259,18 @@ public class ClientMain {
 		}
 	}
 
+<<<<<<< HEAD
 	
+=======
+>>>>>>> a21b9e3444f6681fb14ab7dd5fecf00b891372e0
 	public static void main(String[] args) {
 		
 		boolean suc = initClientMain();
 		
 		System.out.println("main@ClientMain=>" + suc);
 	}
+<<<<<<< HEAD
 	
+=======
+>>>>>>> a21b9e3444f6681fb14ab7dd5fecf00b891372e0
 }

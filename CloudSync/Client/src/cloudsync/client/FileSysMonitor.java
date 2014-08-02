@@ -133,11 +133,10 @@ public class FileSysMonitor {
 
                                 if (type != StandardWatchEventKinds.ENTRY_DELETE && newTimeStamp == 0)
                                     continue;
-
-                                /*
-                                 * if(type==StandardWatchEventKinds.ENTRY_MODIFY
-                                 * && currFile.length()==0) continue;
-                                 */
+                                
+								if(type==StandardWatchEventKinds.ENTRY_MODIFY && currFile.length()==0) 
+									continue;
+                                 
                                 if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
                                     registerSubfolders(child);
                                     continue; // ignore because it is a folder.

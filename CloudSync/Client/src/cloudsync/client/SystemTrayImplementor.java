@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 
+import com.sun.xml.internal.bind.v2.runtime.output.ForkXmlOutput;
+
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
@@ -21,10 +23,9 @@ public class SystemTrayImplementor implements Runnable {
 
 	public static SystemTray tray;
 	public static TrayIcon trayIcon;
-	public static boolean added;
 
 	public void run() {
-		if (!added) {
+
 			// TODO Auto-generated method stub
 			System.out.println("Inside creating System Tray");
 			try {
@@ -39,13 +40,9 @@ public class SystemTrayImplementor implements Runnable {
 					ActionListener UIListener = new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
 							System.out.println("Inside action listener");
-							if(UIThread.added)
-							{
+							
 								UIThread.openStage();
-							}else
-							{
-								Application_Main.launchUIThread();
-							}
+							
 						}
 					};
 
@@ -60,30 +57,28 @@ public class SystemTrayImplementor implements Runnable {
 					};
 					
 					
-					ActionListener BrowserListener = new ActionListener() {
+					/*ActionListener BrowserListener = new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
 							System.out.println("Open the Browser here");
-							if(BrowserThread.added)
+							if(true)
 							{
 								System.out.println("Inside if");
-								BrowserThread.openStage();
 							}else
 							{
 								System.out.println("Inside else");
-								Application_Main.launchBrowserThread();
 							}
 						}
 
-					};
+					};*/
 
 					PopupMenu popup = new PopupMenu();
 					MenuItem defaultItem = new MenuItem("Applcation Control");
 					MenuItem exitItem = new MenuItem("Exit");
-					MenuItem browserItem = new MenuItem("Cloud Browser");
+					//MenuItem browserItem = new MenuItem("Cloud Browser");
 					exitItem.addActionListener(exitListener);
 					defaultItem.addActionListener(UIListener);
-					browserItem.addActionListener(BrowserListener);
-					popup.add(browserItem);
+					//browserItem.addActionListener(BrowserListener);
+					//popup.add(browserItem);
 					popup.add(defaultItem);
 					popup.add(exitItem);
 					
@@ -92,19 +87,22 @@ public class SystemTrayImplementor implements Runnable {
 							"tray icon"), "Dropbox Application", popup);
 					trayIcon.setImageAutoSize(true);
 					tray.add(trayIcon);
-					added = true;
 
-					if(ClientMain.initClientMain())
+					if(FXMLDocumentController.SESSION_OK)
 					{
 						trayIcon.displayMessage("Dropbox Started Successfully....",
 								"Your Root Directory will be Syncing from Cloud",
 								MessageType.INFO);
+						
+						if(FXMLDocumentController.SESSION_OK)
+				    	{
+				        	UIThread.closeStage();;
+				    	}
 					}else
 					{
 						trayIcon.displayMessage("Dropbox Initializion Failed....",
 								"Please re-enter your username and password",
 								MessageType.INFO);
-						Application_Main.launchUIThread();						
 					}
 				} else {
 					System.out.println("system tray not supported");
@@ -112,7 +110,7 @@ public class SystemTrayImplementor implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		
 
 		/*for (int i = 0; i < 50; i++) {
 			try {
@@ -133,6 +131,8 @@ public class SystemTrayImplementor implements Runnable {
 	
 	public static void displayMessage(String trayMessage,String trayMessageBody,MessageType messageType)
 	{
-		
+		trayIcon.displayMessage(trayMessage,
+				"Updating " + trayMessageBody,
+				messageType);
 	}
 }

@@ -12,6 +12,9 @@ public class FileSenderClient {
 	/**
 	 * 	This is a p2p file sender for client. It waits for connection from other 
 	 * 	client to request a file transfer and provides with the file accordingly
+	 * 	It defines following parameters:
+	 * 	1. The port number that is running
+	 * 	2. The rootDir in this machine 
 	 */
 	
 	private ServerSocket serverSocket = null;

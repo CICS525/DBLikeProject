@@ -1,5 +1,6 @@
 package cloudsync.sharedInterface;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,18 +11,24 @@ public class FileReceiverClient {
 	
 	/**
 	 * 	This is a p2p file receiver for client. It initializes request 
-	 * 	for a file by passing the metadata of the file and the destination
-	 *  hostname
+	 * 	for a file by passing the metadata of the file. 
+	 *  It defines following parameters:
+	 *  1. The hostname of the machine that it tries to connect to 
+	 *  2. The port number of that is running on that machine
+	 *  3. Its own root directory to save the file
+	 *  
 	 */
 	private int portNum = 0;
 	private String hostname = null;
 	private Metadata metadata = null;
 	private Socket clientSocket = null;
+	private String rootDir = null;
 	
-	public FileReceiverClient(int portNum, String hostname, Metadata metadata){
+	public FileReceiverClient(int portNum, String hostname, String rootDir, Metadata metadata){
 		this.portNum = portNum;
 		this.hostname = hostname;
 		this.metadata = metadata;
+		this.rootDir = rootDir;
 		FileRequesterThread thread = new FileRequesterThread();
 		thread.start();
 	}
@@ -29,10 +36,11 @@ public class FileReceiverClient {
 	private class FileRequesterThread extends Thread{
 
 		private SocketStream streams = null;
+		private String absFilePath = null;
 		private Long length = null;
 		private int tempLen = 0;
 		private final int BUFF_SIZE = 1024; 
-		private FileOutputStream os = null;
+		
 		
 		@Override
 		public void run() {
@@ -46,7 +54,7 @@ public class FileReceiverClient {
 				if(length == -1){
 					System.out.println("FileReceiverClient: file doesn't exist");
 				}else {
-					System.out.println("FileReceiverClient: file length to receive" + length);
+					System.out.println("FileReceiverClient: file length to receive is " + length);
 					receiveFile();
 				}
 			} catch (UnknownHostException e) {
@@ -60,18 +68,25 @@ public class FileReceiverClient {
 		}
 		
 		private void receiveFile(){
+			
+			absFilePath = Metadata.mixRootAndFilename(rootDir, metadata.basename);
+			int readCount = 0;
+			System.out.println("The absolute name is "+ absFilePath);
+			File file = new File(absFilePath);
+			FileOutputStream os = null;
+			
 			try {
-				os = new FileOutputStream(metadata.basename);
+				os = new FileOutputStream(file);
 			} catch (FileNotFoundException e1) {
-				System.out.println("FileReceiverClient: File not found" + metadata.basename);
+				System.out.println("FileReceiverClient: File not found "+ absFilePath);
 			}
 			while(true){
+				System.out.println("tempLen is " + tempLen);
 				if( tempLen >= length){
-					System.out.println("FileReceiverClient: " + metadata.basename + "is successfully received");
+					System.out.println("FileReceiverClient: " + absFilePath + " is successfully received");
 					break;
 				}else {
 					byte[] buff = new byte[BUFF_SIZE];
-					int readCount = 0;
 					try {
 						readCount = streams.getStreamIn().read(buff);
 					} catch (IOException e) {
