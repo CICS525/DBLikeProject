@@ -28,7 +28,9 @@ public class ClientMain {
 		@Override
 		public void Callback(final Operation operation) {
 			
-			final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(operation.filename);
+			final FileSysPerformer fp = FileSysPerformer.getInstance();
+			final String absoluteFilename = fp.getAbsoluteFilename(operation.filename);
+			final String basename = fp.getBaseFilename(operation.filename);
 			if (Action.MODIFY == operation.action) {
 				System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 
@@ -38,6 +40,8 @@ public class ClientMain {
 					}
 					return;
 				}
+				
+				fp.addDelayPerformFile(basename);
 				
 				FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback() {
 
@@ -52,6 +56,7 @@ public class ClientMain {
 								delayOperations.add(operation);	//save for next try
 							}
 						}
+						fp.removeDelayPerformFile(basename);
 					}
 
 				});

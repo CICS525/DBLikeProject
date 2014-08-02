@@ -10,9 +10,8 @@ import cloudsync.sharedInterface.Metadata.STATUS;
 public class FileSysPerformer {
 	private static final long INTERVAL_BETWEEN_RETRY = 1000;	//milliseconds
 	
-	private class MetadataEx extends Metadata{
+	private class MetadataEx{
 
-		private static final long serialVersionUID = 6819752436364996918L;
 		Metadata metadata = null;
 		FileSysCallback callback = null;
 		
@@ -107,6 +106,18 @@ public class FileSysPerformer {
 
 	private boolean FilePerform(Metadata metadata){
 		boolean ans = false;
+		
+		// Check DelayPerform List
+		synchronized (delayList){
+			for(String delay: delayList){
+				if( delay.compareTo(metadata.basename)==0 ){
+					//do not run now! leave for future retry
+					System.out.println("FilePerform@FileSysPerformer: delayList match:" + delay);
+					return false;
+				}
+			}
+		}
+		
 		// Add this file to the ignore list of all FileSysMonitors
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
 			aMonitor.startIgnoreFile(metadata.basename);
@@ -227,12 +238,22 @@ public class FileSysPerformer {
 		}
 	}
 	
+	private ArrayList<String> delayList = new ArrayList<String>();
+	
 	public boolean addDelayPerformFile(String basename){
-		return false;
+		System.out.println("addDelayPerformFile@FileSysPerformer: basename=" + basename);
+		synchronized ( delayList ){
+			delayList.add(basename);
+		}
+		return true;
 	}
 
 	public boolean removeDelayPerformFile(String basename){
-		return false;
+		System.out.println("removeDelayPerformFile@FileSysPerformer: basename=" + basename);
+		synchronized ( delayList ){
+			delayList.remove(basename);
+		}
+		return true;
 	}
 
 }
