@@ -27,10 +27,18 @@ public class ClientMain {
 	private static FileSysMonitorCallback		fileSysAnswer = new FileSysMonitorCallback() {
 		@Override
 		public void Callback(final Operation operation) {
+			
 			final String absoluteFilename = FileSysPerformer.getInstance().getAbsoluteFilename(operation.filename);
 			if (Action.MODIFY == operation.action) {
 				System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 
+				if( masterLocation==null ){
+					synchronized (delayOperations){
+						delayOperations.add(operation);	//save for next try
+					}
+					return;
+				}
+				
 				FileSender sender = new FileSender(masterLocation.url, absoluteFilename, new FileSysCallback() {
 
 					@Override
@@ -241,12 +249,10 @@ public class ClientMain {
 		}
 	}
 
-	/*
 	public static void main(String[] args) {
 		
 		boolean suc = initClientMain();
 		
 		System.out.println("main@ClientMain=>" + suc);
 	}
-	*/
 }
