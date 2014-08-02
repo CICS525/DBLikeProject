@@ -169,7 +169,7 @@ public class FileSysPerformer {
 				for( MetadataEx aMetaEx : cloneList ){
 					boolean suc = FilePerform(aMetaEx.metadata);
 					System.out.println("PerformThread: "+cloneList.size());
-					System.out.println("PerformThread@FileSysPerformer : FilePerform(" + aMetaEx.metadata.basename + " # " + aMetaEx.metadata.status + ") -> " + suc);
+					System.out.println("PerformThread@FileSysPerformer : FilePerform(" + aMetaEx.metadata.basename + " # " + aMetaEx.metadata.status + " globalCounter=" + aMetaEx.metadata.globalCounter + ") -> " + suc);
 
 					if(suc){
 						delList.add(aMetaEx);

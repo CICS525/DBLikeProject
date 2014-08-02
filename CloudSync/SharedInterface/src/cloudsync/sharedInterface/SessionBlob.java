@@ -224,6 +224,7 @@ public class SessionBlob {
 		{
 		    // Output the stack trace.
 		    e.printStackTrace();
+		    System.out.println("downloadAzureStorageBlobToLocalFile ERROR: filename=" + filename + " blobName=" + blobName + " containerName=" + containerName + " azureConnection=" + azureConnection);
 		    return false;
 		}
 		return true;
