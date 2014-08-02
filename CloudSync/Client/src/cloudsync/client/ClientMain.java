@@ -259,18 +259,12 @@ public class ClientMain {
 		}
 	}
 
-<<<<<<< HEAD
-	
-=======
->>>>>>> a21b9e3444f6681fb14ab7dd5fecf00b891372e0
+	/*
 	public static void main(String[] args) {
 		
 		boolean suc = initClientMain();
 		
 		System.out.println("main@ClientMain=>" + suc);
 	}
-<<<<<<< HEAD
-	
-=======
->>>>>>> a21b9e3444f6681fb14ab7dd5fecf00b891372e0
+	*/
 }
