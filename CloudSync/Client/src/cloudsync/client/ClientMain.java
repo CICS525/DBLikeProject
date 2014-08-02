@@ -85,7 +85,8 @@ public class ClientMain {
 					initClientMain();
 				
 				synchronized(delayOperations){
-					while(delayOperations.size()>0){
+					int len = delayOperations.size();
+					for(int i=0; i<len; i++){
 						Operation op = delayOperations.remove(0);
 						System.out.println("RetryThread:" + op.filename + "#" + op.action);
 						fileSysAnswer.Callback(op);
