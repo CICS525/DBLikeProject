@@ -34,23 +34,32 @@ public class SessionEntry {
 	public void setEntryLocation(ServerLocation entryLocation) {
 		this.entryLocation = entryLocation;
 	}
+	
+	public boolean initialRmi(){
+		if(rmi!=null){
+			Registry registry;
+			try {
+				// initialize RMI interface for entry server
+				System.out.println("Connecting to EntryServer - RIM: " + entryLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+				registry = LocateRegistry.getRegistry(entryLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+				rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
+				System.out.println("~Connected to EntryServer - RIM: " + rmi.toString());
+				return true;
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				return false;
+			} catch (NotBoundException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public ServerLocation getMasterServerLocation(String username, String password) {
-		Registry registry;
-		// get master server location
-		try {
-			// initialize RMI interface for entry server
-			System.out.println("Connecting to EntryServer - RIM: " + entryLocation.url + "@" + DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-			registry = LocateRegistry.getRegistry(entryLocation.url, DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-			rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
-			System.out.println("~Connected to EntryServer - RIM: " + rmi.toString());
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		
+		if( !initialRmi() )
 			return null;
-		} catch (NotBoundException e) {
-			e.printStackTrace();
-			return null;
-		}
 		
         // check password at entry server
         try {
@@ -68,5 +77,21 @@ public class SessionEntry {
             e.printStackTrace();
             return null;
         }
+	}
+	
+	public boolean createAccount(String username, String password) {
+
+		if( !initialRmi() )
+			return false;
+		
+		boolean ans = false;
+		if (rmi != null) {
+			try {
+				ans = rmi.RmiCreateAccount(username, password);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		return ans;
 	}
 }
