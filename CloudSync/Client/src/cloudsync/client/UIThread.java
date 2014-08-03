@@ -31,8 +31,9 @@ public class UIThread extends Application{
         mainController.setStage(newStage);
         Application_Navigator.setMainController(mainController);
         Application_Navigator.loadVista(Application_Navigator.CREDENTIALS);
-        newStage.setHeight(435);
-        newStage.setWidth(483);
+        newStage.getIcons().add(new Image("/images/logo.png"));
+        newStage.setHeight(430);
+        newStage.setWidth(715);
         newStage.show();
         newStage.setResizable(false);
         newStage.show();

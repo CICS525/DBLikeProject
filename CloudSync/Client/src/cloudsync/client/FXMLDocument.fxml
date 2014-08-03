@@ -4,16 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="403.0" prefWidth="483.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.MainController">
-<children><MenuBar prefHeight="25.0" prefWidth="483.0">
+<AnchorPane id="AnchorPane" prefHeight="403.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.MainController">
+<children><StackPane fx:id="MainStackPane" layoutY="25.0" prefHeight="378.0" prefWidth="715.0" /><MenuBar prefHeight="25.0" prefWidth="715.0">
   <menus>
-    <Menu mnemonicParsing="false" text="File">
-      <items>
-        <MenuItem mnemonicParsing="false" text="Exit Application" />
-      </items>
-    </Menu>
+    <Menu fx:id="Main" mnemonicParsing="false" text="Main Menu" />
     <Menu fx:id="Actions" mnemonicParsing="false" text="Actions" />
   </menus>
-</MenuBar><StackPane fx:id="MainStackPane" layoutY="25.0" prefHeight="378.0" prefWidth="483.0" />
+</MenuBar>
 </children>
 </AnchorPane>

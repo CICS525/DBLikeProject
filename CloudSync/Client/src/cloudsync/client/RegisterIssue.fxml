@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="378.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.IssueController">
+<children><ImageView fitHeight="378.0" fitWidth="715.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@../../images/bg.jpg" />
+</image></ImageView><Label fx:id="emaillabel" layoutX="384.0" layoutY="52.0" text="Email ID " textFill="#fcfcfc" /><TextField fx:id="email" layoutX="459.0" layoutY="48.0" prefHeight="25.0" prefWidth="226.0" /><TextArea fx:id="description" layoutX="458.0" layoutY="97.0" prefHeight="200.0" prefWidth="226.0" wrapText="true" /><Label fx:id="desclabel" layoutX="384.0" layoutY="97.0" text="Description" textFill="#fcfcfc" />
+<Button fx:id="submitbutton" layoutX="585.0" layoutY="324.0" mnemonicParsing="false" onAction="#submitIssueAction" prefHeight="25.0" prefWidth="99.0" text="Submit " /><Label fx:id="successmsg" layoutX="450.0" layoutY="172.0" prefHeight="48.0" prefWidth="246.0" text="Your Issue has been reported to the Cloud Box" visible="false" /><Button fx:id="backtohomepage" layoutX="511.0" layoutY="232.0" mnemonicParsing="false" onAction="#backtohomepageaction" text="Back To Home Page" visible="false" />
+</children>
+</AnchorPane>
