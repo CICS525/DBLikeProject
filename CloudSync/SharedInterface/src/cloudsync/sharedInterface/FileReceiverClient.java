@@ -75,6 +75,7 @@ public class FileReceiverClient {
 			File file = new File(absFilePath);
 			FileOutputStream os = null;
 			
+			prepareFolder();
 			try {
 				os = new FileOutputStream(file);
 			} catch (FileNotFoundException e1) {
@@ -111,6 +112,26 @@ public class FileReceiverClient {
 			} catch (IOException e) {
 				System.out.println("FileReceiverClient: Can't close ClientSocket");
 			}
+		}
+		
+		
+		private boolean prepareFolder(){
+			// maybe need to create directory before writing
+			// Convert base filename to absolute file name 
+			String folder = absFilePath.substring(0, absFilePath.lastIndexOf(File.separator));
+			File directory = new File(folder);
+			if(!directory.exists()){
+				System.out.println("Creating a directory " + folder);
+				try {
+					directory.mkdirs();
+					return true;
+				} catch (SecurityException se) {
+					System.out.println(se.getMessage());
+					return false;
+				}
+			}
+			else
+				return false;
 		}
 	}
 }

@@ -47,7 +47,7 @@ public class FileSysPerformer {
 		if(!directory.exists()){
 			System.out.println("Creating a directory " + folder);
 			try {
-				directory.mkdir();
+				directory.mkdirs();
 				return true;
 			} catch (SecurityException se) {
 				System.out.println(se.getMessage());
@@ -222,7 +222,7 @@ public class FileSysPerformer {
 	}
 	
 	public String getBaseFilename(String absoluteFilename){
-		String rootDir = ClientSettings.getInstance().getRootDir();;
+		String rootDir = ClientSettings.getInstance().getRootDir();
 		if(rootDir==null || rootDir.length()==0)
 			return null;	//error
 		
