@@ -56,36 +56,20 @@ public class FileSysMonitor {
     }
 
     public boolean startIgnoreFile(String filename) {
-        String absName;
-        File file = new File(filename);
-        if (file.exists()) {
-            absName = filename;
-        } else {
-            absName = Paths.get(rootFolder, filename).toString();
-        }
-
         boolean contains = false;
         synchronized (ignoreList) {
             System.out.println("FileSysMonitor: startIgnoreFile # " + filename);
             ignoreList.add(filename);
-            contains = ignoreList.contains(absName);
+            contains = ignoreList.contains(filename);
         }
         return contains;
     }
 
     public boolean stopIgnoreFile(String filename) {
-        String absName;
-        File file = new File(filename);
-        if (file.exists()) {
-            absName = filename;
-        } else {
-            absName = Paths.get(rootFolder, filename).toString();
-        }
-
         boolean removed = false;
         synchronized (ignoreList) {
             System.out.println("FileSysMonitor: stopIgnoreFile #" + filename);
-            removed = ignoreList.remove(absName);
+            removed = ignoreList.remove(filename);
         }
         return removed;
     }
