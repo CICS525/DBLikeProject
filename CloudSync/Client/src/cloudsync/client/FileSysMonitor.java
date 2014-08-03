@@ -1,325 +1,237 @@
 package cloudsync.client;
 
-/**
- * Class that represents a file system monitor.
- * @author Aaron Cheng
- * 
- */
-
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.channels.OverlappingFileLockException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchEvent.Kind;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
 import cloudsync.client.FileSysMonitorCallback.Operation;
-
-import com.sun.nio.file.SensitivityWatchEventModifier;
+import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyException;
+import net.contentobjects.jnotify.JNotifyListener;
 
 public class FileSysMonitor {
 
-    private class MFile {
-        private File f;
+    private String rootFolder;
+    private FileSysMonitorCallback callback;
 
-        public MFile(String filename) {
-            f = new File(filename);
-            if (f.exists())
-                return;
+    private int watchID;
 
-            // if(filename.startsWith(rootFolder.toString())){
-            if (filename.toLowerCase().startsWith(rootFolder.toString().toLowerCase())) {
-                f = new File(filename);
-            } else {
-                FileSysPerformer fPer = FileSysPerformer.getInstance();
-                f = new File(fPer.getAbsoluteFilename(filename));
-            }
-        }
+    private ArrayList<String> ignoreList = new ArrayList<>();
+    private ArrayList<String> pendingList = new ArrayList<>();
+    private HashMap<String, Long> lastModify = new HashMap<>();
 
-        @Override
-        public boolean equals(Object paramObject) {
-            // return super.equals(paramObject);
-            boolean ans = false;
-            if (paramObject instanceof MFile) {
-                ans = f.equals(((MFile) paramObject).f);
-            } else if (paramObject instanceof File) {
-                ans = f.equals(paramObject);
-            } else if (paramObject instanceof String) {
-                ans = f.equals(new File((String) paramObject));
-            }
-            return ans;
-        }
-
-        @Override
-        public String toString() {
-            // return super.toString();
-            return "File:[" + f.getAbsolutePath() + "]";
-        }
+    public FileSysMonitor(String rootFolder) {
+        this.rootFolder = rootFolder;
     }
 
-    private static boolean isListening = true;
-    private ArrayList<MFile> ignoreList = new ArrayList<MFile>();
-    private ArrayList<String> pathNames = new ArrayList<String>();
-    private Thread watcherThread;
-    private WatchService watcher;
-    private Path rootFolder;
-    private final HashMap<WatchKey, Path> keys = new HashMap<WatchKey, Path>();
-
-    private final static Kind[] WATCHEVENTS = new Kind[] { StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY };
-
-    private Object watcherLock = new Object();
-
-    public FileSysMonitor(String directory) {
-        rootFolder = Paths.get(directory);
-    }
-
-    /**
-     * Watches a directory for changes, sends to FileSysMontiorCallback when
-     * event is fired, and file is available (not locked).
-     * 
-     * @param directory
-     *            name of the directory to watch.
-     * @param callback
-     *            the callback object
-     */
     public boolean startListen(final FileSysMonitorCallback callback) {
+        this.callback = callback;
+
+        int mask = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_RENAMED | JNotify.FILE_MODIFIED;
+
+        boolean watchSubtree = true;
+
         try {
-            synchronized (watcherLock) {
-                watcher = FileSystems.getDefault().newWatchService();
-            } // lock the watcher
-            WatchKey temp = rootFolder.register(watcher, WATCHEVENTS, SensitivityWatchEventModifier.HIGH);
-            System.out.println("");
-            keys.put(temp, rootFolder); // put into map for monitoring
-            registerSubfolders(rootFolder);
-            watcherThread = new Thread(new Runnable() {
-
-                public void run() {
-                    WatchKey key;
-                    long newTimeStamp = 0;
-
-                    HashMap<String, Long> timeStmpMap = new HashMap<>();
-                    while (isListening) {
-
-                        try {
-                            key = watcher.take();
-                            Path dir = keys.get(key);
-                            for (WatchEvent<?> event : key.pollEvents()) {
-                                Kind<?> type = event.kind();
-                                Path child = dir.resolve((Path) event.context());
-                                File currFile = child.toFile();
-                                newTimeStamp = currFile.lastModified();
-
-                                String filename = child.toAbsolutePath().toString();
-                                System.out.println("FileSysMonitor: WatchEvent " + type + " # " + filename + " Len:" + currFile.length() + " @ " + newTimeStamp);
-
-                                if (type != StandardWatchEventKinds.ENTRY_DELETE && newTimeStamp == 0)
-                                    continue;
-                                
-								if(type==StandardWatchEventKinds.ENTRY_MODIFY && currFile.length()==0) 
-									continue;
-                                 
-                                if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
-                                    registerSubfolders(child);
-                                    continue; // ignore because it is a folder.
-                                }
-                                synchronized (ignoreList) {
-                                    MFile temp = new MFile(filename);
-                                    if (!ignoreList.contains(temp)) {
-                                        // System.out.println("FileSysMonitor: NOT IN ignore_list # "
-                                        // + type + " # " + filename + " Len:" +
-                                        // currFile.length() + " @ " +
-                                        // oldTimeStamp + "~" + newTimeStamp);
-
-                                        Action action = FileSysMonitorCallback.Action.ERROR;
-
-                                        if (type == StandardWatchEventKinds.ENTRY_CREATE) {
-                                            if (currFile.length() == 0) {
-                                                // ignore empty files
-                                                continue;
-                                            }
-                                            action = FileSysMonitorCallback.Action.MODIFY;
-                                            timeStmpMap.put(filename, newTimeStamp);
-
-                                        } else if (type == StandardWatchEventKinds.ENTRY_MODIFY) {
-
-                                            Long prevTimeStamp = timeStmpMap.get(filename);
-
-                                            if ((prevTimeStamp == null) || (newTimeStamp > prevTimeStamp)) {
-                                                System.out.println("old time stamp:" + prevTimeStamp);
-                                                timeStmpMap.put(filename, newTimeStamp);
-                                                action = FileSysMonitorCallback.Action.MODIFY;
-                                            } else {
-                                                continue;
-                                            }
-                                        } else if (type == StandardWatchEventKinds.ENTRY_DELETE) {
-                                            action = FileSysMonitorCallback.Action.DELETE;
-                                            timeStmpMap.remove(filename);
-                                        }
-
-                                        // callback.Callback(child.toAbsolutePath().toString(),
-                                        // action);
-                                        callback.Callback(new Operation(child.toAbsolutePath().toString(), action));
-                                    } else {
-                                        System.out.println("FileSysMonitor: IN ignore_list # " + type + " # " + filename + " Len:" + currFile.length() + " @ " + newTimeStamp);
-                                        ignoreList.remove(temp);
-                                    }
-                                }
-
-                                // for(MFile ignore: ignoreList){
-                                // System.out.println(
-                                // "FileSysMonitor: ignore list~" +
-                                // ignore.toString() );
-                                // }
-
-                                // oldTimeStamp = newTimeStamp;
-                            }
-                            boolean valid = key.reset();
-                            if (!valid) {
-                                keys.remove(key);
-                                if (keys.isEmpty()) {
-                                    break;
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            watcherThread.start(); // start the watcher service thread
-        } catch (IOException e) {
+            watchID = JNotify.addWatch(rootFolder, mask, watchSubtree, new Listener());
+        } catch (JNotifyException e) {
             e.printStackTrace();
-            return false;
         }
+
         return true;
     }
 
-    /**
-     * Register the folder along with any child directories for monitoring.
-     * 
-     * @param root
-     *            folder
-     * @throws IOException
-     */
-    private void registerSubfolders(final Path root) throws IOException {
-        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException {
-                synchronized (watcherLock) {
-                    if (!pathNames.contains(dir.toString())) {
-                        WatchKey temp = dir.register(watcher, WATCHEVENTS, SensitivityWatchEventModifier.HIGH);
-                        System.out.println("FileSystemMonitor: Registered folder#" + dir);
-                        keys.put(temp, dir);
-                        pathNames.add(dir.toString());
-                    }
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
-    }
-
-    /**
-     * Stops the watcher. Synchronized to prevent multiple access to the the
-     * isListening variable.
-     * 
-     * @return true if isListening has been stopped, false otherwise.
-     */
     public boolean stopListen() {
-        synchronized (this) {
-            isListening = false;
+        boolean result = false;
+        try {
+            result = JNotify.removeWatch(watchID);
+        } catch (JNotifyException e) {
+            e.printStackTrace();
+            return false;
         }
-        return !isListening ? true : false;
+
+        return result;
     }
 
-    /**
-     * Prevents a file from being uploaded to the cloud service.
-     * 
-     * @param filenames
-     *            can be absolute, relative or relative with slash in front.
-     * @return
-     */
     public boolean startIgnoreFile(String filename) {
-        // FileSysPerformer.java may need to update files. These action should
-        // be ignored
+        String absName;
+        File file = new File(filename);
+        if (file.exists()) {
+            absName = filename;
+        } else {
+            absName = Paths.get(rootFolder, filename).toString();
+        }
+
         boolean contains = false;
         synchronized (ignoreList) {
             System.out.println("FileSysMonitor: startIgnoreFile # " + filename);
-            MFile temp = new MFile(filename);
-            ignoreList.add(temp);
-            contains = ignoreList.contains(temp);
+            ignoreList.add(filename);
+            contains = ignoreList.contains(absName);
         }
         return contains;
     }
 
-    /**
-     * Allows a file to be uploaded to the cloud service.
-     * 
-     * @param filenames
-     *            can be absolute, relative or relative with a slash in front.
-     * @return true if the file is REMOVED from the ignore list, false otherwise
-     */
     public boolean stopIgnoreFile(String filename) {
+        String absName;
+        File file = new File(filename);
+        if (file.exists()) {
+            absName = filename;
+        } else {
+            absName = Paths.get(rootFolder, filename).toString();
+        }
+
         boolean removed = false;
         synchronized (ignoreList) {
             System.out.println("FileSysMonitor: stopIgnoreFile #" + filename);
-            ignoreList.remove(new MFile(filename));
+            removed = ignoreList.remove(absName);
         }
         return removed;
     }
 
-    private boolean isLocked(String filename) {
-        boolean isLocked = true;
+    class Listener implements JNotifyListener {
 
-        try {
-            FileInputStream is = new FileInputStream(filename);
-            byte[] buff = new byte[1024];
-            int len = is.read(buff);
-            is.close();
-            System.out.println("File len:" + len + " bin:" + buff);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        @Override
+        public void fileCreated(int wd, String rootPath, String name) {
+            Path path = Paths.get(rootPath, name);
+            String absPath = path.toAbsolutePath().toString();
 
-        FileChannel fileChannel = null;
-        try {
-            fileChannel = new RandomAccessFile(filename, "rw").getChannel();
-        } catch (FileNotFoundException e) {
-            // e.printStackTrace();
-            return false;
-        }
-        try {
-            FileLock lock = fileChannel.tryLock();
-            if (lock != null) {
-                lock.close(); // file isn't locked. we close because tryLock
-                              // will actually return a lock.
-                isLocked = false;
+            File file = path.toFile();
+            System.out.println("Created: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
+
+            // ignore creation of folder
+            if (file.isDirectory()) {
+                return;
             }
-            fileChannel.close();
-        } catch (OverlappingFileLockException | IOException e) {
-            isLocked = true;
+
+            handleZeroLen(file);
         }
-        return isLocked;
+
+        @Override
+        public void fileDeleted(int wd, String rootPath, String name) {
+            Path path = Paths.get(rootPath, name);
+            String absPath = path.toAbsolutePath().toString();
+
+            File file = path.toFile();
+            System.out.println("Deleted: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
+
+            // temperory ignore delete directory
+            // TODO cannot detect delete folder
+            if (file.isDirectory()) {
+                return;
+            }
+
+            // remove lastModify info
+            lastModify.remove(absPath);
+
+            // do not proceed if file in ignore list
+            synchronized (ignoreList) {
+                
+                if (ignoreList.contains(absPath)) {
+                    System.out.println("Delete File: " + file.getPath() + " is ignored.");
+                    // remove entry after one use
+                    ignoreList.remove(absPath);
+                    return;
+                }
+            }
+
+            callback.Callback(new Operation(path.toAbsolutePath().toString(), Action.DELETE));
+
+        }
+
+        @Override
+        public void fileModified(int wd, String rootPath, String name) {
+            Path path = Paths.get(rootPath, name);
+            File file = path.toFile();
+            String absPath = path.toAbsolutePath().toString();
+
+            System.out.println("Modified: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
+
+            // ignore modification on folder
+            if (file.isDirectory()) {
+                return;
+            }
+
+            handleZeroLen(file);
+        }
+
+        @Override
+        public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
+            Path path = Paths.get(rootPath, newName);
+            File file = path.toFile();
+            System.out.println("renamed " + path + " : " + oldName + " -> " + newName + " Len: " + file.length() + " time: " + file.lastModified());
+
+            // ignore modification on folder
+            if (file.isDirectory()) {
+                return;
+            }
+
+            Path oldPath = Paths.get(rootPath, oldName);
+            callback.Callback(new Operation(oldPath.toAbsolutePath().toString(), Action.DELETE));
+            callback.Callback(new Operation(path.toAbsolutePath().toString(), Action.MODIFY));
+
+        }
+
+        private void handleZeroLen(File file) {
+            String pathName = file.getPath().toString();
+            if (file.length() == 0) {
+                pendingList.add(pathName);
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        synchronized (pendingList) {
+                            if (pendingList.contains(pathName)) {
+                                System.out.println("Entry is not removed in pendingList");
+                                pendingList.remove(pathName);
+                                doModifyCallback(file);
+                            }
+                            System.out.println("Entry not removed in pendingList");
+                        }
+                    }
+                }).run();
+            } else {
+                synchronized (pendingList) {
+                    pendingList.remove(pathName);
+                }
+                doModifyCallback(file);
+            }
+        }
+
+        private void doModifyCallback(File file) {
+            String absPath = file.getAbsolutePath();
+            // do not proceed if file in ignore list
+            synchronized (ignoreList) {
+                
+                if (ignoreList.contains(absPath)) {
+                    System.out.println("Modify File: " + file.getPath() + " is ignored.");
+                    
+                    lastModify.put(absPath, file.lastModified());
+                    
+                    // remove entry after one use
+                    ignoreList.remove(absPath);
+                    return;
+                }
+            }
+
+            // remove duplicate modification notice
+            Long lastModifyTime = lastModify.get(absPath);
+            if (lastModifyTime != null && lastModifyTime >= file.lastModified()) {
+                return;
+            }
+
+            // update lastModify
+            lastModify.put(absPath, file.lastModified());
+
+            callback.Callback(new Operation(absPath, Action.MODIFY));
+        }
+
     }
 }
