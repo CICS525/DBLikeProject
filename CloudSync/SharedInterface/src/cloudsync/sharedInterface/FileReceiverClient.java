@@ -93,9 +93,9 @@ public class FileReceiverClient {
 			
 			prepareFolder();
 			while(true){
-				System.out.println("FileReceiverClient: tempLen is " + tempLen);
+				//System.out.println("FileReceiverClient: tempLen is " + tempLen);
 				if( tempLen >= length){
-					System.out.println("FileReceiverClient: " + absFilePath + " is successfully received");
+					System.out.print("->" + tempLen);
 					break;
 				}else {
 					byte[] buff = new byte[BUFF_SIZE];

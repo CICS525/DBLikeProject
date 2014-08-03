@@ -392,6 +392,9 @@ public class SessionMaster {
 				FileSysPerformer performer = FileSysPerformer.getInstance();
 				performer.addUpdateLocalTask(aMeta, wanCallback);
 			}else{
+				for (FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()) {
+					aMonitor.startIgnoreFile( FileSysPerformer.getInstance().getAbsoluteFilename(aMeta.basename) );
+				}
 				new FileReceiverClient(lanHostname, DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, ClientSettings.getInstance().getRootDir(), aMeta, lanCallback); 
 			}
 		}
