@@ -6,7 +6,9 @@ import java.util.ArrayList;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
 import cloudsync.client.FileSysMonitorCallback.Operation;
+import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.FileSender;
+import cloudsync.sharedInterface.FileSenderClient;
 import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.Metadata.STATUS;
@@ -178,6 +180,12 @@ public class ClientMain {
 			commitRetry = new RetryThread();
 			commitRetry.start();
 		}
+		
+		boolean bLan = FileSenderClient.initialize(DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, settings.getRootDir());
+		if(bLan)
+			System.out.println("initClientMain@ClientMain: FileSenderClient Success.");
+		else
+			System.out.println("initClientMain@ClientMain: FileSenderClient Failure.");
 
 		return bCnt;
 	}

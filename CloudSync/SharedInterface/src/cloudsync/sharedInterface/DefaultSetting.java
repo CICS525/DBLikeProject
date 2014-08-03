@@ -8,7 +8,8 @@ public class DefaultSetting {
 	public final static int		DEFAULT_MASTER_MESSAGE_PORT		= 2001;
 	public final static int		DEFAULT_MASTER_RMI_PORT			= 2002;
 	public final static int		DEFAULT_MASTER_UPLOAD_PORT		= 2003;
-
+	public final static int		DEFAULT_CLIENT_DOWNLOAD_PORT	= 2004;
+	
 	public final static String	VM_ADDR_ELI						= "cloudsync.cloudapp.net";
 	public final static String	VM_ADDR_CHRIS					= "cloudsync2.cloudapp.net";
 	public final static String	VM_ADDR_SKY						= "cloudsync3.cloudapp.net";

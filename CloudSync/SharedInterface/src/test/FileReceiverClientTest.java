@@ -12,7 +12,7 @@ public class FileReceiverClientTest {
 		int portNum = 200;
 		Metadata metadata = new Metadata("Desktop\\123.txt");
 		String hostname = getHostname();
-		FileReceiverClient frc = new FileReceiverClient(portNum, hostname, "C:\\Users\\Tianlai Dong\\Test", metadata); 
+		FileReceiverClient frc = new FileReceiverClient(hostname, portNum, "C:\\Users\\Tianlai Dong\\Test", metadata, null); 
 		while(true){
 			Thread.sleep(1000);
 		}

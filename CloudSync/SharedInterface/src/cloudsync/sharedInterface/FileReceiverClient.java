@@ -23,12 +23,14 @@ public class FileReceiverClient {
 	private Metadata metadata = null;
 	private Socket clientSocket = null;
 	private String rootDir = null;
+	private FileSysCallback callback = null;		
 	
-	public FileReceiverClient(int portNum, String hostname, String rootDir, Metadata metadata){
+	public FileReceiverClient(String hostname, int portNum, String rootDir, Metadata metadata, FileSysCallback callback){
 		this.portNum = portNum;
 		this.hostname = hostname;
 		this.metadata = metadata;
 		this.rootDir = rootDir;
+		this.callback = callback;
 		FileRequesterThread thread = new FileRequesterThread();
 		thread.start();
 	}
@@ -38,13 +40,13 @@ public class FileReceiverClient {
 		private SocketStream streams = null;
 		private String absFilePath = null;
 		private Long length = null;
-		private int tempLen = 0;
 		private final int BUFF_SIZE = 1024; 
-		
 		
 		@Override
 		public void run() {
+			boolean suc = false;
 			try {
+				int getLen = 0;
 				clientSocket = new Socket(hostname, portNum);
 				streams = new SocketStream();
 				streams.initStream(clientSocket);
@@ -54,24 +56,31 @@ public class FileReceiverClient {
 				if(length == -1){
 					System.out.println("FileReceiverClient: file doesn't exist");
 				}else {
-					System.out.println("FileReceiverClient: file length to receive is " + length);
-					receiveFile();
+					System.out.println("FileReceiverClient: file length to receive is:" + length);
+					getLen = receiveFile();
+					System.out.println("FileReceiverClient: file length receiveed is :" + getLen);
+					if(getLen>=length){
+						suc = true;
+					}
 				}
 			} catch (UnknownHostException e) {
 				System.err.println("FileReceiverClient: Don't know about host " + hostname);
-				System.exit(1);
 			} catch (IOException e) {
 				System.err.println("FileReceiverClient: Can't get I/O for the connection to " + hostname);
-		        System.exit(1);
+			}
+			
+			if(callback!=null){
+				callback.onFinish(suc, metadata.basename);
 			}
 			super.run();
 		}
 		
-		private void receiveFile(){
+		private int receiveFile(){
 			
 			absFilePath = Metadata.mixRootAndFilename(rootDir, metadata.basename);
+			int tempLen = 0;
 			int readCount = 0;
-			System.out.println("The absolute name is "+ absFilePath);
+			System.out.println("FileReceiverClient: The absolute name is "+ absFilePath);
 			File file = new File(absFilePath);
 			FileOutputStream os = null;
 			
@@ -82,7 +91,7 @@ public class FileReceiverClient {
 				System.out.println("FileReceiverClient: File not found "+ absFilePath);
 			}
 			while(true){
-				System.out.println("tempLen is " + tempLen);
+				System.out.println("FileReceiverClient: tempLen is " + tempLen);
 				if( tempLen >= length){
 					System.out.println("FileReceiverClient: " + absFilePath + " is successfully received");
 					break;
@@ -98,7 +107,7 @@ public class FileReceiverClient {
 						os.write(buff, 0, readCount);
 					} catch (IOException e) {
 						System.out.println("FileReceiverClient: Can't read from the FileOutputStream");
-					}	
+					}
 				}
 			}
 			streams.deinitStream();
@@ -112,6 +121,8 @@ public class FileReceiverClient {
 			} catch (IOException e) {
 				System.out.println("FileReceiverClient: Can't close ClientSocket");
 			}
+			
+			return tempLen;
 		}
 		
 		

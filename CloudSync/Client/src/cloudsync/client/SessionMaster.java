@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.FileReceiverClient;
 import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
 import cloudsync.sharedInterface.RemoteInterface;
@@ -96,7 +97,7 @@ public class SessionMaster {
 				System.out.println("SessionMaster:GlobalCounter-Local :" + localCounter);
 
 				if (serverCounter > localCounter) {
-					int toGet = getMetadataAndBlob(localCounter);
+					int toGet = getMetadataAndBlob(localCounter, null);
 					if(toGet==0){	//nothing to retrieve, local is updated
 						metadataManager.setSyncedGlobalWriteCounter(serverCounter);
 					}
@@ -291,10 +292,11 @@ public class SessionMaster {
 					MetadataManager metadataManager = MetadataManager.getInstance();
 					long localCounter = metadataManager.getSyncedGlobalWriteCounter();
 					long serverCounter = message.infoLong;
+					String lanHostname = message.infoString;
 					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localCounter + ", serverGlobalCounter=" + serverCounter);
 
 					if (localCounter < serverCounter) {
-						int toGet = getMetadataAndBlob(localCounter);
+						int toGet = getMetadataAndBlob(localCounter, lanHostname);
 						if(toGet==0){	//nothing to retrieve, local is updated
 							metadataManager.setSyncedGlobalWriteCounter(serverCounter);
 						}
@@ -334,7 +336,7 @@ public class SessionMaster {
 		}
 	}
 	
-	private int getMetadataAndBlob(long since){
+	private int getMetadataAndBlob(long since, String lanHostname){
 		
 		final ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(since);
 		final MetadataManager mm = MetadataManager.getInstance();
@@ -347,9 +349,8 @@ public class SessionMaster {
 			} else {
 				System.out.println("getMetadataAndBlob@SessionMaster: NEW metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
 			}
-
-			FileSysPerformer performer = FileSysPerformer.getInstance();
-			performer.addUpdateLocalTask(aMeta, new FileSysCallback(){
+			
+			final FileSysCallback wanCallback = new FileSysCallback(){
 
 				@Override
 				public void onFinish(boolean success, String filename) {
@@ -373,8 +374,21 @@ public class SessionMaster {
 						increaseCounter(newMetaList, aMeta);
 					}
 				}
-				
-			});
+			};
+			final FileSysCallback lanCallback = new FileSysCallback(){
+
+				@Override
+				public void onFinish(boolean success, String filename) {
+					if(success){
+						wanCallback.onFinish(success, filename);
+					} else {
+						FileSysPerformer performer = FileSysPerformer.getInstance();
+						performer.addUpdateLocalTask(aMeta, wanCallback);
+					}
+				}
+			};
+			
+			new FileReceiverClient(lanHostname, DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, ClientSettings.getInstance().getRootDir(), aMeta, lanCallback); 
 		}
 		
 		return newMetaList.size();
