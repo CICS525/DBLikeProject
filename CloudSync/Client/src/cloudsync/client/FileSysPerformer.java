@@ -66,7 +66,7 @@ public class FileSysPerformer {
 		if(!file.exists()){
 			//the target already gone, no action to do, stop ignore
 			for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-				aMonitor.stopIgnoreFile(filename);
+				aMonitor.stopIgnoreFile(absFilename);
 			}
 			return true;
 		}
@@ -120,7 +120,7 @@ public class FileSysPerformer {
 		
 		// Add this file to the ignore list of all FileSysMonitors
 		for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-			aMonitor.startIgnoreFile(metadata.basename);
+			aMonitor.startIgnoreFile(getAbsoluteFilename(metadata.basename));
 		}
 		
 		if(metadata.status==STATUS.DELETE){
