@@ -34,9 +34,9 @@ public class UIThread extends Application{
         newStage.getIcons().add(new Image("/images/logo.png"));
         newStage.setHeight(430);
         newStage.setWidth(715);
+        newStage.setTitle("Cloud Box Application");
         newStage.show();
         newStage.setResizable(false);
-        newStage.show();
 		LoggerClass.writeLog("Stage Successfully Opened");
 	}
 	
