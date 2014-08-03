@@ -34,6 +34,8 @@ public class ClientMain {
 			final String basename = fp.getBaseFilename(operation.filename);
 			if (Action.MODIFY == operation.action) {
 				System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
+				LoggerClass.writeLog("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
+
 
 				if( masterLocation==null ){
 					synchronized (delayOperations){
@@ -126,6 +128,8 @@ public class ClientMain {
 
 	public static synchronized boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
+		LoggerClass.writeLog("ClientMain starts ...");
+
 
 		settings = ClientSettings.getInstance();
 		settings.loadSettings();
@@ -141,6 +145,8 @@ public class ClientMain {
 		masterLocation = entry.getMasterServerLocation(settings.getUsername(), settings.getPassword());
 		if (masterLocation == null) {
 			System.out.println("Can not locate Master Server");
+			LoggerClass.writeLog("Can not locate Master Server");
+
 			return false;
 		}
 
@@ -156,12 +162,16 @@ public class ClientMain {
 				boolean bMnt = fileMonitor.startListen(fileSysAnswer);
 				if (bMnt) {
 					System.out.println("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
+					LoggerClass.writeLog("initClientMain@ClientMain: fileMonitor.StartListen#" + settings.getRootDir() + "->" + bMnt);
+
 					allFileMonitors.add(fileMonitor);
 				}
 			}
 		}
 
 		System.out.println("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
+		LoggerClass.writeLog("initClientMain@ClientMain: Connecint to Master Server: " + settings.getUsername() + "#" + settings.getPassword());
+
 		boolean bCnt = masterSession.connect(settings.getUsername(), settings.getPassword());
 		
 		if(bCnt && commitRetry==null){	//start retry thread
@@ -199,7 +209,8 @@ public class ClientMain {
 
 			if (complete != null) {
 				System.out.println("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
-				
+				LoggerClass.writeLog("commitFileUpdate@ClientMain:" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status);
+
 				if (complete.status == STATUS.CONFLICT) {
 					// should rename & try again in next FileSysMonitor callback
 
