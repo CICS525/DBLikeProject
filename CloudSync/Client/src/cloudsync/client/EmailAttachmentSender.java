@@ -80,11 +80,7 @@ public class EmailAttachmentSender {
  
     }
  
-    public static void main(String args[])
-    {
-    	sendMail("abc","efg");
-    }
-    /**
+     /**
      * Test sending e-mail with attachments
      */
     public static boolean sendMail(String email,String Content)
