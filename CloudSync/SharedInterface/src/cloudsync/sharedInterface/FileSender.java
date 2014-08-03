@@ -89,8 +89,11 @@ public class FileSender {
 				clientSocket = new Socket(hostname, portNum);
 				fis = new FileInputStream(getFilePath());
 				
+				System.out.print("...Socket stream initStream...?");
 				if(streams.initStream(clientSocket))
-					System.out.println("Socket stream created...");
+					System.out.println("-> OK. created...");
+				else
+					System.out.println("-> Error !!! ...");
 
 				dos = streams.getStreamOut();
 				dis = streams.getStreamIn();

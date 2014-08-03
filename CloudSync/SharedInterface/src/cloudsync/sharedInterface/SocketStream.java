@@ -14,9 +14,15 @@ public class SocketStream {
 		this.socket = socket;
 		try {
 			streamOut = new ObjectOutputStream(socket.getOutputStream());
+			streamOut.writeObject((Long)(long)0);
 			streamOut.flush();
+			
 			streamIn = new ObjectInputStream(socket.getInputStream());
+			streamIn.readObject();
 		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return false;
 		}

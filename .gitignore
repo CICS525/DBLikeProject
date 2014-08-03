@@ -129,3 +129,6 @@ packages/
 *.settings
 *.tmp
 *.dat
+
+#Log
+session.log.*
