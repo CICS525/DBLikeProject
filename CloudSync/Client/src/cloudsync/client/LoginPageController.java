@@ -99,6 +99,7 @@ public class LoginPageController implements Initializable {
     	PasswordTF.setDisable(false);
     	DirectoryTF.setDisable(false);
     	OpenSession.setDisable(false);
+    	ChooseDirectoryButton.setDisable(false);
     	
     }
      
@@ -110,10 +111,14 @@ public class LoginPageController implements Initializable {
     	UsernameTF.setDisable(true);
     	PasswordTF.setDisable(true);
     	DirectoryTF.setDisable(true);
+    	ChooseDirectoryButton.setDisable(true);
+
     	
     	}else
     	{
     		OpenSession.setDisable(false);
+        	ChooseDirectoryButton.setDisable(false);
+
     	}
     	UsernameTF.setText(ClientMain.getSettings().getUsername());
     	PasswordTF.setText(ClientMain.getSettings().getPassword());
