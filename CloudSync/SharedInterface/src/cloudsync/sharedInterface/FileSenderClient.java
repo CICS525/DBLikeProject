@@ -18,6 +18,7 @@ public class FileSenderClient {
 	 */
 	
 	private ServerSocket serverSocket = null;
+	private Socket socket = null;
 	private static FileSenderClient that = null;
 	private String rootDir = null;
 
@@ -54,7 +55,7 @@ public class FileSenderClient {
 		public void run() {
 			
 			while(true){
-				Socket socket = null;
+				
 				try {
 					socket = serverSocket.accept();
 				} catch (IOException e) {
@@ -135,8 +136,14 @@ public class FileSenderClient {
 			} catch (IOException e) {
 				System.out.println("FileSenderClient: Can't close FileInputStream");
 			}
-			System.out.println("FileSenderClient: File Send Completed...");
 			streams.deinitStream();
+			try {
+				socket.close();
+			} catch (IOException e) {
+				System.out.println("FileSenderClient: Can't close socket for file transfer");
+			}
+			System.out.println("FileSenderClient: File Send Completed...");
+			
 		}	
 	}
 	
