@@ -116,8 +116,7 @@ public class FileReceiverClient {
 		
 		
 		private boolean prepareFolder(){
-			// maybe need to create directory before writing
-			// Convert base filename to absolute file name 
+			// If the file isn't located in root directory, create folders for this file if the folders don't exist
 			String folder = absFilePath.substring(0, absFilePath.lastIndexOf(File.separator));
 			File directory = new File(folder);
 			if(!directory.exists()){
