@@ -203,6 +203,15 @@ public class ClientMain {
 
 		return bCnt;
 	}
+	
+	public static synchronized boolean deinitClientMain() {
+		for(FileSysMonitor monitor : allFileMonitors){
+			monitor.stopListen();
+		}
+		allFileMonitors.clear();
+		
+		return true;
+	}
 
 	public static synchronized boolean commitFileUpdate(Action action, String absoluteFilename, String tempFileOnServer) {
 		// metadataManager.findByBasename(FileSysPerformer.getInstance().getBaseFilename(absoluteFilename));

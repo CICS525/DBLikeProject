@@ -45,6 +45,10 @@ public class FileSenderClient {
 			return false;
 	}
 	
+	public static boolean deinitialize(){
+		return false;
+	}
+	
 	public static FileSenderClient getInstance(){
 		return that;
 	}
