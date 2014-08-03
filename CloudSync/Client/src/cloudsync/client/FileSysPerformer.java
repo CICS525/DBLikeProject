@@ -23,7 +23,6 @@ public class FileSysPerformer {
 	
 	//FileSysPerformer should be singleton design pattern
 	private static FileSysPerformer that = null;
-
 	private ArrayList<MetadataEx> metaList = null;
 	private PerformThread thread = null;
 	
@@ -50,7 +49,7 @@ public class FileSysPerformer {
 				directory.mkdirs();
 				return true;
 			} catch (SecurityException se) {
-				System.out.println(se.getMessage());
+				System.out.println("FileSysPerformer: prepareFolder can't create folders. "+se.getMessage());
 				return false;
 			}
 		}
@@ -71,10 +70,10 @@ public class FileSysPerformer {
 			return true;
 		}
 		if (file.delete()){
-			System.out.println(file.getName() + " is deleted.");
+			System.out.println("FileSysPerformer: " + file.getName() + " is deleted.");
 			ans = true;
 		} else {
-			System.out.println("Delete operation fails");
+			System.out.println("FileSysPerformer: Delete operation fails");
 			ans = false;
 		}
 		// delete empty folder when it is empty
@@ -82,23 +81,25 @@ public class FileSysPerformer {
 		
 		// Stop the action when the folder is the rootDir
 		if (folder.equals(ClientSettings.getInstance().getRootDir())){
-			System.out.println("This is the root directory");
+			System.out.println("FileSysPerformer: This is the root directory");
 			return true;
 		}
+		
 		File directory = new File(folder);
+		
 		if (directory.isDirectory()){
 			if(directory.list().length>0){
-				System.out.println("Directory is not empty");
+				System.out.println("FileSysPerformer: Directory is not empty");
 			} else {
 				if(directory.delete())
 					return true;
 				else {
-					System.out.println("Delete Empty folder fails");
+					System.out.println("FileSysPerformer: Delete Empty folder fails");
 					return false;
 				}
 			}	
 		} else {
-			System.out.println("This is not a folder");
+			System.out.println("FileSysPerformer: This is not a folder");
 			ans = false;
 		}
 		return ans;
@@ -183,10 +184,7 @@ public class FileSysPerformer {
 							FileSysCallback callback = aMetaEx.callback;
 							if(callback!=null){
 								callback.onFinish(true, aMetaEx.metadata.basename);
-								// Remove this file from the ignore list all FileSysMonitors 
-								//for(FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()){
-								//	aMonitor.stopIgnoreFile(aMetaEx.metadata.basename);
-								//}
+				
 							}
 						}
 						metaList.removeAll(delList);
