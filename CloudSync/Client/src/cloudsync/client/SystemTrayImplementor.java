@@ -88,12 +88,15 @@ public class SystemTrayImplementor implements Runnable {
 							"tray icon"), "Dropbox Application", popup);
 					trayIcon.setImageAutoSize(true);
 					tray.add(trayIcon);
+					
 
 					if(Application_Navigator.SESSION_OK)
 					{
 						trayIcon.displayMessage("Dropbox Started Successfully....",
 								"Your Root Directory will be Syncing from Cloud",
 								MessageType.INFO);
+						
+						setToolTip("Dropbox Application : Connected");
 						
 						LoggerClass.writeLog("System Tray Message - Success");
 
@@ -108,6 +111,9 @@ public class SystemTrayImplementor implements Runnable {
 						trayIcon.displayMessage("Dropbox Initializion Failed....",
 								"Please re-enter your username and password",
 								MessageType.INFO);
+						
+						setToolTip("Dropbox Application : Not Connected");
+
 					}
 				} else {
 					LoggerClass.writeLog("system tray not supported");
@@ -141,5 +147,11 @@ public class SystemTrayImplementor implements Runnable {
 		trayIcon.displayMessage(trayMessage,
 				"Updating " + trayMessageBody,
 				messageType);
+	}
+	
+	
+	public static void setToolTip(String message)
+	{
+		trayIcon.setToolTip(message);
 	}
 }
