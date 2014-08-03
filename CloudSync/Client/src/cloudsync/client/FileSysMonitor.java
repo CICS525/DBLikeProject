@@ -174,7 +174,7 @@ public class FileSysMonitor {
         }
 
         private void handleZeroLen(File file) {
-            String pathName = file.getPath().toString();
+            final String pathName = file.getPath().toString();
             if (file.length() == 0) {
                 pendingList.add(pathName);
                 new Thread(new Runnable() {
