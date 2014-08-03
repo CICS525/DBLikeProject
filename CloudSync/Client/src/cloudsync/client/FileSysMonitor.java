@@ -145,10 +145,12 @@ public class FileSysMonitor {
                 return;
             }
 
-            Path oldPath = Paths.get(rootPath, oldName);
+            //Path oldPath = Paths.get(rootPath, oldName);            
             System.out.println("FileSysMonitor: Renamed " + path + " : " + oldName + " -> " + newName + " Len: " + file.length() + " time: " + file.lastModified());
-            callback.Callback(new Operation(oldPath.toAbsolutePath().toString(), Action.DELETE));
-            callback.Callback(new Operation(path.toAbsolutePath().toString(), Action.MODIFY));
+            fileDeleted(wd, rootPath, oldName);
+            fileModified(wd, rootPath, newName);
+            //callback.Callback(new Operation(oldPath.toAbsolutePath().toString(), Action.DELETE));
+            //callback.Callback(new Operation(path.toAbsolutePath().toString(), Action.MODIFY));
 
         }
 
