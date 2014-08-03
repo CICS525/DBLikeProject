@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -37,7 +38,7 @@ public class LoginPageController implements Initializable {
 	@FXML
     private TextField UsernameTF;
     @FXML
-    private TextField PasswordTF;
+    private PasswordField PasswordTF;
     @FXML
     private TextField DirectoryTF;
     @FXML
