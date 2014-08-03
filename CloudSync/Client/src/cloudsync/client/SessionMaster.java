@@ -293,7 +293,7 @@ public class SessionMaster {
 					long localCounter = metadataManager.getSyncedGlobalWriteCounter();
 					long serverCounter = message.infoLong;
 					String lanHostname = message.infoString;
-					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localCounter + ", serverGlobalCounter=" + serverCounter);
+					System.out.println("SocketThread@SessionMaster: localGlobalCounter=" + localCounter + ", serverGlobalCounter=" + serverCounter + ", lanHostname=" + lanHostname);
 
 					if (localCounter < serverCounter) {
 						int toGet = getMetadataAndBlob(localCounter, lanHostname);
@@ -343,11 +343,11 @@ public class SessionMaster {
 		
 		for (final Metadata aMeta : newMetaList) {
 			if(mm.includeNewerMetadata(aMeta)) {
-				System.out.println("getMetadataAndBlob@SessionMaster: OLD metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+				System.out.println("getMetadataAndBlob@SessionMaster: OLD metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter + " hostname=" + lanHostname);
 				increaseCounter(newMetaList, aMeta);
 				continue;	//skip
 			} else {
-				System.out.println("getMetadataAndBlob@SessionMaster: NEW metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter);
+				System.out.println("getMetadataAndBlob@SessionMaster: NEW metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter + " hostname=" + lanHostname);
 			}
 			
 			final FileSysCallback wanCallback = new FileSysCallback(){
@@ -388,7 +388,12 @@ public class SessionMaster {
 				}
 			};
 			
-			new FileReceiverClient(lanHostname, DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, ClientSettings.getInstance().getRootDir(), aMeta, lanCallback); 
+			if(lanHostname==null || lanHostname.length()==0){
+				FileSysPerformer performer = FileSysPerformer.getInstance();
+				performer.addUpdateLocalTask(aMeta, wanCallback);
+			}else{
+				new FileReceiverClient(lanHostname, DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, ClientSettings.getInstance().getRootDir(), aMeta, lanCallback); 
+			}
 		}
 		
 		return newMetaList.size();

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 public class FileReceiverClient {
@@ -49,7 +51,13 @@ public class FileReceiverClient {
 				int getLen = 0;
 				clientSocket = new Socket(hostname, portNum);
 				streams = new SocketStream();
+				
 				streams.initStream(clientSocket);
+				SocketAddress localIP = streams.getSocket().getLocalSocketAddress();
+				SocketAddress remotIP = streams.getSocket().getRemoteSocketAddress();
+				System.out.println("FileReceiverClient: SocketStream # " + "local:" + localIP + " remote:" + remotIP);
+				
+
 				// Pass the metadata to FileSenderClient 
 				streams.writeObject(metadata);
 				length = (Long) streams.readObject();
@@ -81,15 +89,9 @@ public class FileReceiverClient {
 			int tempLen = 0;
 			int readCount = 0;
 			System.out.println("FileReceiverClient: The absolute name is "+ absFilePath);
-			File file = new File(absFilePath);
 			FileOutputStream os = null;
 			
 			prepareFolder();
-			try {
-				os = new FileOutputStream(file);
-			} catch (FileNotFoundException e1) {
-				System.out.println("FileReceiverClient: File not found "+ absFilePath);
-			}
 			while(true){
 				System.out.println("FileReceiverClient: tempLen is " + tempLen);
 				if( tempLen >= length){
@@ -100,19 +102,32 @@ public class FileReceiverClient {
 					try {
 						readCount = streams.getStreamIn().read(buff);
 					} catch (IOException e) {
-						System.out.println("FileReceiverClient: Can't read from the inputstream");
+						System.out.println("FileReceiverClient: Can't read from inputstream");
 					}
-					tempLen += readCount;
-					try {
-						os.write(buff, 0, readCount);
-					} catch (IOException e) {
-						System.out.println("FileReceiverClient: Can't read from the FileOutputStream");
+					if(readCount<0){
+						System.out.println("FileReceiverClient: read from the inputstream = " + readCount);
+					}else{
+						try {
+							if(os==null){
+								try {
+									File file = new File(absFilePath);
+									os = new FileOutputStream(file);
+								} catch (FileNotFoundException e1) {
+									System.out.println("FileReceiverClient: File not found "+ absFilePath);
+								}
+							}
+							os.write(buff, 0, readCount);
+						} catch (IOException e) {
+							System.out.println("FileReceiverClient: Can't write into FileOutputStream");
+						}
+						tempLen += readCount;
 					}
 				}
 			}
 			streams.deinitStream();
 			try {
-				os.close();
+				if(os!=null)
+					os.close();
 			} catch (IOException e) {
 				System.out.println("FileReceiverClient: Can't close FileOutputStream");
 			}
