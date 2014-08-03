@@ -173,7 +173,7 @@ public class FileSysMonitor {
 
         }
 
-        private void handleZeroLen(File file) {
+        private void handleZeroLen(final File file) {
             final String pathName = file.getPath().toString();
             if (file.length() == 0) {
                 pendingList.add(pathName);
