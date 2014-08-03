@@ -1,5 +1,6 @@
 package cloudsync.client;
 
+import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -8,6 +9,8 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
@@ -57,28 +60,26 @@ public class SystemTrayImplementor implements Runnable {
 					};
 					
 					
-					/*ActionListener BrowserListener = new ActionListener() {
+					ActionListener openFolder = new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent e) {
-							System.out.println("Open the Browser here");
-							if(true)
-							{
-								System.out.println("Inside if");
-							}else
-							{
-								System.out.println("Inside else");
+							try {
+								Desktop.getDesktop().open(new File(ClientMain.getSettings().getRootDir()));
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
 							}
 						}
 
-					};*/
+					};
 
 					PopupMenu popup = new PopupMenu();
 					MenuItem defaultItem = new MenuItem("Applcation Control");
 					MenuItem exitItem = new MenuItem("Exit");
-					//MenuItem browserItem = new MenuItem("Cloud Browser");
+					MenuItem openfolder = new MenuItem("Open Folder");
 					exitItem.addActionListener(exitListener);
 					defaultItem.addActionListener(UIListener);
-					//browserItem.addActionListener(BrowserListener);
-					//popup.add(browserItem);
+					openfolder.addActionListener(openFolder);
+					popup.add(openfolder);
 					popup.add(defaultItem);
 					popup.add(exitItem);
 					
