@@ -2,6 +2,8 @@ package cloudsync.client;
 
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import cloudsync.client.FileSysMonitorCallback.Action;
@@ -128,6 +130,18 @@ public class ClientMain {
 		ClientMain.masterSession = masterSession;
 	}
 
+	private static String getHostname(){
+		
+		InetAddress inetAddr = null;
+		try {
+			inetAddr = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		String hostname = inetAddr.getHostName();
+		return hostname;
+	}
+	
 	public static synchronized boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 		//LoggerClass.writeLog("ClientMain starts ...");
@@ -265,7 +279,7 @@ public class ClientMain {
 						SocketMessage message = new SocketMessage(COMMAND.UPDATE);
 						message.infoLong = complete.globalCounter;
 						// Get the local IP address from this machine;
-						message.infoString = null;
+						message.infoString = getHostname();
 						int num = masterSession.rmiBroadcastMessage(message);
 						System.out.println("commitFileUpdate@ClientMain: rmiBroadcastMessage=" + num);
 					}

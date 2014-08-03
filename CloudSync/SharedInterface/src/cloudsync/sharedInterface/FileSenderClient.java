@@ -91,11 +91,11 @@ public class FileSenderClient {
 			
 			if(file.isFile()){
 				length = (Long)file.length();
-				System.out.println("FileSenderClient: the file exists and the length is " + length);
+				System.out.println("FileSenderClient: the file exists: " + metadata.basename + " length is " + length);
 				streams.writeObject(length);
 				sendFile();
 			}else{
-				System.out.println("FileSenderClient: the file doesn't exist");
+				System.out.println("FileSenderClient: the file doesn't exist: " + metadata.basename);
 				length = (long) -1;
 				streams.writeObject(length);
 			}
