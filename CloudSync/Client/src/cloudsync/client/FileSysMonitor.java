@@ -79,11 +79,9 @@ public class FileSysMonitor {
         @Override
         public void fileCreated(int wd, String rootPath, String name) {
             Path path = Paths.get(rootPath, name);
-            String absPath = path.toAbsolutePath().toString();
 
             File file = path.toFile();
-            System.out.println("Created: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
-
+            
             // ignore creation of folder
             if (file.isDirectory()) {
                 return;
@@ -98,8 +96,7 @@ public class FileSysMonitor {
             String absPath = path.toAbsolutePath().toString();
 
             File file = path.toFile();
-            System.out.println("Deleted: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
-
+            
             // temperory ignore delete directory
             // TODO cannot detect delete folder
             if (file.isDirectory()) {
@@ -113,13 +110,14 @@ public class FileSysMonitor {
             synchronized (ignoreList) {
                 
                 if (ignoreList.contains(absPath)) {
-                    System.out.println("Delete File: " + file.getPath() + " is ignored.");
+                    System.out.println("FileSysMonitor IGNORE: Delete File: " + file.getPath());
                     // remove entry after one use
                     ignoreList.remove(absPath);
                     return;
                 }
             }
 
+            System.out.println("FileSysMonitor: Deleted: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
             callback.Callback(new Operation(path.toAbsolutePath().toString(), Action.DELETE));
 
         }
@@ -128,9 +126,6 @@ public class FileSysMonitor {
         public void fileModified(int wd, String rootPath, String name) {
             Path path = Paths.get(rootPath, name);
             File file = path.toFile();
-            String absPath = path.toAbsolutePath().toString();
-
-            System.out.println("Modified: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
 
             // ignore modification on folder
             if (file.isDirectory()) {
@@ -144,14 +139,14 @@ public class FileSysMonitor {
         public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
             Path path = Paths.get(rootPath, newName);
             File file = path.toFile();
-            System.out.println("renamed " + path + " : " + oldName + " -> " + newName + " Len: " + file.length() + " time: " + file.lastModified());
-
+            
             // ignore modification on folder
             if (file.isDirectory()) {
                 return;
             }
 
             Path oldPath = Paths.get(rootPath, oldName);
+            System.out.println("FileSysMonitor: Renamed " + path + " : " + oldName + " -> " + newName + " Len: " + file.length() + " time: " + file.lastModified());
             callback.Callback(new Operation(oldPath.toAbsolutePath().toString(), Action.DELETE));
             callback.Callback(new Operation(path.toAbsolutePath().toString(), Action.MODIFY));
 
@@ -173,11 +168,10 @@ public class FileSysMonitor {
 
                         synchronized (pendingList) {
                             if (pendingList.contains(pathName)) {
-                                System.out.println("Entry is not removed in pendingList");
+                                System.out.println("FileSysMonitor: Uploading zero length file.");
                                 pendingList.remove(pathName);
                                 doModifyCallback(file);
                             }
-                            System.out.println("Entry not removed in pendingList");
                         }
                     }
                 }).run();
@@ -195,7 +189,7 @@ public class FileSysMonitor {
             synchronized (ignoreList) {
                 
                 if (ignoreList.contains(absPath)) {
-                    System.out.println("Modify File: " + file.getPath() + " is ignored.");
+                    System.out.println("FileSysMonitor IGNORE: Modify File: " + file.getPath() + " Len: " + file.length() + " Time: " + file.lastModified());
                     
                     lastModify.put(absPath, file.lastModified());
                     
@@ -214,6 +208,7 @@ public class FileSysMonitor {
             // update lastModify
             lastModify.put(absPath, file.lastModified());
 
+            System.out.println("FileSysMonitor: Modified: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
             callback.Callback(new Operation(absPath, Action.MODIFY));
         }
 

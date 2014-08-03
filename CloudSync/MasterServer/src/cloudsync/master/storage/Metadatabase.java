@@ -32,6 +32,8 @@ public class Metadatabase {
 		// but need a mechanism to collect garbage if client does not update
 		// again.
 
+	    System.out.println("acceptFileUpdate@Metadatabase: username: " + username + " Status: " + incompleteMetadata.status.toString() + " " + incompleteMetadata.basename + ":" + fileToUpload + " parent: " + incompleteMetadata.parent);
+	    
 		if (incompleteMetadata.status != STATUS.LAST && incompleteMetadata.status != STATUS.DELETE) {
 			incompleteMetadata.status = STATUS.ERROR;
 			return incompleteMetadata;
@@ -155,7 +157,6 @@ public class Metadatabase {
 		TableOperation update = TableOperation.insertOrReplace(meta);
 		try {
 			table.execute(update);
-			System.out.println("updateRecord@Metadatabase: update complete");
 			return true;
 		} catch (StorageException e) {
 			e.printStackTrace();
@@ -203,6 +204,7 @@ public class Metadatabase {
 
 	private boolean hasError(MetadataDBRow last, Metadata meta) {
 		if(last==null && meta.parent!=0){	//add by Eli
+		    System.out.println("hasError@Metadatabase: has error." + " Parent: " + meta.parent + "last: " + last);
 			return true;	//this is an error! meta data says there is a parent, but can not find the parent in database
 		}
 		return false;	//no error
@@ -210,12 +212,17 @@ public class Metadatabase {
 	private boolean hasConflict(MetadataDBRow last, Metadata meta) {
 		if (meta.parent == 0) { // new file
 			if (last != null) { // conflict existing file
+			    System.out.println("hasConflict@Metadatabase: has conflict." + " Parent: " + meta.parent + "last: " + last.getGlobalCounter());
 				return true;
 			} else { // no conflict
 				return false;
 			}
 		}
-		return (last.getGlobalCounter() != meta.parent);
+		boolean result = (last.getGlobalCounter() != meta.parent);
+		if (result) {
+		    System.out.println("hasConflict@Metadatabase: has conflict." + " Parent: " + meta.parent + "last: " + last.getGlobalCounter());
+		}
+		return result;
 	}
 
 	private MetadataDBRow getLast(String filename, String username) {
