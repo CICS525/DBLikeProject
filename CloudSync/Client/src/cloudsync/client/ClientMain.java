@@ -212,10 +212,18 @@ public class ClientMain {
 	}
 	
 	public static synchronized boolean deinitClientMain() {
+		
+		//disable file system monitor
 		for(FileSysMonitor monitor : allFileMonitors){
 			monitor.stopListen();
 		}
 		allFileMonitors.clear();
+		
+		//disable master session
+		masterSession.disconnect();
+		
+		//disable LAN sync listener
+		FileSenderClient.deinitialize();
 		
 		return true;
 	}
