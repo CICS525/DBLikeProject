@@ -32,8 +32,9 @@ import javafx.stage.WindowEvent;
 *
 * @author Vyas
 */
-public class FXMLDocumentController implements Initializable {
-    @FXML
+public class LoginPageController implements Initializable {
+
+	@FXML
     private TextField UsernameTF;
     @FXML
     private TextField PasswordTF;
@@ -53,21 +54,7 @@ public class FXMLDocumentController implements Initializable {
     public Button NewUser;
     @FXML
     public Button RunInBackGround;
-    @FXML
-    public Menu Actions;
-
-    public MenuItem browser;
-    public MenuItem history;
-    
-    
-    
-    
-    Thread systemTrayThread;
-    public static boolean SESSION_OK;
-    Stage thisStage;
-
-
-
+	
     /**
      * Initializes the controller class.
      */
@@ -101,21 +88,12 @@ public class FXMLDocumentController implements Initializable {
     }
     
     
-    // Function to store the Stage
-    public void setStage(Stage currentStage)
-    {
-        this.thisStage = currentStage;
-        thisStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-     	   public void handle(WindowEvent t) {
-     	      //Platform.exit();
-     	   }
-     	});
-    }
+    
     
     @FXML
     public void NewUserButtonAction(ActionEvent event)
     {
-    	SESSION_OK = false;
+    	Application_Navigator.SESSION_OK = false;
     	UsernameTF.setDisable(false);
     	PasswordTF.setDisable(false);
     	DirectoryTF.setDisable(false);
@@ -125,9 +103,8 @@ public class FXMLDocumentController implements Initializable {
      
     public void InitializeUI()
     {
-    	if(ClientMain.initClientMain())
+    	if(Application_Navigator.SESSION_OK)
     	{
-    	SESSION_OK = true;
     	OpenSession.setDisable(true);
     	UsernameTF.setDisable(true);
     	PasswordTF.setDisable(true);
@@ -136,17 +113,11 @@ public class FXMLDocumentController implements Initializable {
     	}else
     	{
     		OpenSession.setDisable(false);
-    		StopSession.setDisable(true);
-    		RunInBackGround.setDisable(true);
-    		history.setDisable(true);
-    		browser.setDisable(true);
     	}
     	UsernameTF.setText(ClientMain.getSettings().getUsername());
     	PasswordTF.setText(ClientMain.getSettings().getPassword());
     	DirectoryTF.setText(ClientMain.getSettings().getRootDir());
-    	
-    	systemTrayThread = new Thread(new SystemTrayImplementor());
-    	systemTrayThread.start();
+
     	
     }
     
@@ -173,26 +144,20 @@ public class FXMLDocumentController implements Initializable {
             String hostname = addr.getHostName();
             DeviceNameTF.setText(hostname);
         } catch (UnknownHostException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         
-        MenuItem browser = new MenuItem("View Browser");
-        browser.setOnAction(new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent t) {
-                	System.out.println("Inside the add");
-                }
-            }); 
-            
-       Actions.getItems().add(browser);
+        
        
-       
-       MenuItem history = new MenuItem("View History");
-       history.setOnAction(new EventHandler<ActionEvent>() {
-           public void handle(ActionEvent t) {
-           	System.out.println("Inside the add");
-           }
-       }); 
-       
-       Actions.getItems().add(history);
+        
     }
+
+    
+   
+
+    
+    
+    
+    
+    
 }

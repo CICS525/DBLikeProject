@@ -21,22 +21,22 @@ public class UIThread extends Application{
 
 	@Override
 	public void start(Stage arg0) throws Exception {
+		LoggerClass.writeLog("Opening UI Stage");
 		Platform.setImplicitExit(false);
 		newStage = new Stage();
-		FXMLLoader loader = new FXMLLoader();
-		Pane mainPane;
-		try {
-			mainPane = (Pane) loader.load(getClass().getResourceAsStream("FXMLDocument.fxml"));
-			Scene scene = new Scene(mainPane);
-			FXMLDocumentController mainController = loader.getController();
-			mainController.setStage(newStage);
-			newStage.setScene(scene);
-			added = true;
-			newStage.getIcons().add(new Image("/images/logo.png"));
-			newStage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
+        FXMLLoader loader = new FXMLLoader();
+        Pane mainPane = (Pane) loader.load(getClass().getResourceAsStream(Application_Navigator.MAIN));
+        newStage.setScene(createScene(mainPane));
+        MainController mainController = loader.getController();
+        mainController.setStage(newStage);
+        Application_Navigator.setMainController(mainController);
+        Application_Navigator.loadVista(Application_Navigator.CREDENTIALS);
+        newStage.setHeight(435);
+        newStage.setWidth(483);
+        newStage.show();
+        newStage.setResizable(false);
+        newStage.show();
+		LoggerClass.writeLog("Stage Successfully Opened");
 	}
 	
 	@Override
@@ -44,11 +44,15 @@ public class UIThread extends Application{
 	{
 		newStage.hide();
 		System.out.println("Hiding the UI");
+		LoggerClass.writeLog("Hiding the UI");
+
 	}
 	
 	public static void openStage()
 	{
 		System.out.println("Showing the FX Application");
+		LoggerClass.writeLog("Showing the FX Application");
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -63,6 +67,12 @@ public class UIThread extends Application{
 			public void run() {
 				newStage.hide();
 			}});
-		System.out.println("Hiding the UI");
+		LoggerClass.writeLog("Hiding the UI");
 	}
+	
+	
+	private Scene createScene(Pane mainPane) {
+        Scene scene = new Scene(mainPane);
+        return scene;
+    }
 }

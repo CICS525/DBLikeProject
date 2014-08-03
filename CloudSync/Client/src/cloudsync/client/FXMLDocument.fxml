@@ -4,28 +4,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="403.0" prefWidth="483.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.FXMLDocumentController">
-<children>
-<Button fx:id="OpenSession" layoutX="295.0" layoutY="330.0" mnemonicParsing="false" onAction="#OpenSessionButtonAction" prefHeight="25.0" prefWidth="171.0" text="Open Session" />
-<TextField fx:id="UsernameTF" layoutX="109.0" layoutY="152.0" prefHeight="25.0" prefWidth="354.0" />
-<TextField fx:id="PasswordTF" layoutX="109.0" layoutY="186.0" prefHeight="25.0" prefWidth="354.0" />
-<TextField fx:id="DirectoryTF" layoutX="109.0" layoutY="221.0" prefHeight="25.0" prefWidth="322.0" />
-<TextField fx:id="DeviceNameTF" editable="false" layoutX="109.0" layoutY="258.0" prefHeight="25.0" prefWidth="354.0" />
-<Label layoutX="27.0" layoutY="156.0" text="Username" /><Label layoutX="27.0" layoutY="190.0" text="Password" />
-<Label layoutX="27.0" layoutY="225.0" text="Directory" /><Label layoutX="27.0" layoutY="262.0" text="Device" />
-<Button fx:id="ChooseDirectoryButton" layoutX="437.0" layoutY="221.0" mnemonicParsing="false" onAction="#ChooseDirectoryButtonAction" prefHeight="25.0" prefWidth="26.0" text="Button" /><Button fx:id="NewUser" layoutX="24.0" layoutY="330.0" mnemonicParsing="false" onAction="#NewUserButtonAction" prefHeight="25.0" prefWidth="91.0" text="New User" /><MenuBar prefHeight="25.0" prefWidth="483.0">
+<AnchorPane id="AnchorPane" prefHeight="403.0" prefWidth="483.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.MainController">
+<children><MenuBar prefHeight="25.0" prefWidth="483.0">
   <menus>
     <Menu mnemonicParsing="false" text="File">
       <items>
         <MenuItem mnemonicParsing="false" text="Exit Application" />
       </items>
     </Menu>
-    <Menu fx:id="Actions" mnemonicParsing="false" text="Actions">
-      <items>
-        <MenuItem mnemonicParsing="false" text="Open File Browser" /><MenuItem mnemonicParsing="false" text="View History Files" />
-      </items>
-    </Menu>
+    <Menu fx:id="Actions" mnemonicParsing="false" text="Actions" />
   </menus>
-</MenuBar>
+</MenuBar><StackPane fx:id="MainStackPane" layoutY="25.0" prefHeight="378.0" prefWidth="483.0" />
 </children>
 </AnchorPane>

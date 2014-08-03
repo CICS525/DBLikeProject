@@ -88,23 +88,29 @@ public class SystemTrayImplementor implements Runnable {
 					trayIcon.setImageAutoSize(true);
 					tray.add(trayIcon);
 
-					if(FXMLDocumentController.SESSION_OK)
+					if(Application_Navigator.SESSION_OK)
 					{
 						trayIcon.displayMessage("Dropbox Started Successfully....",
 								"Your Root Directory will be Syncing from Cloud",
 								MessageType.INFO);
 						
-						if(FXMLDocumentController.SESSION_OK)
+						LoggerClass.writeLog("System Tray Message - Success");
+
+						if(Application_Navigator.SESSION_OK)
 				    	{
 				        	UIThread.closeStage();;
 				    	}
 					}else
 					{
+						LoggerClass.writeLog("System Tray Message - Failure");
+
 						trayIcon.displayMessage("Dropbox Initializion Failed....",
 								"Please re-enter your username and password",
 								MessageType.INFO);
 					}
 				} else {
+					LoggerClass.writeLog("system tray not supported");
+
 					System.out.println("system tray not supported");
 				}
 			} catch (Exception e) {
