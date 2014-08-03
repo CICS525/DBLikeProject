@@ -80,8 +80,8 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 				folder = userHome;
 		}
 
-		setUsername("testuser");
-		setPassword("testpass");
+		//setUsername("testuser");
+		//setPassword("testpass");
 		setDeviceName(getSystemHostname());
 		setRootDir(folder);
 		setRecentMaster(new ServerLocation(DefaultSetting.DEFAULT_MASTER_SERVER_URL, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT));

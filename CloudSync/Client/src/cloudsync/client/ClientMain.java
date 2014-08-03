@@ -148,7 +148,7 @@ public class ClientMain {
 
 
 		settings = ClientSettings.getInstance();
-		settings.loadSettings();
+		
 
 		// Client should do upload first & do download.
 		// This is in order to handle the file could be modified when the client
@@ -157,6 +157,8 @@ public class ClientMain {
 		// in local metadata.
 
 		// masterLocation = settings.getRecentMaster();
+		if(settings.loadSettings())
+		{
 		SessionEntry entry = SessionEntry.getInstance();
 		masterLocation = entry.getMasterServerLocation(settings.getUsername(), settings.getPassword());
 		if (masterLocation == null) {
@@ -202,6 +204,11 @@ public class ClientMain {
 			System.out.println("initClientMain@ClientMain: FileSenderClient Failure.");
 
 		return bCnt;
+		}else
+		{
+			return false;
+		}
+		
 	}
 	
 	public static synchronized boolean deinitClientMain() {

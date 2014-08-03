@@ -55,6 +55,9 @@ public class LoginPageController implements Initializable {
     public Button NewUser;
     @FXML
     public Button RunInBackGround;
+    
+    
+    boolean newUser;
 	
     /**
      * Initializes the controller class.
@@ -64,20 +67,36 @@ public class LoginPageController implements Initializable {
     	System.out.println("Calling Initialize in the FXMLDocument Controller");
     	initializeComponents();
         InitializeUI();
+        
 	}    
 
     @SuppressWarnings("deprecation")
 	@FXML
     private void OpenSessionButtonAction(ActionEvent event) throws InterruptedException {
+    	Application_Navigator.SESSION_OK = false;
+    	
+    	
     	ClientMain.getSettings().setUsername(UsernameTF.getText());
     	ClientMain.getSettings().setPassword(PasswordTF.getText());
     	ClientMain.getSettings().setRootDir(DirectoryTF.getText());
     	ClientMain.getSettings().setDeviceName(DeviceNameTF.getText());
-    	ClientMain.getSettings().saveSettings();
+		ClientMain.getSettings().saveSettings();
+
     	
-    	OpenSession.setDisable(true);
-    	StopSession.setDisable(false);
-    	RunInBackGround.setDisable(false);
+    	if(newUser)
+    	{
+    		if(SessionEntry.getInstance().createAccount(UsernameTF.getText(), PasswordTF.getText()))
+    		{
+    			System.out.println("User successfully created");
+    		}
+    	}
+    	
+    	if(ClientMain.initClientMain())
+    	{
+    		Application_Navigator.SESSION_OK = true;
+    	}
+    	
+    	InitializeUI();
     }
 
     @FXML // Directory Button Code
@@ -94,12 +113,15 @@ public class LoginPageController implements Initializable {
     @FXML
     public void NewUserButtonAction(ActionEvent event)
     {
+    	newUser = true;
     	Application_Navigator.SESSION_OK = false;
+    	ClientMain.deinitClientMain();
     	UsernameTF.setDisable(false);
     	PasswordTF.setDisable(false);
     	DirectoryTF.setDisable(false);
     	OpenSession.setDisable(false);
     	ChooseDirectoryButton.setDisable(false);
+    	OpenSession.setText("Create");
     	
     }
      
@@ -116,6 +138,9 @@ public class LoginPageController implements Initializable {
     	
     	}else
     	{
+        	UsernameTF.setDisable(false);
+        	PasswordTF.setDisable(false);
+        	DirectoryTF.setDisable(false);
     		OpenSession.setDisable(false);
         	ChooseDirectoryButton.setDisable(false);
 

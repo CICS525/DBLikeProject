@@ -145,6 +145,7 @@ public class MainController implements Initializable{
 			Application_Navigator.SESSION_OK = true;
 		}else
 		{
+			ClientMain.deinitClientMain();
 			Application_Navigator.SESSION_OK = false;
 
 		}
