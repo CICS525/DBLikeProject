@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cloudsync.client.DialogFX.Type;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -53,7 +54,19 @@ public class NewUserController implements Initializable {
     
     public void createNewUserAction(ActionEvent event)
     {
-    	
+    	if(SessionEntry.getInstance().createAccount(UsernameTF.getText(), PasswordTF.getText()))
+    	{
+	    	DialogFX dialog = new DialogFX(Type.INFO);
+	        dialog.setTitleText("User Created");
+	        dialog.setMessage("New User Successfully Created");
+	        dialog.showDialog();
+    	}else
+    	{
+    		DialogFX dialog = new DialogFX(Type.ERROR);
+            dialog.setTitleText("User Not Created");
+            dialog.setMessage("New User Creation Failed");
+            dialog.showDialog();
+    	}
     }
     
     public boolean checkMandatory()
