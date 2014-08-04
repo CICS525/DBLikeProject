@@ -47,15 +47,13 @@ public class FileSenderClient {
 			return false;
 	}
 	
-	public static boolean deinitalize(){
+	public static boolean deinitailize(){
 		if(that == null){
 			System.out.println("FileSenderClient: file sender client hasn't been initialized");
 			return false;
 		}
 		else {
-		    if (that.fileSenderThread != null) {
-		        that.fileSenderThread.interrupt();
-		    }
+	
 		    if (that.backgroundTread != null) {
 		        that.backgroundTread.interrupt();
 		    }
@@ -69,15 +67,6 @@ public class FileSenderClient {
 	}
 	
 	public boolean deinitalizeSocket(){
-		
-		try {
-			if(socket != null)
-				socket.close();
-		} catch (IOException e) {
-			System.out.println("FileSenderClient: Can't deinitialize the client socket");
-			return false;
-		}
-		
 		
 		try {
 			if(serverSocket != null){
@@ -170,8 +159,7 @@ public class FileSenderClient {
 				System.exit(1);
 			}
 			while(true){
-				if(fileSenderThread.isInterrupted())
-					break;
+				
 				try {
 					readCount = fis.read(buff);
 				} catch (IOException e) {
