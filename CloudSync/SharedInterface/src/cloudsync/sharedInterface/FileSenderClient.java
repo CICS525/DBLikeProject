@@ -21,11 +21,13 @@ public class FileSenderClient {
 	private Socket socket = null;
 	private static FileSenderClient that = null;
 	private String rootDir = null;
+	private BackgroundTread backgroundTread = null;
+	private FileSenderThread fileSenderThread = null;
 
 	private FileSenderClient(){
 		serverSocket = null;
-		BackgroundTread thread = new BackgroundTread();
-		thread.start();
+		backgroundTread = new BackgroundTread();
+		backgroundTread.start();
 	}
 	
 	public static boolean initialize(int port, String rootDir){
@@ -43,6 +45,55 @@ public class FileSenderClient {
 			return true;
 		} else 
 			return false;
+	}
+	
+	public boolean deinitalize(){
+		if(that == null){
+			System.out.println("FileSenderClient: file sender client hasn't been initialized");
+			return false;
+		}
+		else {
+			boolean isDeintialized = true;
+			if(that.fileSenderThread != null || that.backgroundTread != null){
+				if(that.fileSenderThread != null && that.fileSenderThread.isAlive()){
+					that.fileSenderThread.interrupt();
+					if(!that.fileSenderThread.isInterrupted())
+						isDeintialized = false;
+				}
+				if(that.fileSenderThread != null && that.backgroundTread.isAlive()){
+					that.backgroundTread.interrupt();
+					if(!that.backgroundTread.isInterrupted())
+						isDeintialized = false;
+				} 
+			}
+			if(isDeintialized){
+				deinitalizeSocket();
+				that = null;
+				System.out.println("FileSenderClient: fileSenderClient is deinitialized.");
+				return true;
+			}
+			else{
+				System.out.println("FileSenderClient: fileSenderClient can't be deinitialized.");
+				return false;
+			}
+		}
+	}
+	
+	public boolean deinitalizeSocket(){
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			System.out.println("FileSenderClient: Can't deinitialize the server socket");
+			return false;
+		}
+		try {
+			socket.close();
+			return true;
+		} catch (IOException e) {
+			System.out.println("FileSenderClient: Can't deinitialize the client socket");
+			return false;
+		}
+		
 	}
 	
 	public static boolean deinitialize(){
@@ -71,7 +122,7 @@ public class FileSenderClient {
 					System.out.println("FileSenderClient: Can't accept client socket");
 				}
 				System.out.println("FileSenderClient: Client socket coming. " + socket.getRemoteSocketAddress().toString());
-				FileSenderThread fileSenderThread = new FileSenderThread(socket);
+				fileSenderThread = new FileSenderThread(socket);
 				fileSenderThread.start();
 			}
 		}
