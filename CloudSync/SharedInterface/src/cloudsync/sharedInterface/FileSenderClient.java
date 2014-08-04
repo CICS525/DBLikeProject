@@ -53,6 +53,7 @@ public class FileSenderClient {
 			return false;
 		}
 		else {
+			deinitalizeSocket();
 			boolean isDeintialized = true;
 			if(that.fileSenderThread != null || that.backgroundTread != null){
 				if(that.fileSenderThread != null && that.fileSenderThread.isAlive()){
@@ -67,7 +68,6 @@ public class FileSenderClient {
 				} 
 			}
 			if(isDeintialized){
-				deinitalizeSocket();
 				that = null;
 				System.out.println("FileSenderClient: fileSenderClient is deinitialized.");
 				return true;
@@ -121,15 +121,24 @@ public class FileSenderClient {
 		public void run() {
 			
 			while(true){
-				
+				boolean socketIsComing = false;
 				try {
 					socket = serverSocket.accept();
+					socketIsComing = true;
 				} catch (IOException e) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					System.out.println("FileSenderClient: Can't accept client socket");
 				}
-				System.out.println("FileSenderClient: Client socket coming. " + socket.getRemoteSocketAddress().toString());
-				fileSenderThread = new FileSenderThread(socket);
-				fileSenderThread.start();
+				if(socketIsComing){
+					System.out.println("FileSenderClient: Client socket coming. " + socket.getRemoteSocketAddress().toString());
+					fileSenderThread = new FileSenderThread(socket);
+					fileSenderThread.start();
+				}
 			}
 		}
 	}
