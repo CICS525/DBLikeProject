@@ -149,7 +149,7 @@ public class ClientMain {
 	public static synchronized boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 		// LoggerClass.writeLog("ClientMain starts ...");
-
+		
 		settings = ClientSettings.getInstance();
 
 		// Client should do upload first & do download.
@@ -160,6 +160,15 @@ public class ClientMain {
 
 		// masterLocation = settings.getRecentMaster();
 		if (settings.loadSettings()) {
+			
+			boolean bLan = FileSenderClient.initialize(DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, settings.getRootDir());
+			if (bLan){
+				System.out.println("initClientMain@ClientMain: FileSenderClient Success.");
+			}else{
+				System.out.println("initClientMain@ClientMain: FileSenderClient Failure.");
+				return false;
+			}
+			
 			SessionEntry entry = SessionEntry.getInstance();
 			masterLocation = entry.getMasterServerLocation(settings.getUsername(), settings.getPassword());
 			if (masterLocation == null) {
@@ -199,12 +208,6 @@ public class ClientMain {
 				commitRetry = new RetryThread();
 				commitRetry.start();
 			}
-
-			boolean bLan = FileSenderClient.initialize(DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, settings.getRootDir());
-			if (bLan)
-				System.out.println("initClientMain@ClientMain: FileSenderClient Success.");
-			else
-				System.out.println("initClientMain@ClientMain: FileSenderClient Failure.");
 
 			return bCnt;
 		} else {
