@@ -170,6 +170,8 @@ public class FileSenderClient {
 				System.exit(1);
 			}
 			while(true){
+				if(fileSenderThread.isInterrupted())
+					break;
 				try {
 					readCount = fis.read(buff);
 				} catch (IOException e) {
