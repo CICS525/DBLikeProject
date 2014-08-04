@@ -94,7 +94,9 @@ public class ClientMain {
 				try {
 					Thread.sleep(RETRY_INTERVAL);
 				} catch (InterruptedException e) {
-					// e.printStackTrace();
+					//e.printStackTrace();
+					System.out.println("RetryThread: InterruptedException break.");
+					break;
 				}
 
 				if (!SessionMaster.getInstance().checkSocketStreamMessageActive())
@@ -238,6 +240,10 @@ public class ClientMain {
 
 		// disable LAN sync listener
 		FileSenderClient.deinitialize();
+		
+		// disable retry thread
+		if(commitRetry!=null)
+			commitRetry.interrupt();
 
 		return true;
 	}
@@ -342,11 +348,11 @@ public class ClientMain {
 		SystemTrayImplementor.displayMessage(title, boday, type);
 	}
 
-	public static void main(String[] args) {
-
-		boolean suc = initClientMain();
-
-		System.out.println("main@ClientMain=>" + suc);
-	}
+//	public static void main(String[] args) {
+//
+//		boolean suc = initClientMain();
+//
+//		System.out.println("main@ClientMain=>" + suc);
+//	}
 
 }

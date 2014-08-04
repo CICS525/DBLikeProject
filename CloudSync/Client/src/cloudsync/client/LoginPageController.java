@@ -127,7 +127,7 @@ public class LoginPageController implements Initializable {
     	DirectoryTF.setDisable(false);
     	OpenSession.setDisable(false);
     	ChooseDirectoryButton.setDisable(false);
-
+    	NewUser.setDisable(true);	//disable Logout button
     	
     	/*newUser = true;
     	Application_Navigator.SESSION_OK = false;
@@ -145,26 +145,23 @@ public class LoginPageController implements Initializable {
     {
     	if(Application_Navigator.SESSION_OK)
     	{
-    	OpenSession.setDisable(true);
-    	UsernameTF.setDisable(true);
-    	PasswordTF.setDisable(true);
-    	DirectoryTF.setDisable(true);
-    	ChooseDirectoryButton.setDisable(true);
-    	
-    	}else
-    	{
+	    	OpenSession.setDisable(true);
+	    	UsernameTF.setDisable(true);
+	    	PasswordTF.setDisable(true);
+	    	DirectoryTF.setDisable(true);
+	    	ChooseDirectoryButton.setDisable(true);
+	    	NewUser.setDisable(false);	//enable Logout button
+    	}else{
         	UsernameTF.setDisable(false);
         	PasswordTF.setDisable(false);
         	DirectoryTF.setDisable(false);
     		OpenSession.setDisable(false);
         	ChooseDirectoryButton.setDisable(false);
-
+        	NewUser.setDisable(true);	//still disable Logout button
     	}
     	UsernameTF.setText(ClientMain.getSettings().getUsername());
     	PasswordTF.setText(ClientMain.getSettings().getPassword());
     	DirectoryTF.setText(ClientMain.getSettings().getRootDir());
-
-    	
     }
     
     public void initializeComponents()
@@ -192,9 +189,5 @@ public class LoginPageController implements Initializable {
         } catch (UnknownHostException ex) {
             
         }
-        
-        
-       
-        
     }
 }
