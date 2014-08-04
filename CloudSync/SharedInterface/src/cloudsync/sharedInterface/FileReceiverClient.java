@@ -25,7 +25,9 @@ public class FileReceiverClient {
 	private Metadata metadata = null;
 	private Socket clientSocket = null;
 	private String rootDir = null;
-	private FileSysCallback callback = null;		
+	private FileSysCallback callback = null;
+	
+	private static final int TIMEOUT = 200;
 	
 	public FileReceiverClient(String hostname, int portNum, String rootDir, Metadata metadata, FileSysCallback callback){
 		this.portNum = portNum;
@@ -50,6 +52,7 @@ public class FileReceiverClient {
 			try {
 				int getLen = 0;
 				clientSocket = new Socket(hostname, portNum);
+				clientSocket.setSoTimeout(TIMEOUT);
 				streams = new SocketStream();
 				
 				streams.initStream(clientSocket);
