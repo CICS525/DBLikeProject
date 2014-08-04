@@ -98,7 +98,7 @@ public class Metadatabase {
 			boolean b = sb.uploadFile(fileToUpload, completeMetadata);
 			System.out.println("acceptFileUpdate@Metadatabase: Update #" + fileToUpload + "->" + b);
 			
-			if(b){	//delete the file after successful upload
+			if(b && DefaultSetting.DELETE_TEMP_FILE_ON_MASTER_SERVER){	//delete the file after successful upload
 				File f = new File(fileToUpload);
 				boolean d = f.delete();
 				System.out.println("acceptFileUpdate@Metadatabase: Delete #" + fileToUpload + "->" + d);

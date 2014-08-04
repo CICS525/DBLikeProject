@@ -35,4 +35,6 @@ public class DefaultSetting {
 	public final static String	DEFAULT_SYNC_DIR_NAME			= "CloudSync";
 	
 	public final static boolean CREATE_NEW_ACCOUNT_ON_LOGIN_FAILURE = false;
+	
+	public final static boolean DELETE_TEMP_FILE_ON_MASTER_SERVER = false;
 }
