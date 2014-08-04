@@ -11,7 +11,7 @@ public class Application_Navigator {
 	public static final String BROWSER = "/cloudsync/client/Browser.fxml";
 	public static final String CREDENTIALS = "/cloudsync/client/CredentialsPage.fxml";
 	public static final String ISSUE = "/cloudsync/client/RegisterIssue.fxml";
-	public static final String NEWUSER = "/cloudsync/client/NewUserFXML.fxml";
+	public static final String NEWUSER = "/cloudsync/client/NewUser.fxml";
 
 
 	

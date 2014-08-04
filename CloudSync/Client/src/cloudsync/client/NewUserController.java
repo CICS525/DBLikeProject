@@ -37,11 +37,11 @@ import javafx.stage.WindowEvent;
 public class NewUserController implements Initializable {
 
 	@FXML
-    private TextField UsernameTF;
+    private TextField UserTF;
     @FXML
-    private PasswordField PasswordTF;
+    private PasswordField PassTF;
     @FXML
-    private PasswordField ConfirmPasswordTF;
+    private PasswordField ConfirmTF;
     
     
 	
@@ -52,9 +52,9 @@ public class NewUserController implements Initializable {
     	
 	}    
     
-    public void createNewUserAction(ActionEvent event)
+    public void SubmitButtonAction(ActionEvent event)
     {
-    	if(SessionEntry.getInstance().createAccount(UsernameTF.getText(), PasswordTF.getText()))
+    	if(SessionEntry.getInstance().createAccount(UserTF.getText(), PassTF.getText()))
     	{
 	    	DialogFX dialog = new DialogFX(Type.INFO);
 	        dialog.setTitleText("User Created");

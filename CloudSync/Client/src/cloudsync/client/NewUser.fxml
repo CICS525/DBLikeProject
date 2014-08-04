@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="378.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.NewUserController">
+<children><ImageView fitHeight="378.0" fitWidth="715.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@../../images/bg.jpg" />
+</image></ImageView><Label layoutX="373.0048828125" layoutY="110.5" text="User name" textFill="WHITE" /><Label layoutX="373.009765625" layoutY="157.5" text="Password" textFill="WHITE" /><Label layoutX="375.0" layoutY="207.0" text="Confirm Password" textFill="WHITE" /><TextField fx:id="UserTF" layoutX="497.0" layoutY="107.0" prefHeight="25.0" prefWidth="182.0" /><PasswordField fx:id="PassTF" layoutX="497.0" layoutY="154.0" prefHeight="25.0" prefWidth="182.0" /><PasswordField fx:id="ConfirmTF" layoutX="497.0" layoutY="203.0" prefHeight="25.0" prefWidth="176.0" /><Button layoutX="521.0" layoutY="258.0" mnemonicParsing="false" onAction="#SubmitButtonAction" prefHeight="25.0" prefWidth="134.0" text="Submit" />
+</children></AnchorPane>
