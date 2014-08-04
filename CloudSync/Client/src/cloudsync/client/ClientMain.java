@@ -163,6 +163,7 @@ public class ClientMain {
 		// masterLocation = settings.getRecentMaster();
 		if (settings.loadSettings()) {
 			
+			FileSenderClient.deinitialize();
 			boolean bLan = FileSenderClient.initialize(DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, settings.getRootDir());
 			if (bLan){
 				System.out.println("initClientMain@ClientMain: FileSenderClient Success.");
