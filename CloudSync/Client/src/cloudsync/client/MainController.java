@@ -83,7 +83,6 @@ public class MainController implements Initializable{
 			}
 		}); 
 
-		Main.getItems().add(home);
 		
 		newuser = new MenuItem("New User");
 		newuser.setOnAction(new EventHandler<ActionEvent>() {
@@ -93,9 +92,8 @@ public class MainController implements Initializable{
 
 			}
 		}); 
-
-		Main.getItems().add(newuser);
-
+		
+		
 		exit = new MenuItem("Exit Application");
 		exit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
@@ -103,6 +101,11 @@ public class MainController implements Initializable{
 				System.exit(0);
 			}
 		}); 
+
+		
+		Main.getItems().add(home);
+	
+		Main.getItems().add(newuser);
 
 		Main.getItems().add(exit);
 		

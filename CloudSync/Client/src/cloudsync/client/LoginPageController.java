@@ -150,7 +150,6 @@ public class LoginPageController implements Initializable {
     	PasswordTF.setDisable(true);
     	DirectoryTF.setDisable(true);
     	ChooseDirectoryButton.setDisable(true);
-    	MainController.history.setDisable(true);
     	
     	}else
     	{

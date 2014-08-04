@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="378.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cloudsync.client.NewUserController">
+<children><ImageView fitHeight="378.0" fitWidth="715.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@../../images/bg.jpg" />
+</image>
+</ImageView><Label layoutX="345.0048828125" layoutY="234.0" text="Confirm Password" textFill="WHITE" /><TextField fx:id="ConfirmPasswordTF" layoutX="459.0" layoutY="230.0" prefHeight="25.0" prefWidth="217.0" /><Button layoutX="489.0" layoutY="276.0" mnemonicParsing="false" onAction="#createNewUserAction" prefHeight="25.0" prefWidth="130.0" text="Create New User" /><PasswordField fx:id="PasswordTF" layoutX="458.0" layoutY="177.0" prefHeight="25.0" prefWidth="217.0" /><Label layoutX="345.0" layoutY="181.0" text="Password" textFill="#fcf8f8" /><Label layoutX="345.0" layoutY="130.0" text="Username" textFill="#fcf8f8" /><TextField fx:id="UsernameTF" layoutX="459.0" layoutY="126.0" prefHeight="25.0" prefWidth="217.0" />
+</children></AnchorPane>
