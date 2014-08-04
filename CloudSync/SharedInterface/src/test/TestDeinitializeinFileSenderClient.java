@@ -20,9 +20,9 @@ public class TestDeinitializeinFileSenderClient {
 		else 
 			System.out.println("Fail to initialize fileSenderClient");
 		
-		Thread.sleep(1000);
-		fsc.deinitalize();
-		Thread.sleep(1000);
+		Thread.sleep(5000);
+		FileSenderClient.deinitalize();
+		Thread.sleep(5000);
 		System.out.println("This is Sender");
 		if(FileSenderClient.initialize(200, "C:\\Users\\Tianlai Dong"))
 			System.out.println("The fileSenderClient is initialized");
