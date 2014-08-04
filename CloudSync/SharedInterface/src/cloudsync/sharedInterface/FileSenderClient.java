@@ -80,19 +80,25 @@ public class FileSenderClient {
 	}
 	
 	public boolean deinitalizeSocket(){
+		
 		try {
-			serverSocket.close();
-		} catch (IOException e) {
-			System.out.println("FileSenderClient: Can't deinitialize the server socket");
-			return false;
-		}
-		try {
-			socket.close();
-			return true;
+			if(socket != null)
+				socket.close();
 		} catch (IOException e) {
 			System.out.println("FileSenderClient: Can't deinitialize the client socket");
 			return false;
 		}
+		
+		try {
+			if(serverSocket != null){
+				serverSocket.close();
+				return true;
+			}
+		} catch (IOException e) {
+			System.out.println("FileSenderClient: Can't deinitialize the server socket");
+			return false;
+		}
+		return false;
 		
 	}
 	
