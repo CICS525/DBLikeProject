@@ -2,6 +2,7 @@ package cloudsync.master;
 
 import java.util.ArrayList;
 
+import cloudsync.master.storage.AccountDatabase;
 import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
@@ -45,6 +46,10 @@ public class SessionAccount {
 		}
 		if(!suc)
 			System.err.println("removeSocketStream@SessionAccount: remove failed! ERROR!!!");
+		else {
+		    // logout, decrement account's counter
+            AccountDatabase.getInstance().logout(username);
+        }
 		if(isSocketStreamEmpty()){
 			SessionManager sessionManager = SessionManager.getInstance();
 			sessionManager.clearDeactiveAccount();
