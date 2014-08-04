@@ -145,7 +145,7 @@ public class SystemTrayImplementor implements Runnable {
 	public static void displayMessage(String trayMessage,String trayMessageBody,MessageType messageType)
 	{
 		trayIcon.displayMessage(trayMessage,
-				"Updating " + trayMessageBody,
+				trayMessageBody,
 				messageType);
 	}
 	

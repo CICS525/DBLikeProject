@@ -36,8 +36,13 @@ public class MainController implements Initializable{
 	@FXML
 	public Menu Main;
 
-	public MenuItem browser;
-	public MenuItem history;
+	public static MenuItem browser;
+	public static MenuItem history;
+	public static MenuItem home;
+	public static MenuItem newuser;
+	public static MenuItem issue;
+	public static MenuItem exit;
+
 
 	Stage thisStage;
 
@@ -70,7 +75,7 @@ public class MainController implements Initializable{
 
 		//---------------------------- Main Menu Drop down --------------------------------
 
-		MenuItem home = new MenuItem("Home Page");
+		home = new MenuItem("Home Page");
 		home.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
 				Application_Navigator.loadVista(Application_Navigator.CREDENTIALS);
@@ -79,8 +84,18 @@ public class MainController implements Initializable{
 		}); 
 
 		Main.getItems().add(home);
+		
+		newuser = new MenuItem("New User");
+		newuser.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+				Application_Navigator.loadVista(Application_Navigator.NEWUSER);
 
-		MenuItem exit = new MenuItem("Exit Application");
+			}
+		}); 
+
+		Main.getItems().add(newuser);
+
+		exit = new MenuItem("Exit Application");
 		exit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
 				System.out.println("quitting");
@@ -93,7 +108,7 @@ public class MainController implements Initializable{
 
 		//---------------------------- Actions Menu Drop down --------------------------------
 
-		MenuItem history = new MenuItem("View History");
+		history = new MenuItem("View History");
 		history.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {       	
 				// open the default web browser for the HTML page
@@ -112,7 +127,7 @@ public class MainController implements Initializable{
 
 		Actions.getItems().add(history);
 
-		MenuItem browser = new MenuItem("View Browser");
+		browser = new MenuItem("View Browser");
 		browser.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
 				System.out.println("Inside the browser");
@@ -122,8 +137,9 @@ public class MainController implements Initializable{
 		}); 
 
 		Actions.getItems().add(browser);
-
-		MenuItem issue = new MenuItem("Report Issue");
+		browser.setDisable(true);
+		
+		issue = new MenuItem("Report Issue");
 		issue.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
 				Application_Navigator.loadVista(Application_Navigator.ISSUE);
@@ -147,8 +163,8 @@ public class MainController implements Initializable{
 		{
 			ClientMain.deinitClientMain();
 			Application_Navigator.SESSION_OK = false;
-
 		}
+		
 		System.out.println("Calling here");
 		systemTrayThread = new Thread(new SystemTrayImplementor());
 		systemTrayThread.start();

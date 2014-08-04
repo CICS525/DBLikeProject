@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.contentobjects.jnotify.macosx.FSEventListener;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
@@ -162,5 +163,18 @@ public class ClientSettings implements Serializable {	// Serialization initializ
             //Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
 		return hostname;
+	}
+	
+	
+	public boolean deleteSettingFile()
+	{
+		File settingFile = new File(fSettingsFileName);
+		if(settingFile.delete())
+		{	
+			System.out.println("Deleting the file");
+			return true;
+		}
+		
+		return false;
 	}
 }

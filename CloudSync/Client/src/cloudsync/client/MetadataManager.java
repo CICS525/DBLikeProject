@@ -1,5 +1,6 @@
 package cloudsync.client;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -229,5 +230,18 @@ public class MetadataManager {
 	private void clearMetadata(){
 		synchronized(LocalMetadata){
 		}
+	}
+	
+	
+	public boolean deleteMetaData()
+	{
+		File metafile = new File(META_FILENAME);
+		if(metafile.delete())
+		{	
+			System.out.println("Deleting the Metadata file");
+			return true;
+		}
+		
+		return false;
 	}
 }

@@ -213,6 +213,14 @@ public class ClientMain {
 
 	}
 
+	public static MetadataManager getMetadataManager() {
+		return metadataManager;
+	}
+
+	public static void setMetadataManager(MetadataManager metadataManager) {
+		ClientMain.metadataManager = metadataManager;
+	}
+
 	public static synchronized boolean deinitClientMain() {
 
 		// disable file system monitor

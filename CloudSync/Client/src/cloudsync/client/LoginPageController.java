@@ -67,15 +67,22 @@ public class LoginPageController implements Initializable {
     	System.out.println("Calling Initialize in the FXMLDocument Controller");
     	initializeComponents();
         InitializeUI();
-        
 	}    
 
     @SuppressWarnings("deprecation")
 	@FXML
     private void OpenSessionButtonAction(ActionEvent event) throws InterruptedException {
+    	
+		System.out.println("Calling the Login function");
+
+    	if(!UsernameTF.getText().equals(ClientMain.getSettings().getUsername()))
+    	{
+    		System.out.println("Deleting the Old setting files to Configure for new user");
+    		ClientMain.getSettings().deleteSettingFile();
+    		MetadataManager.getInstance().deleteMetaData();
+    	}
+    	
     	Application_Navigator.SESSION_OK = false;
-    	
-    	
     	ClientMain.getSettings().setUsername(UsernameTF.getText());
     	ClientMain.getSettings().setPassword(PasswordTF.getText());
     	ClientMain.getSettings().setRootDir(DirectoryTF.getText());
@@ -83,13 +90,13 @@ public class LoginPageController implements Initializable {
 		ClientMain.getSettings().saveSettings();
 
     	
-    	if(newUser)
+    	/*if(newUser)
     	{
     		if(SessionEntry.getInstance().createAccount(UsernameTF.getText(), PasswordTF.getText()))
     		{
     			System.out.println("User successfully created");
     		}
-    	}
+    	}*/
     	
     	if(ClientMain.initClientMain())
     	{
@@ -113,7 +120,17 @@ public class LoginPageController implements Initializable {
     @FXML
     public void NewUserButtonAction(ActionEvent event)
     {
-    	newUser = true;
+    	ClientMain.deinitClientMain();
+    	Application_Navigator.SESSION_OK = false;
+    	MainController.newuser.setDisable(true);
+    	UsernameTF.setDisable(false);
+    	PasswordTF.setDisable(false);
+    	DirectoryTF.setDisable(false);
+    	OpenSession.setDisable(false);
+    	ChooseDirectoryButton.setDisable(false);
+
+    	
+    	/*newUser = true;
     	Application_Navigator.SESSION_OK = false;
     	ClientMain.deinitClientMain();
     	UsernameTF.setDisable(false);
@@ -121,7 +138,7 @@ public class LoginPageController implements Initializable {
     	DirectoryTF.setDisable(false);
     	OpenSession.setDisable(false);
     	ChooseDirectoryButton.setDisable(false);
-    	OpenSession.setText("Create");
+    	OpenSession.setText("Create");*/
     	
     }
      
@@ -134,7 +151,8 @@ public class LoginPageController implements Initializable {
     	PasswordTF.setDisable(true);
     	DirectoryTF.setDisable(true);
     	ChooseDirectoryButton.setDisable(true);
-
+    	MainController.history.setDisable(true);
+    	MainController.newuser.setDisable(true);
     	
     	}else
     	{
@@ -182,13 +200,4 @@ public class LoginPageController implements Initializable {
        
         
     }
-
-    
-   
-
-    
-    
-    
-    
-    
 }
