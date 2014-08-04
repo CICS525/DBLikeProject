@@ -1,0 +1,1 @@
+del session.log*

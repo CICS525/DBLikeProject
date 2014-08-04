@@ -21,7 +21,7 @@ public class TestDeinitializeinFileSenderClient {
 			System.out.println("Fail to initialize fileSenderClient");
 		
 		Thread.sleep(1000);
-		boolean result = FileSenderClient.deinitalize();
+		boolean result = FileSenderClient.deinitialize();
 		System.out.println(result);
 		Thread.sleep(1000);
 

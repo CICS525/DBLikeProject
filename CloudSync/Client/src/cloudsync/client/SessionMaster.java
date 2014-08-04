@@ -85,10 +85,15 @@ public class SessionMaster {
 
 		try {
 			boolean suc = rmi.RmiCheckUsernamePassword(username, password);
+			
 			if (!suc) {
-				suc = rmi.RmiCreateAccount(username, password);
-				if (!suc)
+				if(DefaultSetting.CREATE_NEW_ACCOUNT_ON_LOGIN_FAILURE){
+					suc = rmi.RmiCreateAccount(username, password);
+					if (!suc)
+						return false;
+				}else{
 					return false;
+				}
 			}
 
 			if (suc) { // fetch metadata from Master Server

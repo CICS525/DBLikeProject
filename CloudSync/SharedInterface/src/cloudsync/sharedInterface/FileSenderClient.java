@@ -18,7 +18,6 @@ public class FileSenderClient {
 	 */
 	
 	private ServerSocket serverSocket = null;
-	private Socket socket = null;
 	private static FileSenderClient that = null;
 	private String rootDir = null;
 	private BackgroundTread backgroundTread = null;
@@ -74,7 +73,6 @@ public class FileSenderClient {
 				return true;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("FileSenderClient: Can't deinitialize the server socket");
@@ -91,10 +89,11 @@ public class FileSenderClient {
 		public void run() {
 			
 			while(true){
-				boolean socketIsComing = false;
+				//boolean socketIsComing = false;
+				Socket socket = null;
 				try {
 					socket = serverSocket.accept();
-					socketIsComing = true;
+					//socketIsComing = true;
 				} catch (Exception e) {
 				    if (Thread.interrupted()) {
 				        System.out.println("Thread interrupted");
@@ -102,7 +101,8 @@ public class FileSenderClient {
 				    }
 					System.out.println("FileSenderClient: Can't accept client socket");
 				}
-				if(socketIsComing){
+				//if(socketIsComing){
+				if(socket!=null){
 					System.out.println("FileSenderClient: Client socket coming. " + socket.getRemoteSocketAddress().toString());
 					fileSenderThread = new FileSenderThread(socket);
 					fileSenderThread.start();
@@ -112,7 +112,7 @@ public class FileSenderClient {
 	}
 	
 	private class FileSenderThread extends Thread{
-		
+		private Socket sockSender = null;
 		private SocketStream streams = null;
 		private Metadata metadata = null;
 		private String absFilePath = null;
@@ -120,6 +120,7 @@ public class FileSenderClient {
 		
 		public FileSenderThread(Socket socket){
 			super();
+			this.sockSender = socket;
 			streams = new SocketStream();
 			streams.initStream(socket);
 			metadata = (Metadata) streams.readObject();
@@ -182,7 +183,7 @@ public class FileSenderClient {
 			}
 			streams.deinitStream();
 			try {
-				socket.close();
+				sockSender.close();
 			} catch (IOException e) {
 				System.out.println("FileSenderClient: Can't close socket for file transfer");
 			}
