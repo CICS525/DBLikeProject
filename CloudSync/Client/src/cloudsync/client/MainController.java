@@ -88,6 +88,7 @@ public class MainController implements Initializable{
 		newuser = new MenuItem("New User");
 		newuser.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
+				System.out.println("Calling New User window");
 				Application_Navigator.loadVista(Application_Navigator.NEWUSER);
 
 			}
