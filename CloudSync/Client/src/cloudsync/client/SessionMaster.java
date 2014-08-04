@@ -26,7 +26,7 @@ public class SessionMaster {
 
 	private ServerLocation			masterLocation	= null;
 	private SocketStream			socketStream	= null;
-	private SocketThread			threadS			= null;
+	private SocketThread			threadM			= null;
 	private ActiveThread			threadA			= null;
 	private RemoteInterface			rmi				= null;
 	private String					username		= null;
@@ -148,14 +148,16 @@ public class SessionMaster {
 
 
 		// Then, create a new thread to wait in-coming message for master server
-		if(threadS==null){
-			threadS = new SocketThread();
-			threadS.start();
+		if(threadM==null){
+			threadM = new SocketThread();
+			threadM.start();
+			System.out.println("connect@SessionMaster: threadS for Message started.");
 		}
 		
 		if(threadA==null){
 			threadA = new ActiveThread();
 			threadA.start();
+			System.out.println("connect@SessionMaster: threadA for Active started.");
 		}
 
 		return true;
@@ -253,7 +255,8 @@ public class SessionMaster {
 				try {
 					Thread.sleep(ACTIVE_MESSAGE_INTERVAL);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
+					break;
 				}
 				
 				if(SessionMaster.this.socketStream!=null){
@@ -315,8 +318,12 @@ public class SessionMaster {
 			System.out.println("SocketThread@SessionMaster: thread finished.");
 			
 			if(SessionMaster.this.threadA!=null){
-				//SessionMaster.this.threadA.stop();
+				SessionMaster.this.threadA.interrupt();
 				SessionMaster.this.threadA = null;
+			}
+			
+			if(SessionMaster.this.threadM!=null){
+				SessionMaster.this.threadM = null;
 			}
 			
 			SessionMaster.this.socketStream = null;
