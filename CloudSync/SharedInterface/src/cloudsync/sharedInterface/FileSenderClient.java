@@ -47,7 +47,7 @@ public class FileSenderClient {
 			return false;
 	}
 	
-	public static boolean deinitailize(){
+	public static boolean deinitialize(){
 		if(that == null){
 			System.out.println("FileSenderClient: file sender client hasn't been initialized");
 			return false;
