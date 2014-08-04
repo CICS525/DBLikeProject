@@ -13,13 +13,16 @@ import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
 public class FileSysMonitor {
+    
+    private static final int zeroLenFileDelay = 10000;
 
     private String rootFolder;
     private FileSysMonitorCallback callback;
 
     private int watchID;
 
-    private ArrayList<String> ignoreList = new ArrayList<>();
+    //private ArrayList<String> ignoreList = new ArrayList<>();
+    private HashMap<String, Integer> ignoreList = new HashMap<>();
     private ArrayList<String> pendingList = new ArrayList<>();
     private HashMap<String, Long> lastModify = new HashMap<>();
 
@@ -61,13 +64,15 @@ public class FileSysMonitor {
      * @return true on success
      */
     public boolean startIgnoreFile(String filename) {
-        boolean contains = false;
         synchronized (ignoreList) {
-            System.out.println("FileSysMonitor: startIgnoreFile # " + filename);
-            ignoreList.add(filename);
-            contains = ignoreList.contains(filename);
+            if (ignoreList.containsKey(filename)) {
+                ignoreList.put(filename, (ignoreList.get(filename) + 1));
+            } else {
+                ignoreList.put(filename, 1);
+            }
+            System.out.println("FileSysMonitor: startIgnoreFile # " + filename + " count: " + ignoreList.get(filename));
         }
-        return contains;
+        return true;
     }
 
     /**
@@ -76,12 +81,29 @@ public class FileSysMonitor {
      * @return true if the file is in ignore list and is removed
      */
     public boolean stopIgnoreFile(String filename) {
-        boolean removed = false;
+        boolean result = decreaseIgnoreCounter(filename);
+        System.out.println("FileSysMonitor: stopIgnoreFile #" + filename + " -> " + result + " Count: " + ignoreList.get(filename));
+        return result;
+    }
+    
+    /**
+     * Decrease ignore counter of a file by 1 if the file is in ignore map and has value larger than 1
+     * @param filename the file to decrease counter
+     * @return true on success, false otherwise
+     */
+    private boolean decreaseIgnoreCounter(String filename) {
         synchronized (ignoreList) {
-            System.out.println("FileSysMonitor: stopIgnoreFile #" + filename);
-            removed = ignoreList.remove(filename);
+            if (ignoreList.containsKey(filename)) {
+                Integer count = ignoreList.get(filename) - 1;
+                if (count < 0) {
+                    return false;
+                } else {
+                    ignoreList.put(filename, count);
+                    return true;
+                }
+            }
+            return false;
         }
-        return removed;
     }
 
     class Listener implements JNotifyListener {
@@ -117,14 +139,10 @@ public class FileSysMonitor {
             lastModify.remove(absPath);
 
             // do not proceed if file in ignore list
-            synchronized (ignoreList) {
-                
-                if (ignoreList.contains(absPath)) {
-                    System.out.println("FileSysMonitor IGNORE: Delete File: " + file.getPath());
-                    // remove entry after one use
-                    ignoreList.remove(absPath);
-                    return;
-                }
+            if (decreaseIgnoreCounter(absPath)) {
+                System.out.println("FileSysMonitor IGNORE: Delete File: " + file.getPath());
+                System.out.println("FileSysMonitor: decrease ignore counter" + absPath + " Count: " + ignoreList.get(absPath));
+                return;
             }
 
             System.out.println("FileSysMonitor: Deleted: " + absPath + " Len: " + file.length() + " Time: " + file.lastModified());
@@ -173,14 +191,14 @@ public class FileSysMonitor {
                     @Override
                     public void run() {
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(zeroLenFileDelay);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
                         synchronized (pendingList) {
                             if (pendingList.contains(pathName)) {
-                                System.out.println("FileSysMonitor: Uploading zero length file.");
+                                System.out.println("FileSysMonitor: Uploading zero length file: " + file.getPath() + " time: " + file.lastModified());
                                 pendingList.remove(pathName);
                                 doModifyCallback(file);
                             }
@@ -198,17 +216,14 @@ public class FileSysMonitor {
         private void doModifyCallback(File file) {
             String absPath = file.getAbsolutePath();
             // do not proceed if file in ignore list
-            synchronized (ignoreList) {
+            if (decreaseIgnoreCounter(absPath)) {
+                System.out.println("FileSysMonitor doModifyCallback IGNORE: Modify File: " + file.getPath() + " Len: " + file.length() + " Time: " + file.lastModified());
                 
-                if (ignoreList.contains(absPath)) {
-                    System.out.println("FileSysMonitor IGNORE: Modify File: " + file.getPath() + " Len: " + file.length() + " Time: " + file.lastModified());
-                    
-                    lastModify.put(absPath, file.lastModified());
-                    
-                    // remove entry after one use
-                    ignoreList.remove(absPath);
-                    return;
-                }
+                // add ignored file to lastmodified
+                lastModify.put(absPath, file.lastModified());
+                
+                System.out.println("FileSysMonitor: decrease ignore counter" + absPath + " Count: " + ignoreList.get(absPath));
+                return;
             }
 
             // remove duplicate modification notice
