@@ -22,7 +22,7 @@ public class MetadataManager {
 	private static Long GlobalWriteCounter = (long) 0;
 	private ArrayList<Metadata> LocalMetadata = new ArrayList<Metadata>();
 	private static MetadataManager that = null;
-	private static String META_FILENAME = "metadata.dat";
+	private static final String META_FILENAME = "metadata.dat";
 	
 	private MetadataManager(){
 		//private constructor to secure singleton
@@ -86,7 +86,8 @@ public class MetadataManager {
 			objInput.close();
 			return true;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("MetadataManager: Metadata file not found! " + META_FILENAME);
 			return false;
 		} catch (IOException e) {
 			e.printStackTrace();

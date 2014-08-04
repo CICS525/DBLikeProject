@@ -104,7 +104,8 @@ public class FileReceiver {
 				try {
 					os = new FileOutputStream(filename);
 				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					System.out.println("FileReceiver: FileNotFoundException: " + filename);
 					return;
 				}
 				

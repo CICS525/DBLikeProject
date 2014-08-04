@@ -12,10 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import net.contentobjects.jnotify.macosx.FSEventListener;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
 
@@ -24,7 +21,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 	private static final long serialVersionUID = -3650388503954215299L;
 
 	private static ClientSettings that = null;
-	private final String fSettingsFileName = ".ClientSettings.settings";		//auto hidden file on Linux & MacOS
+	private final static String SETTING_FILENAME = ".ClientSettings.settings";		//auto hidden file on Linux & MacOS
 	private String Username = null;
 	private String Password = null;
 	private String DeviceName = null;				//a account many have several devices, each device should have a unique name
@@ -102,7 +99,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		ObjectInputStream is=null;
 		try {
 			
-			is=new ObjectInputStream(new FileInputStream(fSettingsFileName));
+			is=new ObjectInputStream(new FileInputStream(SETTING_FILENAME));
 			
 			ClientSettings temp = (ClientSettings)is.readObject();
 			setUsername(temp.getUsername());
@@ -113,7 +110,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 			
 			ans = true;
         } catch (FileNotFoundException e) {
-        	System.out.println("ClientSettings: Setting file not found! " + fSettingsFileName);
+        	System.out.println("ClientSettings: Setting file not found! " + SETTING_FILENAME);
 		} catch (Exception e) {
             System.out.println("ERROR"+e);
 		}
@@ -135,7 +132,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 		boolean ans = false;
 		ObjectOutputStream os=null;
 		try {
-			os=new ObjectOutputStream(new FileOutputStream(fSettingsFileName));
+			os=new ObjectOutputStream(new FileOutputStream(SETTING_FILENAME));
 			os.writeObject(this);
 			ans = true;
 		} catch (Exception e) {
@@ -168,7 +165,7 @@ public class ClientSettings implements Serializable {	// Serialization initializ
 	
 	public boolean deleteSettingFile()
 	{
-		File settingFile = new File(fSettingsFileName);
+		File settingFile = new File(SETTING_FILENAME);
 		if(settingFile.delete())
 		{	
 			System.out.println("Deleting the file");

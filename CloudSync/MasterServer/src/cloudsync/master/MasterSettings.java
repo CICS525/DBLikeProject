@@ -34,7 +34,7 @@ public class MasterSettings implements Serializable { // serialization
 	private String					MasterAddrMain		= null;
 	private String					MasterAddrBackup	= null;
 
-	private final String			fSettingsFileName	= ".MasterSettings.settings";
+	private final static String		SETTING_FILENAME	= ".MasterSettings.settings";
 
 	public int getLocalMessagePort() {
 		return LocalMessagePort;
@@ -125,7 +125,7 @@ public class MasterSettings implements Serializable { // serialization
 		// Read all settings from file SettingsFileName
 		ObjectInputStream is = null;
 		try {
-			is = new ObjectInputStream(new FileInputStream(fSettingsFileName));
+			is = new ObjectInputStream(new FileInputStream(SETTING_FILENAME));
 
 			MasterSettings temp = (MasterSettings) is.readObject();
 			setLocalMessagePort(temp.getLocalMessagePort());
@@ -140,7 +140,7 @@ public class MasterSettings implements Serializable { // serialization
 
 			ans = true;
 		} catch (FileNotFoundException e) {
-			System.out.println("MasterSettings: Setting file not found! " + fSettingsFileName);
+			System.out.println("MasterSettings: Setting file not found! " + SETTING_FILENAME);
 		} catch (Exception e) {
 			System.err.println("ERROR:" + e);
 		} finally {
@@ -160,7 +160,7 @@ public class MasterSettings implements Serializable { // serialization
 		// Write all settings into file SettingsFileName
 		ObjectOutputStream os = null;
 		try {
-			os = new ObjectOutputStream(new FileOutputStream(fSettingsFileName));
+			os = new ObjectOutputStream(new FileOutputStream(SETTING_FILENAME));
 			os.writeObject(this);
 			ans = true;
 		} catch (FileNotFoundException e) {
