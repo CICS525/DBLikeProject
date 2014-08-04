@@ -122,7 +122,7 @@ public class LoginPageController implements Initializable {
     {
     	ClientMain.deinitClientMain();
     	Application_Navigator.SESSION_OK = false;
-    	MainController.newuser.setDisable(true);
+    	MainController.newuser.setDisable(false);
     	UsernameTF.setDisable(false);
     	PasswordTF.setDisable(false);
     	DirectoryTF.setDisable(false);
