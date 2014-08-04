@@ -1,5 +1,6 @@
 package cloudsync.client;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -336,6 +337,10 @@ public class SessionMaster {
 		}
 	}
 	
+	private interface FileSysCallbackEx extends FileSysCallback{
+		void setExFlag(boolean flag);
+	}
+	
 	private int getMetadataAndBlob(long since, String lanHostname){
 		
 		final ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(since);
@@ -350,7 +355,8 @@ public class SessionMaster {
 				System.out.println("getMetadataAndBlob@SessionMaster: NEW metadata #" + " basename=" + aMeta.basename + " status=" + aMeta.status + " globalCounter=" + aMeta.globalCounter + " hostname=" + lanHostname);
 			}
 			
-			final FileSysCallback wanCallback = new FileSysCallback(){
+			final FileSysCallbackEx wanCallback = new FileSysCallbackEx(){
+				private boolean bFlag = true;	//set default as true, to display message
 
 				@Override
 				public void onFinish(boolean success, String filename) {
@@ -372,7 +378,15 @@ public class SessionMaster {
 						//	}
 						//}
 						increaseCounter(newMetaList, aMeta);
+						
+						if(bFlag)
+							ClientMain.messageSystemTray("Downloaded", aMeta.basename, MessageType.NONE);
 					}
+				}
+
+				@Override
+				public void setExFlag(boolean flag) {
+					bFlag = flag;
 				}
 			};
 			final FileSysCallback lanCallback = new FileSysCallback(){
@@ -380,7 +394,9 @@ public class SessionMaster {
 				@Override
 				public void onFinish(boolean success, String filename) {
 					if(success){
+						wanCallback.setExFlag(false);
 						wanCallback.onFinish(success, filename);
+						ClientMain.messageSystemTray("Downloaded via LAN", aMeta.basename, MessageType.NONE);
 					} else {
 						FileSysPerformer performer = FileSysPerformer.getInstance();
 						performer.addUpdateLocalTask(aMeta, wanCallback);

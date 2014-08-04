@@ -58,13 +58,13 @@ public class ClientMain {
 								public void onFinish(boolean success, String tempFileOnServer) {
 									boolean done = false;
 									if (success) {
-										done = commitFileUpdate(Action.MODIFY, absoluteFilename,
-												tempFileOnServer);
+										done = commitFileUpdate(Action.MODIFY, absoluteFilename, tempFileOnServer);
 									}
 									if (!done) {
 										synchronized (delayOperations) {
 											delayOperations.add(operation); // save for next try
 										}
+									} else {
 									}
 									fp.removeDelayPerformFile(basename);
 								}
@@ -149,7 +149,7 @@ public class ClientMain {
 	public static synchronized boolean initClientMain() {
 		System.out.println("ClientMain starts ...");
 		// LoggerClass.writeLog("ClientMain starts ...");
-
+		
 		settings = ClientSettings.getInstance();
 
 		// Client should do upload first & do download.
@@ -160,6 +160,15 @@ public class ClientMain {
 
 		// masterLocation = settings.getRecentMaster();
 		if (settings.loadSettings()) {
+			
+			boolean bLan = FileSenderClient.initialize(DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, settings.getRootDir());
+			if (bLan){
+				System.out.println("initClientMain@ClientMain: FileSenderClient Success.");
+			}else{
+				System.out.println("initClientMain@ClientMain: FileSenderClient Failure.");
+				return false;
+			}
+			
 			SessionEntry entry = SessionEntry.getInstance();
 			masterLocation = entry.getMasterServerLocation(settings.getUsername(), settings.getPassword());
 			if (masterLocation == null) {
@@ -199,12 +208,6 @@ public class ClientMain {
 				commitRetry = new RetryThread();
 				commitRetry.start();
 			}
-
-			boolean bLan = FileSenderClient.initialize(DefaultSetting.DEFAULT_CLIENT_DOWNLOAD_PORT, settings.getRootDir());
-			if (bLan)
-				System.out.println("initClientMain@ClientMain: FileSenderClient Success.");
-			else
-				System.out.println("initClientMain@ClientMain: FileSenderClient Failure.");
 
 			return bCnt;
 		} else {
@@ -312,8 +315,7 @@ public class ClientMain {
 					return false;
 				} else {
 					boolean suc = metadataManager.updateLocalMetadata(complete);
-					System.out.println("commitFileUpdate@ClientMain: updateLocalMetadata(" + "basename=" + complete.basename + " parent=" + complete.parent
-							+ " globalCounter=" + complete.globalCounter + " status=" + complete.status + ") => " + suc);
+					System.out.println("commitFileUpdate@ClientMain: updateLocalMetadata(" + "basename=" + complete.basename + " parent=" + complete.parent + " globalCounter=" + complete.globalCounter + " status=" + complete.status + ") => " + suc);
 					if (suc) {
 						if (complete.globalCounter == 1 + metadataManager.getSyncedGlobalWriteCounter())
 							metadataManager.setSyncedGlobalWriteCounter(complete.globalCounter);
@@ -324,15 +326,20 @@ public class ClientMain {
 						message.infoString = getHostname();
 						int num = masterSession.rmiBroadcastMessage(message);
 						System.out.println("commitFileUpdate@ClientMain: rmiBroadcastMessage=" + num);
+						
+						messageSystemTray("Uploaded", complete.basename, MessageType.NONE);
 					}
 					return suc;
 				}
 			} else {
-				System.out.println("commitFileUpdate@ClientMain-ERROR-NULL:" + "basename=" + incomplete.basename + " parent=" + incomplete.parent
-						+ " globalCounter=" + incomplete.globalCounter + " status=" + incomplete.status);
+				System.out.println("commitFileUpdate@ClientMain-ERROR-NULL:" + "basename=" + incomplete.basename + " parent=" + incomplete.parent + " globalCounter=" + incomplete.globalCounter + " status=" + incomplete.status);
 				return false;
 			}
 		}
+	}
+	
+	public static synchronized void messageSystemTray(String title, String boday, MessageType type){
+		SystemTrayImplementor.displayMessage(title, boday, type);
 	}
 
 	public static void main(String[] args) {

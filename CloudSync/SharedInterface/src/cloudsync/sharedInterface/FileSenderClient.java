@@ -78,18 +78,18 @@ public class FileSenderClient {
 			return false;
 		}
 		
+		
 		try {
 			if(serverSocket != null){
 				serverSocket.close();
-				System.out.println("server socket closed");
 				return true;
 			}
 		} catch (IOException e) {
-			System.out.println("FileSenderClient: Can't deinitialize the server socket");
-			return false;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return false;
-		
+		System.out.println("FileSenderClient: Can't deinitialize the server socket");
+		return false;			
 	}
 	
 	public static FileSenderClient getInstance(){
