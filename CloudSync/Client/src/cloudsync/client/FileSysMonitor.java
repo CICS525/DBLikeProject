@@ -55,6 +55,11 @@ public class FileSysMonitor {
         return result;
     }
 
+    /**
+     * Ignore event from a file for one time
+     * @param filename The absolute path of the file to ignore
+     * @return true on success
+     */
     public boolean startIgnoreFile(String filename) {
         boolean contains = false;
         synchronized (ignoreList) {
@@ -65,6 +70,11 @@ public class FileSysMonitor {
         return contains;
     }
 
+    /**
+     * Stop ignore event from a file
+     * @param filename The absolute path of the file to ignore
+     * @return true if the file is in ignore list and is removed
+     */
     public boolean stopIgnoreFile(String filename) {
         boolean removed = false;
         synchronized (ignoreList) {

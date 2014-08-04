@@ -47,36 +47,25 @@ public class FileSenderClient {
 			return false;
 	}
 	
-	public boolean deinitalize(){
+	public static boolean deinitalize(){
 		if(that == null){
 			System.out.println("FileSenderClient: file sender client hasn't been initialized");
 			return false;
 		}
 		else {
-			deinitalizeSocket();
-			boolean isDeintialized = true;
-			if(that.fileSenderThread != null || that.backgroundTread != null){
-				if(that.fileSenderThread != null && that.fileSenderThread.isAlive()){
-					that.fileSenderThread.interrupt();
-					if(!that.fileSenderThread.isInterrupted())
-						isDeintialized = false;
-				}
-				if(that.fileSenderThread != null && that.backgroundTread.isAlive()){
-					that.backgroundTread.interrupt();
-					if(!that.backgroundTread.isInterrupted())
-						isDeintialized = false;
-				} 
-			}
-			if(isDeintialized){
-				that = null;
-				System.out.println("FileSenderClient: fileSenderClient is deinitialized.");
-				return true;
-			}
-			else{
-				System.out.println("FileSenderClient: fileSenderClient can't be deinitialized.");
-				return false;
-			}
+		    if (that.fileSenderThread != null) {
+		        that.fileSenderThread.interrupt();
+		    }
+		    if (that.backgroundTread != null) {
+		        that.backgroundTread.interrupt();
+		    }
+			that.deinitalizeSocket();
+			
+			that = null;
+			
+			return true;
 		}
+		
 	}
 	
 	public boolean deinitalizeSocket(){
@@ -92,6 +81,7 @@ public class FileSenderClient {
 		try {
 			if(serverSocket != null){
 				serverSocket.close();
+				System.out.println("server socket closed");
 				return true;
 			}
 		} catch (IOException e) {
@@ -100,15 +90,6 @@ public class FileSenderClient {
 		}
 		return false;
 		
-	}
-	
-	public static boolean deinitialize(){
-		if(that!=null){
-			that = null;
-			return true;
-		}else{
-			return false;
-		}
 	}
 	
 	public static FileSenderClient getInstance(){
@@ -125,13 +106,11 @@ public class FileSenderClient {
 				try {
 					socket = serverSocket.accept();
 					socketIsComing = true;
-				} catch (IOException e) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				} catch (Exception e) {
+				    if (Thread.interrupted()) {
+				        System.out.println("Thread interrupted");
+				        return;
+				    }
 					System.out.println("FileSenderClient: Can't accept client socket");
 				}
 				if(socketIsComing){
