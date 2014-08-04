@@ -137,6 +137,13 @@ public class FileSysMonitor {
 
             // remove lastModify info
             lastModify.remove(absPath);
+            
+            // remove file from list if it is pending
+            synchronized (pendingList) {
+                if (pendingList.contains(name)) {
+                    pendingList.remove(name);
+                }
+            }
 
             // do not proceed if file in ignore list
             if (decreaseIgnoreCounter(absPath)) {
