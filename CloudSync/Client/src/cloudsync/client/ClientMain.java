@@ -222,7 +222,8 @@ public class ClientMain {
 		allFileMonitors.clear();
 
 		// disable master session
-		masterSession.disconnect();
+		if(masterSession!=null)
+			masterSession.disconnect();
 
 		// disable LAN sync listener
 		FileSenderClient.deinitialize();
