@@ -1,7 +1,11 @@
 package cloudsync.master.storage;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
 import cloudsync.master.MasterSettings;
 import cloudsync.sharedInterface.DefaultSetting;
+import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
 
 import com.microsoft.azure.storage.*;
@@ -60,18 +64,73 @@ public class AccountDatabase {
     public synchronized ServerLocation getServerLocation(String username) {
         // get current server flag, set server flag if current is USING_NONE
         AccountDBRow acc = getAccount(username);
-        int flag = acc.getServerflag();
-        if (flag == AccountDBRow.USING_NONE) {
-            flag = selectServer();
-            acc.setServerflag(flag);
-            acc.setConnectionCount(1);
-        } else {
-            acc.setConnectionCount(acc.getConnectionCount() + 1);
+        
+        int mainResult;
+        int backupResult;
+        
+        try {
+            Registry registry = LocateRegistry.getRegistry(acc.getMasterAddrMain(), DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+            RemoteInterface rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
+            mainResult = rmi.RmiHello();
+        } catch (Exception e) {
+            System.out.println("getServerLocation@AccountDatabase: Main Master Fail! " + acc.getMasterAddrMain());
+            mainResult = 0;
+        }
+        
+        try {
+            Registry registry = LocateRegistry.getRegistry(acc.getMasterAddrBackup(), DefaultSetting.DEFAULT_MASTER_RMI_PORT);
+            RemoteInterface rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
+            backupResult = rmi.RmiHello();
+        } catch (Exception e) {
+            System.out.println("getServerLocation@AccountDatabase: Main Master Fail! " + acc.getMasterAddrMain());
+            backupResult = 0;
+        }
+        
+        // both server down
+        if (mainResult == 0 && backupResult == 0) {
+            return null;
+        }
+        
+        // both server working
+        if ((mainResult > 0 && backupResult > 0) ) {
+            int flag = acc.getServerflag();
+            if (flag == AccountDBRow.USING_NONE) {
+                flag = selectServer();
+                acc.setServerflag(flag);
+                acc.setConnectionCount(1);
+            } else {
+                acc.setConnectionCount(acc.getConnectionCount() + 1);
+            }
+        }
+        
+        // only main server working
+        if (mainResult > 0) {
+            int flag = acc.getServerflag();
+            if (flag != AccountDBRow.USING_MAIN) {
+                flag = AccountDBRow.USING_MAIN;
+                acc.setServerflag(flag);
+                acc.setConnectionCount(1);
+            } else {
+                acc.setConnectionCount(acc.getConnectionCount() + 1);
+            }
+        }
+        
+        // only backup server working
+        if (backupResult > 0) {
+            int flag = acc.getServerflag();
+            if (flag != AccountDBRow.USING_BACKUP) {
+                flag = AccountDBRow.USING_BACKUP;
+                acc.setServerflag(flag);
+                acc.setConnectionCount(1);
+            } else {
+                acc.setConnectionCount(acc.getConnectionCount() + 1);
+            }
         }
         
         updateAccount(acc);
         
-        if (flag == AccountDBRow.USING_MAIN) {
+        // return based on flag
+        if (acc.getServerflag() == AccountDBRow.USING_MAIN) {
             return acc.getMainServer();
         } else {
             return acc.getBackupServer();
