@@ -38,8 +38,7 @@ public class ClientMain {
 				final String absoluteFilename = fp.getAbsoluteFilename(operation.filename);
 				final String basename = fp.getBaseFilename(operation.filename);
 				if (Action.MODIFY == operation.action) {
-					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:"
-							+ absoluteFilename);
+					System.out.println("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 					// LoggerClass.writeLog("ClientMain: FileSysMonitor~Callback: Upload File:" + absoluteFilename);
 
 					if (masterLocation == null) {
@@ -73,14 +72,18 @@ public class ClientMain {
 					sender.startFileTransfer();
 
 				} else if (Action.DELETE == operation.action) {
-					System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:"
-							+ absoluteFilename);
-					boolean done = false;
-					done = commitFileUpdate(Action.DELETE, absoluteFilename, null);
-					if (!done) {
-						synchronized (delayOperations) {
-							delayOperations.add(operation); // save for next try
-						}
+					Metadata parent = MetadataManager.getInstance().findByBasename(basename);
+					if(parent==null || parent.status!=STATUS.LAST){
+						System.out.println("ClientMain: FileSysMonitor~Callback: Delete File SKIP:" + absoluteFilename);
+					}else{
+						System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename);
+						boolean done = false;
+						done = commitFileUpdate(Action.DELETE, absoluteFilename, null);
+						if (!done) {
+							synchronized (delayOperations) {
+								delayOperations.add(operation); // save for next try
+							}
+						}						
 					}
 				}
 			}
