@@ -121,6 +121,7 @@ public class LoginPageController implements Initializable {
     public void NewUserButtonAction(ActionEvent event)
     {
     	ClientMain.deinitClientMain();
+    	SystemTrayImplementor.setToolTip("Dropbox Application : Not Connected");
     	Application_Navigator.SESSION_OK = false;
     	UsernameTF.setDisable(false);
     	PasswordTF.setDisable(false);
