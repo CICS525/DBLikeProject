@@ -12,15 +12,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
-
-import com.sun.xml.internal.bind.v2.runtime.output.ForkXmlOutput;
-
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.Stage;
 
 public class SystemTrayImplementor implements Runnable {
 
@@ -144,9 +137,11 @@ public class SystemTrayImplementor implements Runnable {
 	
 	public static void displayMessage(String trayMessage,String trayMessageBody,MessageType messageType)
 	{
-		trayIcon.displayMessage(trayMessage,
-				trayMessageBody,
-				messageType);
+		if(trayIcon!=null){
+			trayIcon.displayMessage(trayMessage,
+					trayMessageBody,
+					messageType);
+		}
 	}
 	
 	

@@ -334,7 +334,11 @@ public class ClientMain {
 						int num = masterSession.rmiBroadcastMessage(message);
 						System.out.println("commitFileUpdate@ClientMain: rmiBroadcastMessage=" + num);
 						
-						messageSystemTray("Uploaded", complete.basename, MessageType.NONE);
+						if(complete.status == STATUS.DELETE){
+							messageSystemTray("Delete Synced", complete.basename, MessageType.NONE);
+						}else{
+							messageSystemTray("Uploaded", complete.basename, MessageType.NONE);
+						}
 					}
 					return suc;
 				}

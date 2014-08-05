@@ -15,6 +15,7 @@ import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.FileReceiverClient;
 import cloudsync.sharedInterface.FileSysCallback;
 import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.Metadata.STATUS;
 import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
 import cloudsync.sharedInterface.SocketMessage;
@@ -353,7 +354,7 @@ public class SessionMaster {
 		void setExFlag(boolean flag);
 	}
 	
-	private int getMetadataAndBlob(long since, String lanHostname){
+	private int getMetadataAndBlob(long since, final String lanHostname){
 		
 		final ArrayList<Metadata> newMetaList = rmiGetCompleteMetadata(since);
 		final MetadataManager mm = MetadataManager.getInstance();
@@ -391,8 +392,12 @@ public class SessionMaster {
 						//}
 						increaseCounter(newMetaList, aMeta);
 						
-						if(bFlag)
-							ClientMain.messageSystemTray("Downloaded", aMeta.basename, MessageType.NONE);
+						if(bFlag){
+							if(aMeta.status==STATUS.DELETE)
+								ClientMain.messageSystemTray("Delete Synced", aMeta.basename, MessageType.NONE);
+							else
+								ClientMain.messageSystemTray("Downloaded", aMeta.basename, MessageType.NONE);
+						}
 					}
 				}
 
@@ -408,7 +413,7 @@ public class SessionMaster {
 					if(success){
 						wanCallback.setExFlag(false);
 						wanCallback.onFinish(success, filename);
-						ClientMain.messageSystemTray("Downloaded via LAN", aMeta.basename, MessageType.NONE);
+						ClientMain.messageSystemTray("Downloaded via LAN:" + lanHostname, aMeta.basename, MessageType.NONE);
 					} else {
 						FileSysPerformer performer = FileSysPerformer.getInstance();
 						performer.addUpdateLocalTask(aMeta, wanCallback);
