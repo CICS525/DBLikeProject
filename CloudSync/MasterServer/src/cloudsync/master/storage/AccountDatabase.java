@@ -1,15 +1,16 @@
 package cloudsync.master.storage;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.io.IOException;
+import java.net.Socket;
 
 import cloudsync.master.MasterSettings;
 import cloudsync.sharedInterface.DefaultSetting;
-import cloudsync.sharedInterface.RemoteInterface;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketStream;
 
-import com.microsoft.azure.storage.*;
-import com.microsoft.azure.storage.table.*;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.CloudTable;
+import com.microsoft.azure.storage.table.TableOperation;
 
 public class AccountDatabase {
     // Singleton design pattern
@@ -65,34 +66,16 @@ public class AccountDatabase {
         // get current server flag, set server flag if current is USING_NONE
         AccountDBRow acc = getAccount(username);
         
-        int mainResult;
-        int backupResult;
-        
-        try {
-            Registry registry = LocateRegistry.getRegistry(acc.getMasterAddrMain(), DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-            RemoteInterface rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
-            mainResult = rmi.RmiHello();
-        } catch (Exception e) {
-            System.out.println("getServerLocation@AccountDatabase: Main Master Fail! " + acc.getMasterAddrMain());
-            mainResult = 0;
-        }
-        
-        try {
-            Registry registry = LocateRegistry.getRegistry(acc.getMasterAddrBackup(), DefaultSetting.DEFAULT_MASTER_RMI_PORT);
-            RemoteInterface rmi = (RemoteInterface) registry.lookup(RemoteInterface.RMI_ID);
-            backupResult = rmi.RmiHello();
-        } catch (Exception e) {
-            System.out.println("getServerLocation@AccountDatabase: Main Master Fail! " + acc.getMasterAddrMain());
-            backupResult = 0;
-        }
+        boolean mainResult = checkMasterServer(acc.getMasterAddrMain());
+        boolean backupResult = checkMasterServer(acc.getMasterAddrMain());
         
         // both server down
-        if (mainResult == 0 && backupResult == 0) {
+        if (!mainResult && !backupResult) {
             return null;
         }
         
         // both server working
-        if ((mainResult > 0 && backupResult > 0) ) {
+        if (mainResult && backupResult ) {
             int flag = acc.getServerflag();
             if (flag == AccountDBRow.USING_NONE) {
                 flag = selectServer();
@@ -101,32 +84,32 @@ public class AccountDatabase {
             } else {
                 acc.setConnectionCount(acc.getConnectionCount() + 1);
             }
-        }
-        
-        // only main server working
-        if (mainResult > 0) {
-            int flag = acc.getServerflag();
-            if (flag != AccountDBRow.USING_MAIN) {
-                flag = AccountDBRow.USING_MAIN;
-                acc.setServerflag(flag);
-                acc.setConnectionCount(1);
-            } else {
-                acc.setConnectionCount(acc.getConnectionCount() + 1);
+        } else {
+            // only main server working
+            if (mainResult) {
+                int flag = acc.getServerflag();
+                if (flag != AccountDBRow.USING_MAIN) {
+                    flag = AccountDBRow.USING_MAIN;
+                    acc.setServerflag(flag);
+                    acc.setConnectionCount(1);
+                } else {
+                    acc.setConnectionCount(acc.getConnectionCount() + 1);
+                }
             }
+            
+            // only backup server working
+            if (backupResult) {
+                int flag = acc.getServerflag();
+                if (flag != AccountDBRow.USING_BACKUP) {
+                    flag = AccountDBRow.USING_BACKUP;
+                    acc.setServerflag(flag);
+                    acc.setConnectionCount(1);
+                } else {
+                    acc.setConnectionCount(acc.getConnectionCount() + 1);
+                }
+            }        	
         }
-        
-        // only backup server working
-        if (backupResult > 0) {
-            int flag = acc.getServerflag();
-            if (flag != AccountDBRow.USING_BACKUP) {
-                flag = AccountDBRow.USING_BACKUP;
-                acc.setServerflag(flag);
-                acc.setConnectionCount(1);
-            } else {
-                acc.setConnectionCount(acc.getConnectionCount() + 1);
-            }
-        }
-        
+
         updateAccount(acc);
         
         // return based on flag
@@ -217,4 +200,23 @@ public class AccountDatabase {
         }
     }
 
+	public boolean checkMasterServer(String masterAddress){
+		Socket socket = null;
+		try {
+			socket = new Socket(masterAddress, DefaultSetting.DEFAULT_MASTER_MESSAGE_PORT);
+			socket.setSoTimeout(500);
+		} catch (IOException e) {
+			//e.printStackTrace();
+			System.out.println("Can not connect to: " + masterAddress);
+			return false;
+		}
+		SocketStream socketStream = new SocketStream();
+		if(socket!=null){
+			socketStream.initStream(socket);
+			socketStream.deinitStream();
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

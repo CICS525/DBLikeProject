@@ -69,9 +69,4 @@ public class RemoteMethodProvider implements RemoteInterface {
 		return ret;
 	}
 
-	@Override
-	public int RmiHello() throws RemoteException {
-		return 1;
-	}
-
 }
