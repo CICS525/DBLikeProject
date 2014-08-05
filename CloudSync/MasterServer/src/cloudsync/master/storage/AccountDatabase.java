@@ -67,7 +67,7 @@ public class AccountDatabase {
         AccountDBRow acc = getAccount(username);
         
         boolean mainResult = checkMasterServer(acc.getMasterAddrMain());
-        boolean backupResult = checkMasterServer(acc.getMasterAddrMain());
+        boolean backupResult = checkMasterServer(acc.getMasterAddrBackup());
         
         // both server down
         if (!mainResult && !backupResult) {
@@ -113,11 +113,14 @@ public class AccountDatabase {
         updateAccount(acc);
         
         // return based on flag
+        ServerLocation add = null;
         if (acc.getServerflag() == AccountDBRow.USING_MAIN) {
-            return acc.getMainServer();
+        	add = acc.getMainServer();
         } else {
-            return acc.getBackupServer();
+        	add = acc.getBackupServer();
         }
+    	System.out.println("AccountDatabase:getServerLocation=" + add.url);
+    	return add;
     }
     
     public synchronized void logout(String username) {
