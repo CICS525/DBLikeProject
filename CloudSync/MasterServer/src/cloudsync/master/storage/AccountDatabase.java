@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 
 import cloudsync.master.MasterSettings;
+import cloudsync.sharedInterface.AccountInfo;
 import cloudsync.sharedInterface.DefaultSetting;
 import cloudsync.sharedInterface.ServerLocation;
+import cloudsync.sharedInterface.SocketMessage;
 import cloudsync.sharedInterface.SocketStream;
 
 import com.microsoft.azure.storage.StorageException;
@@ -216,6 +218,8 @@ public class AccountDatabase {
 		SocketStream socketStream = new SocketStream();
 		if(socket!=null){
 			socketStream.initStream(socket);
+			AccountInfo account = new AccountInfo(null, null);
+			socketStream.writeObject(account);
 			socketStream.deinitStream();
 			return true;
 		}else{
