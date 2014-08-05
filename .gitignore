@@ -132,3 +132,8 @@ packages/
 
 #Log
 session.log.*
+
+#UML
+CloudSync/Client/UML/*.png
+CloudSync/MasterServer/UML/*.png
+CloudSync/SharedInterface/UML/*.png
