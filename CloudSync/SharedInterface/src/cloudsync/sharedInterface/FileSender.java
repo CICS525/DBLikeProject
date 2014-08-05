@@ -18,8 +18,6 @@ public class FileSender {
 	private String filePath = null;
 	private File file = null;
 	private FileInputStream fis = null;
-	private ObjectOutputStream dos = null;
-	private ObjectInputStream dis = null;
 	private final int BUFF_SIZE = 8192;
 	private int read = 0;
 	private byte[] buff = null;
@@ -95,15 +93,13 @@ public class FileSender {
 				else
 					System.out.println("-> Error !!! ...");
 
-				dos = streams.getStreamOut();
-				dis = streams.getStreamIn();
-				//dos = new ObjectOutputStream(clientSocket.getOutputStream());
-				//dis = new ObjectInputStream(clientSocket.getInputStream());
+				ObjectOutputStream dos = streams.getStreamOut();
+				ObjectInputStream  dis = streams.getStreamIn();
 				file = new File(getFilePath());
 				dos.writeObject((Long)file.length());
 				dos.flush();
 				buff = new byte[BUFF_SIZE];
-				fileOnServer = sendFile();
+				fileOnServer = sendFile(streams);
 			} catch (UnknownHostException e) {
 				System.err.println("FileSender: UnknownHostException #" + hostname);
 			} catch (IOException e) {
@@ -134,7 +130,8 @@ public class FileSender {
 		}
 	}*/
 	
-	private String sendFile(){
+	private String sendFile(SocketStream streams){
+		
 		String fileOnServer = null;
 		finished = false;
 		while (true){
@@ -148,13 +145,13 @@ public class FileSender {
 					finished = true;
 					break;
 				}
-				dos.write(buff,0,read);
+				streams.getStreamOut().write(buff,0,read);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		try {
-			dos.flush();
+			streams.getStreamOut().flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -162,7 +159,7 @@ public class FileSender {
 			if(finished){
 				System.out.println("FileSender: File Send Completed...");
 				try {
-					fileOnServer = (String) dis.readObject();
+					fileOnServer = (String) streams.getStreamIn().readObject();
 					System.out.println("Filename from Server: "+ fileOnServer);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
@@ -174,9 +171,9 @@ public class FileSender {
 				thread = null;
 			}
 			try {
-				clientSocket.close();
-				dos.close();
+				streams.deinitStream();
 				fis.close();
+				fis = null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
