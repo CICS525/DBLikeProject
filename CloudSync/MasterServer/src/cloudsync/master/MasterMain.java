@@ -80,6 +80,8 @@ public class MasterMain {
 				account = (AccountInfo)(socketStream.readObject());
 				if(account==null)
 					continue;
+				if(account.getUsername()==null || account.getPassword()==null)
+					continue;
 				
 				AccountDatabase accountDB = AccountDatabase.getInstance();
 				boolean suc = accountDB.login(account.getUsername(), account.getPassword());
