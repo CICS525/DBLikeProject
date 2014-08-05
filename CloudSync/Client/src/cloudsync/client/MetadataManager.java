@@ -75,6 +75,10 @@ public class MetadataManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean readLocalMetadata() {
+		GlobalWriteCounter = (long) 0;
+		if(LocalMetadata!=null)
+			LocalMetadata.clear();
+		
 		try {
 			FileInputStream fs = new FileInputStream(META_FILENAME);
 			ObjectInputStream objInput = new ObjectInputStream(fs);
