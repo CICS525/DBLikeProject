@@ -18,7 +18,6 @@ public class RemoteMethodProvider implements RemoteInterface {
 
 	protected RemoteMethodProvider() throws RemoteException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -68,6 +67,11 @@ public class RemoteMethodProvider implements RemoteInterface {
 		System.out.println("RmiBroadcastMessage@RemoteMethodProvider[" + username + "]:" + message.command);
 		int ret = SessionManager.getInstance().broadcastSocketMessage(username, message);
 		return ret;
+	}
+
+	@Override
+	public int RmiHello() throws RemoteException {
+		return 1;
 	}
 
 }
