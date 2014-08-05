@@ -141,8 +141,9 @@ public class FileSysMonitor {
             
             // remove file from list if it is pending
             synchronized (pendingList) {
-                if (pendingList.contains(name)) {
-                    pendingList.remove(name);
+                if (pendingList.contains(absPath)) {
+                    pendingList.remove(absPath);
+                    return;
                 }
             }
 
