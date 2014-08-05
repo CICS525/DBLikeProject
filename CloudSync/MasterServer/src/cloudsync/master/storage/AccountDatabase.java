@@ -83,6 +83,9 @@ public class AccountDatabase {
         AccountDBRow acc = getAccount(username);
         if( acc!=null ){
             int count = acc.getConnectionCount() - 1;
+            if (count < 0) {
+                count = 0;
+            }
             acc.setConnectionCount(count);
             
             if (count == 0) {

@@ -96,6 +96,7 @@ public class FileSysMonitor {
             if (ignoreList.containsKey(filename)) {
                 Integer count = ignoreList.get(filename) - 1;
                 if (count < 0) {
+                    ignoreList.put(filename, 0);
                     return false;
                 } else {
                     ignoreList.put(filename, count);
