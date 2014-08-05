@@ -75,6 +75,22 @@ public class ClientMain {
 					Metadata parent = MetadataManager.getInstance().findByBasename(basename);
 					if(parent==null || parent.status!=STATUS.LAST){
 						System.out.println("ClientMain: FileSysMonitor~Callback: Delete File SKIP:" + absoluteFilename);
+						
+						ArrayList<Metadata> metas = MetadataManager.getInstance().findByFolder(basename);
+						
+						if (metas.size() == 0) {
+						    System.out.println("ClientMain: FileSysMonitor~Callback: NO file in folder:" + absoluteFilename);
+						} else {
+						    for (Metadata meta : metas) {
+						        System.out.println("ClientMain: FileSysMonitor~Callback: Deleting file: " + meta.basename + " in folder: " + absoluteFilename);
+						        boolean done = commitFileUpdate(Action.DELETE, fp.getAbsoluteFilename(meta), null);
+						        if (!done) {
+		                            synchronized (delayOperations) {
+		                                delayOperations.add(operation); // save for next try
+		                            }
+		                        }
+						    }
+						}
 					}else{
 						System.out.println("ClientMain: FileSysMonitor~Callback: Delete File:" + absoluteFilename);
 						boolean done = false;

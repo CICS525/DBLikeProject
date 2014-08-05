@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import cloudsync.sharedInterface.Metadata;
+import cloudsync.sharedInterface.Metadata.STATUS;
 
 /**
  * Class that manages the all the metadata for
@@ -203,6 +204,24 @@ public class MetadataManager {
 			}
 		}
 		return lastMatch;
+	}
+	
+	/**
+	 * Get metadata in a folder whose status is LAST
+	 * @param folderName The folder to search
+	 * @return ArrayList of matching metadata
+	 */
+	public ArrayList<Metadata> findByFolder(String folderName) {
+	    ArrayList<Metadata> result = new ArrayList<>();
+	    String filePrefix = folderName + File.separator;
+	    synchronized(LocalMetadata){
+            for( Metadata meta : LocalMetadata ){
+                if( meta.basename.startsWith(filePrefix) && meta.status == STATUS.LAST) {
+                    result.add(meta);
+                }
+            }
+        }
+	    return result;
 	}
 	
 	public Metadata findByGlobalCounter(long globalCounter){
