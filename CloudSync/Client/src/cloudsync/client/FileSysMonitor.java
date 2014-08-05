@@ -193,12 +193,16 @@ public class FileSysMonitor {
         private void handleZeroLen(final File file) {
             final String pathName = file.getPath().toString();
             if (file.length() == 0) {
-                pendingList.add(pathName);
+                synchronized (pendingList) {
+                    pendingList.add(pathName);
+                }
+                
                 new Thread(new Runnable() {
 
                     @Override
                     public void run() {
                         try {
+                            System.out.println("FileSysMonitor: DELAY Upload zero length file: " + file.getPath() + " time: " + file.lastModified());
                             Thread.sleep(zeroLenFileDelay);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -209,10 +213,12 @@ public class FileSysMonitor {
                                 System.out.println("FileSysMonitor: Uploading zero length file: " + file.getPath() + " time: " + file.lastModified());
                                 pendingList.remove(pathName);
                                 doModifyCallback(file);
+                            } else {
+                                System.out.println("FileSysMonitor: CANCLE Upload zero length file: " + file.getPath() + " time: " + file.lastModified());
                             }
                         }
                     }
-                }).run();
+                }).start();
             } else {
                 synchronized (pendingList) {
                     pendingList.remove(pathName);
