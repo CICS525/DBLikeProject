@@ -55,9 +55,6 @@ public class SessionManager {
 				if( account.isSocketStreamEmpty() ){
 					counter++;
 				    
-				    // change entry server flag
-				    AccountDatabase.getInstance().logout(account.getUsername());
-				    
 					if(delList==null)
 						delList = new ArrayList<SessionAccount>();
 					delList.add(account);
