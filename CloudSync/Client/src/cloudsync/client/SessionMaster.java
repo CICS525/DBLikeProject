@@ -415,6 +415,9 @@ public class SessionMaster {
 						wanCallback.onFinish(success, filename);
 						ClientMain.messageSystemTray("Downloaded via LAN:" + lanHostname, aMeta.basename, MessageType.NONE);
 					} else {
+						for (FileSysMonitor aMonitor : ClientMain.getAllFileMonitors()) {
+							aMonitor.stopIgnoreFile( FileSysPerformer.getInstance().getAbsoluteFilename(aMeta.basename) );
+						}
 						FileSysPerformer performer = FileSysPerformer.getInstance();
 						performer.addUpdateLocalTask(aMeta, wanCallback);
 					}
