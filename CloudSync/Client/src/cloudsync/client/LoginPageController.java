@@ -100,6 +100,8 @@ public class LoginPageController implements Initializable {
     	
     	if(ClientMain.initClientMain())
     	{
+        	SystemTrayImplementor.setToolTip("Dropbox Application : Connected");
+
     		Application_Navigator.SESSION_OK = true;
     	}
     	
