@@ -115,6 +115,11 @@ public class FileSysMonitor {
 
             File file = path.toFile();
             
+            // ignore hidden and tmp file
+            if (file.isHidden() || file.getName().endsWith(".tmp")) {
+                return;
+            }
+            
             // ignore creation of folder
             if (file.isDirectory()) {
                 return;
@@ -164,6 +169,11 @@ public class FileSysMonitor {
             Path path = Paths.get(rootPath, name);
             File file = path.toFile();
 
+            // ignore hidden and tmp file
+            if (file.isHidden() || file.getName().endsWith(".tmp")) {
+                return;
+            }
+            
             // ignore modification on folder
             if (file.isDirectory()) {
                 return;
