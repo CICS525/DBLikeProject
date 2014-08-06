@@ -116,7 +116,8 @@ public class FileSysMonitor {
             File file = path.toFile();
             
             // ignore hidden and tmp file
-            if (file.isHidden() || file.getName().endsWith(".tmp")) {
+            if (file.isHidden() || name.endsWith(".tmp")) {
+                System.err.println("Create: ignore hidden:" + name);
                 return;
             }
             
@@ -134,6 +135,12 @@ public class FileSysMonitor {
             String absPath = path.toAbsolutePath().toString();
 
             File file = path.toFile();
+            
+            // ignore hidden and tmp file
+            if (file.isHidden() || name.endsWith(".tmp")) {
+                System.err.println("Create: ignore hidden:" + name);
+                return;
+            }
             
             // temperory ignore delete directory
             // TODO cannot detect delete folder
@@ -169,8 +176,9 @@ public class FileSysMonitor {
             Path path = Paths.get(rootPath, name);
             File file = path.toFile();
 
-            // ignore hidden and tmp file
-            if (file.isHidden() || file.getName().endsWith(".tmp")) {
+         // ignore hidden and tmp file
+            if (file.isHidden() || name.endsWith(".tmp")) {
+                System.err.println("Modify: ignore hidden:" + name);
                 return;
             }
             
